@@ -1,0 +1,33 @@
+/* (c) Oliver Bedernik · Terra-Kit · exam_druck.css · A4-Prüfungsbogen (Standard 3.1) */
+.ef { margin-bottom: 5mm; padding: 3.4mm 4mm 3.6mm; background: var(--kachel); border: 0.6pt solid var(--linie); border-top: 2.2pt solid var(--p); border-radius: 2pt; }
+.ef-kopf { position: relative; padding-bottom: 1.4mm; margin-bottom: 2.2mm; border-bottom: 0.4pt solid var(--linie); }
+.ef-nr { font: 600 15pt/1 var(--f-titel); font-variant-numeric: lining-nums; }
+.ef-typ { margin-left: 2.4mm; font: 600 7.6pt var(--f-ui); color: var(--tinte-2); }
+.ef-prov { position: absolute; right: 0; top: 0.6mm; font: 600 7.4pt var(--f-ui); color: var(--p); }
+.ef .fallbeispiel { margin-bottom: 2.6mm; }
+.ef-frage { margin: 0 0 2.4mm; font: 500 10.4pt/1.42 var(--f-text); }
+.ef-opt { position: relative; padding: 1.4mm 0 1.4mm 10mm; border-bottom: 0.3pt dotted var(--linie); }
+.ef-opt:last-child { border-bottom: 0; }
+.ef-opt .kast { position: absolute; left: 0; top: 1.6mm; width: 4.2mm; height: 4.2mm; border: 0.9pt solid var(--tinte); }
+.ef-opt .kast.rund { border-radius: 50%; }
+.ef-opt .bu { position: absolute; left: 5.6mm; top: 1.2mm; font: italic 600 11pt/1 var(--f-titel); }
+.eck-tab { width: 100%; border-collapse: collapse; margin: 3mm 0 5mm; font-size: 9.6pt; }
+.eck-tab td { padding: 1.6mm 0; border-bottom: 0.4pt solid var(--linie); }
+.eck-tab td:last-child { text-align: right; font: 600 9.6pt var(--f-ui); }
+.namensfeld { margin-top: 7mm; font: 400 8.6pt var(--f-ui); color: var(--tinte-2); }
+.namensfeld div { display: flex; gap: 4mm; margin-bottom: 6mm; }
+.namensfeld span { flex: none; width: 34mm; }
+.namensfeld i { flex: 1; border-bottom: 0.6pt solid var(--tinte); }
+.regeln-d { margin: 0; padding-left: 5mm; font-size: 9.2pt; }
+.regeln-d li { margin-bottom: 1mm; }
+.el { margin-bottom: 4.6mm; padding: 3mm 4mm; background: var(--kachel); border: 0.6pt solid var(--linie); border-left: 2.4pt solid var(--p); }
+.el-kopf { font: 600 11pt var(--f-titel); margin-bottom: 1.6mm; }
+.el-kopf b { font: 700 8.4pt var(--f-ui); color: var(--p); margin-left: 2mm; }
+.el table { width: 100%; border-collapse: collapse; font-size: 8.4pt; line-height: 1.35; }
+.el td { padding: 1mm 1.4mm 1mm 0; border-bottom: 0.3pt solid var(--linie); vertical-align: top; }
+.el td.bu { width: 6mm; font: italic 600 10.5pt var(--f-titel); }
+.el td.w { width: 15mm; font: 600 7.6pt var(--f-ui); }
+.el td.w.ja { color: #3E7A4E; } .el td.w.nein { color: var(--falle-bar); }
+.el .norm { display: block; font: 600 7.4pt var(--f-ui); color: var(--ocker); }
+.el .verweis { margin-top: 1.6mm; font: 600 7.6pt var(--f-ui); color: var(--p); }
+.el .box { margin-top: 1.8mm; font-size: 8.6pt; }

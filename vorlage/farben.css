@@ -1,0 +1,58 @@
+/* (c) Oliver Bedernik · Terra-Kit · farben.css · gemeinsame Farb- und Dunkelmodusregeln für Karte und Exam
+   Ergänzt skript.css. Farben ausschließlich über Variablen auf :root. */
+
+
+:root {
+  color-scheme: light;
+  --grund: #EFE6D4; --leiste: rgba(252, 250, 245, 0.94); --leiste-rand: #D9CFBC; --schatten: rgba(31, 42, 68, 0.14);
+  --region: rgba(252, 250, 245, 0.62); --fokus: #A8742A; --wz-farbe: #1F2A44;
+  --kopf-h: 52px; --fuss-h: 56px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --dunkel: 1; }
+}
+:root[data-theme="dark"] { --dunkel: 1; }
+
+/* Dunkelwerte: zweimal notiert (Systemeinstellung und Schalter), siehe Regeln */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --papier: #1A1D23; --pergament: #16181D; --kachel: #22262D; --flaeche: #2B3038;
+    --tinte: #E9E4D8; --tinte-2: #B8B2A5; --tinte-3: #8E897E; --linie: #3B414C; --ocker: #D6A95E;
+    --merke-bg: #3A321F; --merke-bar: #C9A24A; --fein-bg: #2C3036; --fein-bar: #8A949E;
+    --falle-bg: #3E2522; --falle-bar: #E07A64; --akt-bg: #1D3434; --akt-bar: #5FB3B0;
+    --lat-rand: #C9A24A; --lat-bg: #2A261C; --luecke: #E06A5C; --luecke-bg: #3A2323; --aut-rot: #E25A6E;
+    --grund: #121418; --leiste: rgba(26, 29, 35, 0.94); --leiste-rand: #3B414C; --schatten: rgba(0, 0, 0, 0.45);
+    --region: rgba(30, 33, 40, 0.66); --fokus: #D6A95E; --wz-farbe: #E9E4D8;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --papier: #1A1D23; --pergament: #16181D; --kachel: #22262D; --flaeche: #2B3038;
+  --tinte: #E9E4D8; --tinte-2: #B8B2A5; --tinte-3: #8E897E; --linie: #3B414C; --ocker: #D6A95E;
+  --merke-bg: #3A321F; --merke-bar: #C9A24A; --fein-bg: #2C3036; --fein-bar: #8A949E;
+  --falle-bg: #3E2522; --falle-bar: #E07A64; --akt-bg: #1D3434; --akt-bar: #5FB3B0;
+  --lat-rand: #C9A24A; --lat-bg: #2A261C; --luecke: #E06A5C; --luecke-bg: #3A2323; --aut-rot: #E25A6E;
+  --grund: #121418; --leiste: rgba(26, 29, 35, 0.94); --leiste-rand: #3B414C; --schatten: rgba(0, 0, 0, 0.45);
+  --region: rgba(30, 33, 40, 0.66); --fokus: #D6A95E; --wz-farbe: #E9E4D8;
+}
+
+
+/* ── Bausteinoptik aus skript.css: Boxen über Variablen statt fester Hexwerte ── */
+.merke { background: var(--merke-bg); border-color: var(--merke-bar); } .merke .lbl { color: var(--merke-bar); }
+.feinheit { background: var(--fein-bg); border-color: var(--fein-bar); } .feinheit .lbl { color: var(--tinte-2); }
+.klausurfalle { background: var(--falle-bg); border-color: var(--falle-bar); } .klausurfalle .lbl { color: var(--falle-bar); }
+.austriacum { background: color-mix(in srgb, var(--aut-rot) 7%, var(--kachel)); }
+.zitat { background: var(--kachel); }
+.fb-kopf { background: var(--tinte); color: var(--papier); }
+.fallbeispiel { border-color: var(--tinte); }
+.tk th, .tk .h { border-color: var(--tinte); }
+
+
+/* Dunkelmodus: Provinzfarben sind dort hell, Schrift auf Provinzflächen daher dunkel (Kontrast) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .pchip, :root:not([data-theme="light"]) .chip, :root:not([data-theme="light"]) .pw i,
+  :root:not([data-theme="light"]) .pknopf i, :root:not([data-theme="light"]) .reg-gruppe h3 i { color: #15171C; }
+}
+:root[data-theme="dark"] .pchip, :root[data-theme="dark"] .chip, :root[data-theme="dark"] .pw i,
+:root[data-theme="dark"] .pknopf i, :root[data-theme="dark"] .reg-gruppe h3 i { color: #15171C; }

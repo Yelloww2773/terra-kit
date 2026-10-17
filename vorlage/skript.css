@@ -1,0 +1,346 @@
+/* (c) Oliver Bedernik · Terra-Kit · skript.css · Lernskript A4 (Standard 3.1)
+   Grundsatz: Seitenmontage statt Fließumbruch. Jede .page ist ein fester Container;
+   die Montage (montage.js) verteilt atomare Einheiten und prüft jeden Überlauf. */
+
+/* Symbolschrift: nur für Pfeile, geometrische Formen und Zeichen (▸ ◆ ★ ○ ⚠ →),
+   die in den Hausschriften fehlen. Ein Font statt zufälliger Ersatzschriften. */
+@font-face { font-family: "Terra Symbole"; font-weight: 400; src: url("file:///usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
+  unicode-range: U+2190-21FF, U+25A0-25FF, U+2600-26FF, U+2700-27BF; }
+@font-face { font-family: "Terra Symbole"; font-weight: 700; src: url("file:///usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf");
+  unicode-range: U+2190-21FF, U+25A0-25FF, U+2600-26FF, U+2700-27BF; }
+
+:root {
+  --papier: #FCFAF5; --pergament: #F1E9DA; --kachel: #FFFDF8; --flaeche: #F4EEE2;
+  --tinte: #1F2A44; --tinte-2: #4A5468; --tinte-3: #7A8292; --linie: #D9CFBC; --ocker: #A8742A;
+  --merke-bg: #F5ECD9; --merke-bar: #C9A45C;
+  --fein-bg: #EEF0F2;  --fein-bar: #8A949E;
+  --falle-bg: #F8E7E0; --falle-bar: #B5543A;
+  --akt-bg: #E3EFEF;   --akt-bar: #2F7A7A;
+  --lat-rand: #B8913A; --lat-bg: #FFFBF1;
+  --luecke: #C0392B;   --luecke-bg: #FDF3F2;
+  --aut-rot: #C8102E;
+  --marker: #F0DC98;
+  --p: #405A8B; --p-hell: #E8EAEB;
+  --f-titel: "Terra Symbole", "Cormorant Garamond", "EB Garamond", Garamond, "Times New Roman", serif;
+  --f-text: "Terra Symbole", "Spectral", "Alegreya Sans", Georgia, "Times New Roman", serif;
+  --f-ui: "Terra Symbole", "Alegreya Sans", "Helvetica Neue", Arial, sans-serif;
+}
+@page { size: A4; margin: 0; }
+@page quer { size: A4 landscape; margin: 0; }
+
+html, body { margin: 0; padding: 0; }
+body {
+  font: 400 9.6pt/1.42 var(--f-text); color: var(--tinte);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  font-variant-numeric: lining-nums; text-rendering: geometricPrecision;
+}
+#quelle { position: absolute; left: -10000mm; top: 0; width: 176mm; visibility: hidden; }
+
+/* ── Seite ───────────────────────────────────────────────────────── */
+.page {
+  position: relative; box-sizing: border-box; width: 210mm; height: 296.6mm;
+  padding: 15mm 17mm 17mm 17mm; background: var(--papier);
+  break-after: page; page-break-after: always;
+}
+.page:last-child { break-after: auto; page-break-after: auto; }
+.page.quer { page: quer; width: 297mm; height: 209.6mm; }
+.koerper { position: relative; height: 100%; }
+.kopfzeile, .fusszeile {
+  position: absolute; left: 17mm; right: 17mm; font: 400 7.4pt/1.2 var(--f-ui); color: var(--tinte-2);
+}
+.kopfzeile { top: 7.5mm; padding-bottom: 1.2mm; border-bottom: 0.4pt solid var(--linie); }
+.fusszeile { bottom: 8mm; padding-top: 1.2mm; border-top: 0.4pt solid var(--linie); }
+.kopfzeile .r { position: absolute; right: 0; top: 0; font-style: italic; }
+.fusszeile .r { position: absolute; right: 0; top: 1.2mm; }
+.fusszeile .m { position: absolute; left: 0; right: 0; top: 1.2mm; text-align: center; }
+.kopfzeile b { font-weight: 700; color: var(--tinte); }
+.wz { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 20; mix-blend-mode: multiply; }
+.wz span {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-35deg);
+  font: 600 56pt/1 var(--f-titel); color: var(--tinte); opacity: 0.055; white-space: nowrap; letter-spacing: 0.02em;
+}
+
+/* ── Provinzkopf ─────────────────────────────────────────────────── */
+.provkopf { background: var(--p-hell); border-left: 4pt solid var(--p); padding: 5mm 6mm 4.5mm; border-radius: 0 3pt 3pt 0; margin-bottom: 4.5mm; }
+.pchip, .chip { display: inline-block; font: 700 7.4pt/1 var(--f-ui); color: #fff; background: var(--p); padding: 1mm 2mm; border-radius: 1.5pt; letter-spacing: 0.04em; }
+h1.ptitel { font: 600 25pt/1.05 var(--f-titel); margin: 2.6mm 0 0.6mm; color: var(--tinte); }
+.pde { font: italic 400 13pt/1.2 var(--f-titel); color: var(--tinte-2); }
+.leitfrage { margin-top: 3.2mm; font: italic 400 10.2pt/1.4 var(--f-text); }
+.leitfrage b { font: 700 7pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; font-style: normal; color: var(--p); display: block; margin-bottom: 0.6mm; }
+.kompakt { margin-top: 3mm; }
+.kompakt b { font: 700 7pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--p); }
+.kompakt ol { margin: 0.8mm 0 0; padding-left: 5mm; }
+.kompakt li { margin-bottom: 0.5mm; }
+.panker { margin-top: 2.6mm; font: 400 8pt var(--f-ui); color: var(--ocker); }
+.kindex { width: 100%; border-collapse: collapse; margin-bottom: 4mm; font-size: 8.6pt; }
+.kindex td { padding: 0.8mm 1mm 0.8mm 0; border-bottom: 0.4pt dashed var(--linie); vertical-align: baseline; width: 50%; }
+.kindex .c { font: 700 7.4pt var(--f-ui); color: var(--p); display: inline-block; width: 8mm; }
+
+/* ── Kachel ──────────────────────────────────────────────────────── */
+.kachel { background: var(--kachel); border: 0.6pt solid var(--linie); border-top: 2.2pt solid var(--p);
+  border-radius: 2.5pt; padding: 3mm 4mm 3.2mm; margin: 0 0 4.2mm; }
+.kachel.fortsetzung { border-top: 0.8pt dashed var(--p); border-top-left-radius: 0; border-top-right-radius: 0; }
+.kachel.offen-unten { border-bottom: 0.8pt dashed var(--linie); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.kkopf { border-bottom: 0.4pt solid var(--linie); padding-bottom: 1.6mm; margin-bottom: 2.2mm; position: relative; padding-right: 34mm; }
+.kkopf .code { display: inline-block; vertical-align: 2pt; font: 700 7.4pt/1 var(--f-ui); color: #fff; background: var(--p); padding: 0.9mm 1.5mm; border-radius: 1.2pt; margin-right: 2mm; }
+.kkopf h2 { display: inline; font: 600 13.5pt/1.2 var(--f-titel); margin: 0; color: var(--tinte); }
+.kkopf .rel { font: 400 9pt var(--f-ui); color: var(--p); margin-left: 1.5mm; }
+.kkopf .kanker { position: absolute; right: 0; top: 0.8mm; width: 33mm; text-align: right; font: 400 7.4pt/1.25 var(--f-ui); color: var(--ocker); }
+.fkopf { font: 400 8pt var(--f-ui); color: var(--tinte-2); padding-bottom: 1.2mm; margin-bottom: 2mm; border-bottom: 0.4pt dashed var(--linie); }
+.fkopf .code { font: 700 7.2pt/1 var(--f-ui); color: #fff; background: var(--p); padding: 0.6mm 1.2mm; border-radius: 1.2pt; margin-right: 1.5mm; }
+
+.unit + .unit, .kachel > .unit + .unit { margin-top: 2.4mm; }
+.label { font: 700 6.8pt/1.2 var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--p); margin-bottom: 0.8mm; }
+p { margin: 0 0 1.2mm; } p:last-child { margin-bottom: 0; }
+strong { font-weight: 600; }
+a.vw { color: var(--p); text-decoration: none; font: 600 0.9em var(--f-ui); white-space: nowrap; }
+a.vw::before { content: "→\00a0"; }
+span.vw-ext { color: var(--tinte-2); font: 600 0.9em var(--f-ui); white-space: nowrap; }
+span.vw-ext::before { content: "→\00a0"; }
+
+
+ul.kern { list-style: none; padding: 0; margin: 0; }
+ul.kern li { position: relative; padding-left: 4.2mm; margin-bottom: 0.6mm; }
+ul.kern li::before { content: "▸"; position: absolute; left: 0; top: 0; color: var(--p); }
+
+
+/* Formel und Rechenweg */
+.formel { position: relative; padding: 1.2mm 14mm 1.2mm 0; text-align: center; }
+.formel .nr { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font: 400 9pt var(--f-ui); color: var(--tinte-2); }
+.formel .katex-display { margin: 0.8mm 0; }
+table.var { border-collapse: collapse; margin: 0.6mm auto 0; font-size: 8.4pt; }
+table.var td { padding: 0.3mm 2mm; vertical-align: baseline; }
+table.var td:first-child { text-align: right; }
+.rechenweg .aufgabe { font-style: italic; margin-bottom: 1mm; }
+.rechenweg ol { margin: 0; padding-left: 5mm; }
+.rechenweg li { margin-bottom: 0.8mm; }
+.rechenweg li .katex { font-size: 1.02em; }
+.rechenweg .tex { display: block; margin: 0.3mm 0 0.6mm; }
+.ergebnis { margin-top: 1.2mm; display: inline-block; padding: 1mm 3mm; border: 0.8pt solid var(--p); border-radius: 2pt; font: 600 9.6pt var(--f-ui); }
+.katex { font-size: 1.08em; }
+
+/* Schemata */
+.schema-titel { font: 600 10.6pt/1.2 var(--f-titel); color: var(--tinte); margin-bottom: 1.2mm; }
+.schema-titel .forts { font: italic 400 8pt var(--f-ui); color: var(--tinte-2); margin-left: 1.5mm; }
+.weiter { margin-top: 1mm; text-align: right; font: italic 400 7.4pt var(--f-ui); color: var(--tinte-2); }
+table.t { width: 100%; border-collapse: collapse; font-size: 8.4pt; line-height: 1.32; }
+table.t th { font: 700 6.9pt/1.25 var(--f-ui); letter-spacing: 0.06em; text-transform: uppercase; text-align: left;
+  color: var(--tinte); border-bottom: 0.9pt solid var(--tinte); padding: 1mm 1.6mm 1mm 0; vertical-align: bottom; }
+table.t td { border-bottom: 0.3pt solid var(--linie); padding: 1mm 1.6mm 1mm 0; vertical-align: top; }
+table.t tr { break-inside: avoid; }
+table.t td.lat { font-style: italic; }
+table.t td.code a { font: 700 7.4pt var(--f-ui); color: var(--p); text-decoration: none; }
+.quer table.t { font-size: 8.8pt; }
+table.abgr th:first-child, table.abgr td:first-child { width: 28%; color: var(--tinte-2); font: 600 8pt/1.3 var(--f-ui); }
+table.zeit td.d { width: 16mm; font: 700 8.4pt var(--f-ui); color: var(--p); white-space: nowrap; }
+table.zeit td.e { border-left: 1.2pt solid var(--p); padding-left: 3mm; position: relative; }
+table.zeit td.e::before { content: ""; position: absolute; left: -2.1pt; top: 1.9mm; width: 3pt; height: 3pt; border-radius: 50%; background: var(--p); }
+table.zeit td { border-bottom: 0; padding-top: 0.8mm; padding-bottom: 0.8mm; }
+
+.tkonten { text-align: center; }
+.tk { display: inline-table; width: 77mm; margin: 0 1.5mm 2.4mm; border-collapse: collapse; font-size: 8.2pt; vertical-align: top; }
+.tk caption { font: 600 10pt var(--f-titel); padding-bottom: 0.6mm; }
+.tk th { font: 700 6.6pt var(--f-ui); letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 0.9pt solid var(--tinte); padding: 0.6mm 1.2mm; text-align: center; }
+.tk .h { border-left: 0.9pt solid var(--tinte); }
+.tk td { padding: 0.5mm 1.2mm; vertical-align: top; text-align: left; }
+.tk td.tx { width: 23.5mm; }
+.tk td.b { width: 15mm; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tk tr.sum td.b.s { border-top: 0.6pt solid var(--tinte); font-weight: 600; }
+.buchungssatz { margin-top: 0.6mm; font: 600 8.8pt var(--f-ui); text-align: center; }
+.buchungssatz b { font: 700 6.8pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--p); margin-right: 1.5mm; }
+
+.fig { text-align: center; }
+.fig svg { display: block; margin: 0 auto; width: 100%; height: auto; }
+.fig .alt { display: none; }
+.t-flaeche { fill: var(--flaeche); stroke: var(--tinte-2); stroke-width: 0.8; }
+.t-akzent  { fill: var(--p-hell); stroke: var(--p); stroke-width: 1.2; }
+.t-linie   { fill: none; stroke: var(--tinte-2); stroke-width: 0.9; }
+.t-text    { fill: var(--tinte); font: 400 11.5px var(--f-ui); }
+.t-klein   { fill: var(--tinte-2); font: 400 9.5px var(--f-ui); }
+.t-label   { fill: var(--p); font: 700 10px var(--f-ui); }
+.t-gitter  { stroke: var(--linie); stroke-width: 0.6; }
+.t-achse   { stroke: var(--tinte); stroke-width: 1; }
+.t-reihe0  { fill: none; stroke: var(--p); stroke-width: 2.1; }
+.t-reihe1  { fill: none; stroke: var(--tinte); stroke-width: 1.7; stroke-dasharray: 6 4; }
+.t-reihe2  { fill: none; stroke: var(--ocker); stroke-width: 1.7; stroke-dasharray: 2 3; }
+.t-reihe3  { fill: none; stroke: var(--akt-bar); stroke-width: 1.7; stroke-dasharray: 9 3 2 3; }
+.t-punkt0  { fill: var(--p); } .t-punkt1 { fill: var(--tinte); } .t-punkt2 { fill: var(--ocker); } .t-punkt3 { fill: var(--akt-bar); }
+.n-start rect    { fill: var(--flaeche); stroke: var(--tinte-2); stroke-width: 1; }
+.n-frage rect    { fill: var(--kachel); stroke: var(--p); stroke-width: 1.3; }
+.n-station rect  { fill: var(--kachel); stroke: var(--tinte-2); stroke-width: 1; }
+.n-ergebnis rect { fill: var(--p-hell); stroke: var(--p); stroke-width: 1.6; }
+.n-sperre rect   { fill: var(--falle-bg); stroke: var(--falle-bar); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
+.kante { fill: none; stroke: var(--tinte-2); stroke-width: 1.1; }
+.pfeil { fill: var(--tinte-2); }
+
+/* Repetitorium: generierte Abschnitte */
+.selbsttest ol { margin: 0; padding-left: 5.5mm; }
+.selbsttest li { margin-bottom: 1.2mm; }
+.selbsttest .loes { margin-top: 2.5mm; padding: 1.8mm 3mm; border: 0.6pt dashed var(--linie); font-size: 8.4pt; }
+.selbsttest .loes ol { padding-left: 5mm; }
+.fallen li { margin-bottom: 1.4mm; }
+
+/* Kolophon */
+.kolophon { font-size: 8.8pt; }
+.kolophon table { border-collapse: collapse; width: 100%; }
+.kolophon td { padding: 1mm 2mm 1mm 0; border-bottom: 0.3pt solid var(--linie); vertical-align: top; }
+.kolophon td:first-child { width: 42mm; font: 700 7.4pt var(--f-ui); text-transform: uppercase; letter-spacing: 0.08em; color: var(--tinte-2); }
+
+@media screen {
+  body { background: #8E8A82; }
+  #buch { padding: 8mm 0; }
+  .page { margin: 0 auto 8mm; box-shadow: 0 1mm 4mm rgba(0,0,0,.25); }
+}
+
+
+/* ══ Bausteine nach Vorlage „Zum Gebrauch“ ═════════════════════════ */
+.zitat { margin: 1.8mm 0 0; padding: 2mm 3.4mm 2mm 4mm; background: #FFFEFB; border: 0.6pt solid var(--linie);
+  border-left: 3.2pt double var(--p); }
+.zitat .w { display: block; font-style: italic; }
+.zitat .q { display: block; margin-top: 1mm; font: 400 7.4pt var(--f-ui); color: var(--tinte-2); }
+.box { padding: 2mm 3.4mm 2.2mm 3.6mm; border-left: 2.4pt solid; border-radius: 0 2pt 2pt 0; }
+.box .lbl { font: 600 8pt/1.2 var(--f-ui); margin-bottom: 0.7mm; letter-spacing: 0.01em; }
+.box .lbl .norm, .box .lbl .meta, .box .lbl .grund { font-weight: 400; color: var(--tinte-2); margin-left: 1mm; }
+.merke { background: #F8EED6; border-color: #C9A24A; } .merke .lbl { color: #9A7424; }
+.feinheit { background: #EFEDE8; border-color: #6F7884; } .feinheit .lbl { color: #4E5864; }
+.klausurfalle { background: #F7E4E1; border-color: #A33B32; } .klausurfalle .lbl { color: #A33B32; }
+.austriacum { background: #FBF4F4; border-left: 3pt solid var(--aut-rot);
+  border-image: linear-gradient(to bottom, var(--aut-rot) 0 33.3%, #ffffff 33.3% 66.6%, var(--aut-rot) 66.6% 100%) 1; }
+.austriacum .lbl { color: var(--aut-rot); }
+.aktualisierung { background: var(--akt-bg); border-color: var(--akt-bar); } .aktualisierung .lbl { color: var(--akt-bar); }
+.latinum { background: var(--lat-bg); border: 0.8pt dashed var(--lat-rand); border-radius: 2pt; text-align: center; padding: 2.4mm 4mm; }
+.latinum .lat { display: block; font: italic 500 13pt/1.25 var(--f-titel); color: var(--tinte); }
+.latinum .de { display: block; margin-top: 0.6mm; }
+.latinum .stelle { display: block; margin-top: 0.5mm; font: 400 7.4pt var(--f-ui); color: var(--tinte-2); }
+.luecke { background: var(--luecke-bg); border: 0.8pt dashed var(--luecke); border-radius: 2pt; } .luecke .lbl { color: var(--luecke); }
+.fallbeispiel { border: 0.9pt solid var(--tinte); border-radius: 1.5pt; font-size: 9.2pt; }
+.fb-kopf { background: var(--tinte); color: #fff; font: 700 8.2pt var(--f-ui); padding: 1.3mm 3mm; letter-spacing: 0.02em; }
+.fb-teil { padding: 1.8mm 3mm 2mm; }
+.fb-teil + .fb-teil { border-top: 0.6pt dashed var(--linie); }
+.fb-lbl { font: italic 400 7.6pt var(--f-ui); color: var(--tinte-2); letter-spacing: 0.04em; margin-bottom: 0.6mm; }
+.fallbeispiel .sv { font-style: italic; }
+
+/* ══ Titelseite ═══════════════════════════════════════════════════ */
+.page.deck { background: var(--tp-papier); padding: 0; }
+.page.deck .koerper { position: absolute; inset: 0; height: auto; }
+.tp-band { position: absolute; left: 0; right: 0; top: 0; height: 66mm; background: var(--tp-band); color: var(--tp-text);
+  padding: 24mm 30mm 0 26mm; box-sizing: border-box; }
+.tp-reihe { font: 600 8.2pt/1.3 var(--f-ui); letter-spacing: 0.16em; text-transform: uppercase; color: var(--tp-reihe); }
+.tp-autor { margin-top: 9mm; font: 500 15pt/1.2 var(--f-titel); letter-spacing: 0.03em; color: var(--tp-text); }
+.tp-mitte { position: absolute; left: 26mm; right: 34mm; top: 96mm; }
+.tp-titel { font: 600 54pt/0.98 var(--f-titel); margin: 0; color: var(--tp-titel); letter-spacing: -0.005em; }
+.tp-unter { margin-top: 5mm; font: italic 400 19pt/1.25 var(--f-titel); color: var(--tinte-2); }
+.tp-lv { margin-top: 3mm; font: 400 9.5pt var(--f-ui); color: var(--tinte-2); }
+.tp-linie { margin: 11mm 0 4mm; width: 34mm; border-top: 1.4pt solid var(--tp-akzent); }
+.tp-ausgabe { font: 400 9.6pt var(--f-ui); color: var(--tinte-2); letter-spacing: 0.02em; }
+.tp-fuss { position: absolute; left: 26mm; right: 34mm; bottom: 22mm; border-top: 0.5pt solid var(--tinte-3); padding-top: 3mm;
+  font: 600 8.4pt var(--f-ui); letter-spacing: 0.18em; text-transform: uppercase; color: var(--tinte-2); }
+
+/* ══ Daumenregister ═══════════════════════════════════════════════ */
+.daumen { position: absolute; right: 0; width: 8mm; background: var(--p); border-radius: 1.6mm 0 0 1.6mm; z-index: 4; }
+.daumen span { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center;
+  font: 700 7.4pt/1 var(--f-ui); color: #fff; letter-spacing: 0.02em; }
+
+/* ══ Titelei ══════════════════════════════════════════════════════ */
+.titelzeile { margin-bottom: 6mm; border-bottom: 1.4pt solid var(--tp-titel); padding-bottom: 2mm; }
+.tz-ober { font: 400 8pt var(--f-ui); letter-spacing: 0.06em; color: var(--tinte-2); margin-bottom: 0.8mm; }
+h1.teil { font: 600 28pt/1.05 var(--f-titel); margin: 0; color: var(--tinte); }
+.teil-unter { font: 400 8.8pt/1.45 var(--f-text); color: var(--tinte-2); margin: 2mm 0 0; }
+h2.unter { font: 600 17pt/1.1 var(--f-titel); margin: 7mm 0 2.5mm; padding-bottom: 1.6mm; border-bottom: 1pt solid var(--tinte); }
+
+.page.titelei .kopfzeile .r { display: none; }
+.epigraph { margin: 50mm 14mm 0; text-align: center; }
+.ep-lat { font: italic 500 20pt/1.25 var(--f-titel); color: var(--tinte); }
+.ep-de { margin-top: 2.5mm; font: 400 10.5pt var(--f-text); color: var(--tinte-2); }
+.ep-st { margin-top: 1.5mm; font: 400 8pt var(--f-ui); color: var(--tinte-3); }
+.impressum { position: absolute; left: 0; right: 0; bottom: 0; font: 400 8.2pt/1.5 var(--f-text); color: var(--tinte-2);
+  border-top: 0.5pt solid var(--linie); padding-top: 3mm; }
+.impressum p { margin: 0 0 1.4mm; }
+.impressum b { color: var(--tinte); }
+
+/* Zum Gebrauch */
+table.gebrauch { width: 100%; border-collapse: collapse; }
+table.gebrauch > tbody > tr > td { width: 50%; vertical-align: top; padding: 0; }
+table.gebrauch > tbody > tr > td:first-child { padding-right: 6mm; }
+table.gebrauch > tbody > tr > td:last-child { padding-left: 2mm; }
+.gebrauch h3 { font: 600 13pt/1.2 var(--f-titel); margin: 3.4mm 0 1.2mm; color: var(--tinte); }
+.gebrauch h3:first-child { margin-top: 0; }
+.gebrauch p { font-size: 9pt; line-height: 1.45; }
+.gebrauch .box, .gebrauch .zitat, .gebrauch .fallbeispiel { margin-bottom: 2.6mm; font-size: 9pt; }
+.gebrauch .hinweis { font-size: 8.4pt; color: var(--tinte-2); margin-top: 1mm; }
+.gebrauch .sym { color: var(--ocker); }
+.anatomie { border: 0.6pt solid var(--linie); border-top: 2.2pt solid var(--p); background: var(--kachel); padding: 2.6mm 3.4mm 1.6mm; }
+.an-kopf { position: relative; padding-right: 26mm; border-bottom: 0.4pt solid var(--linie); padding-bottom: 1.6mm; }
+.an-code { font: 600 19pt/1 var(--f-titel); color: var(--p); margin-right: 3mm; vertical-align: -1pt; }
+.an-titel { font: 600 13.5pt/1.15 var(--f-titel); color: var(--tinte); }
+.an-anker { position: absolute; right: 0; top: 1mm; font: 600 7.6pt var(--f-ui); color: var(--p); }
+.an-leg { position: relative; height: 4mm; margin-top: 1mm; font: 400 7pt var(--f-ui); color: var(--tinte-2); }
+.an-leg span:nth-child(1) { position: absolute; left: 0; }
+.an-leg span:nth-child(2) { position: absolute; left: 14mm; }
+.an-leg span:nth-child(3) { position: absolute; right: 0; }
+
+/* Abkürzungen */
+table.abk { width: 100%; border-collapse: collapse; font-size: 8.6pt; line-height: 1.3; }
+table.abk th { font: 700 6.9pt var(--f-ui); letter-spacing: 0.06em; text-transform: uppercase; text-align: left; color: var(--tinte-2);
+  border-bottom: 0.9pt solid var(--tinte); padding: 0.8mm 2mm 0.8mm 0; }
+table.abk td { padding: 0.75mm 2mm 0.75mm 0; vertical-align: top; border-bottom: 0.3pt solid #EAE3D4; }
+table.abk td.a { font: 700 8pt var(--f-ui); color: var(--tinte); width: 16mm; white-space: nowrap; }
+table.abk tr { break-inside: avoid; }
+table.zit td:first-child { width: 24mm; } table.zit td:nth-child(2) { width: 46mm; }
+table.zit th { color: #2E5A88; }
+
+/* ══ Inhaltsverzeichnis, zweispaltig ══════════════════════════════ */
+.page.spalten .koerper { column-count: 2; column-gap: 9mm; column-fill: balance; }
+.unit.spann { column-span: all; }
+.page.spalten .unit { break-inside: avoid; }
+.tocp { margin: 0 0 4.6mm; }
+.tocp .k { position: relative; background: var(--p-hell); border-left: 3.4pt solid var(--p); border-radius: 0 2pt 2pt 0;
+  padding: 2.2mm 12mm 2.4mm 3mm; }
+.tocp .k .pchip { font-size: 7pt; padding: 0.8mm 1.6mm; }
+.tocp .k a.pt { display: block; margin-top: 1.2mm; font: 600 13pt/1.15 var(--f-titel); color: var(--tinte); text-decoration: none; }
+.tocp .k .pd { font: italic 400 9.6pt/1.2 var(--f-titel); color: var(--tinte-2); }
+.tocp .k .n { position: absolute; right: 3mm; top: 2.4mm; font: 700 9.4pt var(--f-ui); color: var(--p); }
+.tocp table { width: 100%; border-collapse: collapse; margin-top: 0.6mm; }
+.tocp td { padding: 1.05mm 0; border-bottom: 0.5pt dotted var(--linie); vertical-align: baseline; }
+.tocp td.c { width: 9.5mm; font: 700 7.6pt var(--f-ui); color: var(--p); }
+.tocp td.t { font: 400 8.8pt/1.3 var(--f-text); }
+.tocp td.t a { color: var(--tinte); text-decoration: none; }
+.tocp td.t .rs { margin-left: 1.2mm; color: var(--p); font-size: 7.4pt; }
+.tocp td.n { width: 8mm; text-align: right; font: 700 8.2pt var(--f-ui); color: var(--p); }
+.tocv td.t { font: 600 9.4pt var(--f-titel); font-size: 11pt; }
+.tocv td { border-bottom: 0.5pt solid var(--linie); }
+
+/* ══ Kachelkopf nach Atlas-Vorlage: großer Code in Provinzfarbe ═════ */
+.kkopf { padding-right: 36mm; padding-bottom: 1.8mm; }
+.kkopf .code { display: inline; background: none; color: var(--p); padding: 0; margin-right: 2.6mm; border-radius: 0;
+  font: 600 18pt/1 var(--f-titel); font-variant-numeric: lining-nums; vertical-align: -0.5pt; }
+.kkopf h2 { font: 600 14pt/1.2 var(--f-titel); }
+.kkopf .kanker { top: 1.2mm; width: 35mm; font: 600 7.6pt/1.3 var(--f-ui); color: var(--p); }
+.kkopf .kanker .seite { display: block; font-weight: 400; color: var(--tinte-3); }
+.fkopf .code { background: none; color: var(--p); padding: 0; font: 600 10.5pt/1 var(--f-titel); font-variant-numeric: lining-nums; margin-right: 1.6mm; }
+.an-code { font-variant-numeric: lining-nums; }
+.tocp td.c, .kindex .c, .toc td.c { font-variant-numeric: lining-nums; }
+
+/* Registerübersicht auf der Titelseite */
+.daumen em { position: absolute; right: 11mm; top: 50%; transform: translateY(-50%); white-space: nowrap; text-align: right;
+  font: italic 500 11pt/1.15 var(--f-titel); color: var(--tinte-2); }
+.daumen em b { display: block; font: 600 6.8pt var(--f-ui); font-style: normal; letter-spacing: 0.12em; text-transform: uppercase; color: var(--p); }
+
+/* ══ Farbschemata: Titelseite und Inhaltsverzeichnis (Provinzfarben unberührt) ══ */
+body, .schema-nacht { --tp-band: #1F2A44; --tp-text: #FBF7EE; --tp-reihe: #CDBF9F; --tp-akzent: #A8742A; --tp-papier: #F1E9DA; --tp-titel: #1F2A44; }
+.schema-bordeaux { --tp-band: #5B1D27; --tp-text: #FBF1E6; --tp-reihe: #DEC08E; --tp-akzent: #B08A3E; --tp-papier: #F4ECDF; --tp-titel: #3D141B; }
+.schema-tanne    { --tp-band: #1E3A32; --tp-text: #F3EFE3; --tp-reihe: #D2BF86; --tp-akzent: #A98C45; --tp-papier: #F0ECE0; --tp-titel: #1E3A32; }
+.schema-graphit  { --tp-band: #2A2C31; --tp-text: #F5F2EC; --tp-reihe: #D3A57C; --tp-akzent: #B4673A; --tp-papier: #F7F4EF; --tp-titel: #2A2C31; }
+
+/* Bordeaux und Tanne: Provinzköpfe im Verzeichnis vollflächig */
+.schema-bordeaux .tocp .k, .schema-tanne .tocp .k { background: var(--p); border-left: 0; border-radius: 2pt; }
+.schema-bordeaux .tocp .k .pchip, .schema-tanne .tocp .k .pchip { background: #fff; color: var(--p); }
+.schema-bordeaux .tocp .k a.pt, .schema-tanne .tocp .k a.pt { color: #fff; }
+.schema-bordeaux .tocp .k .pd, .schema-tanne .tocp .k .pd { color: rgba(255,255,255,.82); }
+.schema-bordeaux .tocp .k .n, .schema-tanne .tocp .k .n { color: #fff; }
+.schema-bordeaux .tocv td.t a, .schema-tanne .tocv td.t a { color: var(--tp-titel); }
+
+/* Graphit: nüchtern, Provinzziffer als Farbquadrat (nach Atlas-Vorlage) */
+.schema-graphit .tocp .k { background: none; border-left: 0; border-bottom: 1.2pt solid var(--p); border-radius: 0; padding: 1.4mm 10mm 2mm 13mm; }
+.schema-graphit .tocp .k .pchip { position: absolute; left: 0; top: 1.8mm; width: 10mm; text-align: center; padding: 1.6mm 0; font-size: 7.6pt; border-radius: 0; }
+.schema-graphit .tocp .k a.pt { margin-top: 0; }

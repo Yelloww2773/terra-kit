@@ -1,0 +1,150 @@
+/* (c) Oliver Bedernik · Terra-Kit · karte.css · Wissenslandkarte (Standard 3.1)
+   Ergänzt skript.css (Bausteinoptik, eine Quelle) um Arbeitsfläche, Bedienleisten,
+   Register und Dunkelmodus. Farben ausschließlich über Variablen auf :root. */
+   Farben und Dunkelmodus: farben.css (gemeinsam mit dem Exam).
+
+html { height: 100%; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  scroll-padding-top: env(safe-area-inset-top, 0px); background: var(--grund); }
+body { height: 100%; margin: 0; overflow: hidden; background: var(--grund); color: var(--tinte);
+  font: 400 15px/1.5 var(--f-text); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--leiste); }
+*, *::before, *::after { box-sizing: border-box; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--fokus); outline-offset: 2px; }
+
+/* ── Kopfleiste ─────────────────────────────────────────────────── */
+.kopf { position: fixed; z-index: 50; left: 0; right: 0; top: env(safe-area-inset-top, 0px); height: var(--kopf-h);
+  display: flex; align-items: center; gap: 8px; padding: 0 12px 0 16px; background: var(--leiste);
+  border-bottom: 1px solid var(--leiste-rand); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.kopf .titel { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 10px; overflow: hidden; white-space: nowrap; }
+.kopf .titel b { font: 600 21px/1 var(--f-titel); letter-spacing: 0.005em; }
+.kopf .titel span { font: italic 400 16px/1 var(--f-titel); color: var(--tinte-2); overflow: hidden; text-overflow: ellipsis; }
+.knopf { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; height: 40px; padding: 0 12px;
+  border: 1px solid var(--leiste-rand); border-radius: 8px; background: transparent; cursor: pointer; font: 500 14px var(--f-ui); }
+.knopf:hover { background: var(--flaeche); }
+.knopf[aria-pressed="true"] { background: var(--tinte); color: var(--papier); border-color: var(--tinte); }
+.knopf svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+.suche { position: relative; }
+.suche input { width: 230px; height: 40px; padding: 0 12px 0 34px; border: 1px solid var(--leiste-rand); border-radius: 8px;
+  background: var(--papier); font: 400 14px var(--f-ui); }
+.suche svg { position: absolute; left: 10px; top: 11px; width: 18px; height: 18px; stroke: var(--tinte-2); fill: none; stroke-width: 1.7; }
+
+/* ── Arbeitsfläche ─────────────────────────────────────────────── */
+.flaeche { position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + var(--kopf-h)); bottom: calc(env(safe-area-inset-bottom, 0px) + var(--fuss-h));
+  overflow: hidden; touch-action: none; cursor: grab; background: var(--grund); }
+.flaeche.zieht { cursor: grabbing; }
+.wz-muster { position: absolute; inset: 0; pointer-events: none; opacity: 0.06; color: var(--wz-farbe); }
+.welt { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+.region { container-type: inline-size; position: absolute; border-radius: 22px; background: var(--region); border: 1.5px solid color-mix(in srgb, var(--p) 45%, transparent); }
+.region::before { content: ""; position: absolute; inset: 10px; border-radius: 14px; border: 1px dashed color-mix(in srgb, var(--p) 30%, transparent); pointer-events: none; }
+.rkopf { position: relative; margin: 28px 28px 0; padding: 18px 22px 16px; background: var(--p-hell); border-left: 6px solid var(--p); border-radius: 0 12px 12px 0; }
+.rkopf .pchip { font-size: 11px; padding: 4px 8px; }
+.rkopf h2 { margin: 10px 0 2px; font: 600 34px/1.05 var(--f-titel); color: var(--tinte); }
+.rkopf .rde { font: italic 400 19px/1.25 var(--f-titel); color: var(--tinte-2); }
+.rkopf .leitfrage { margin-top: 12px; font: italic 400 15.5px/1.45 var(--f-text); }
+.rkopf .leitfrage b, .rkopf .kompakt b { font: 700 10.5px var(--f-ui); letter-spacing: 0.1em; text-transform: uppercase; color: var(--p); display: block; margin-bottom: 3px; font-style: normal; }
+.rkopf .kompakt { margin-top: 10px; font-size: 14.5px; }
+.rkopf .kompakt ol { margin: 2px 0 0; padding-left: 20px; }
+.rkopf .panker { margin-top: 10px; font: 500 12.5px var(--f-ui); color: var(--ocker); }
+.landname { position: absolute; left: 4%; right: 4%; transform: translateY(-50%); text-align: center; pointer-events: none; opacity: 0; transition: opacity .25s;
+  font: italic 600 min(clamp(56px, calc(26px * var(--inv, 1)), 210px), 12cqw)/1.02 var(--f-titel); letter-spacing: 0.05em; color: var(--p);
+  text-wrap: balance; text-shadow: 0 0 calc(6px * var(--inv, 1)) var(--grund), 0 0 calc(12px * var(--inv, 1)) var(--grund); }
+.landname small { display: block; margin-top: 0.25em; font: 600 0.32em/1.1 var(--f-ui); font-style: normal; letter-spacing: 0.14em; color: var(--tinte-2); text-transform: none; }
+.fern .landname { opacity: 0.92; }
+.fern .karte-kachel { opacity: 0.22; }
+.fern .rkopf { opacity: 0.4; }
+
+/* Kachel auf der Karte */
+.karte-kachel { position: absolute; width: 440px; margin: 0; font-size: 14.5px; line-height: 1.5; transition: opacity .2s, box-shadow .2s;
+  box-shadow: 0 1px 2px var(--schatten); }
+.karte-kachel.breit { width: 902px; }
+.karte-kachel .unit + .unit { margin-top: 10px; }
+.karte-kachel.gedimmt { opacity: 0.25; }
+.karte-kachel.blitz { box-shadow: 0 0 0 4px var(--fokus), 0 8px 26px var(--schatten); }
+.tabwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.kkopf { cursor: zoom-in; }
+.karte-kachel table.t { font-size: 13px; }
+.karte-kachel .fig svg { max-width: 100%; }
+.karte-kachel math[display="block"] { font-size: 1.12em; }
+.selbsttest details { margin-top: 10px; }
+.selbsttest summary { cursor: pointer; font: 600 13px var(--f-ui); color: var(--p); }
+
+/* Startfeld */
+.start { --p: #353D4D; --p-hell: #E8EBF1; }
+.kartusche { margin: 34px 34px 0; padding: 30px 34px 26px; background: var(--papier); border: 1.5px solid var(--tinte); outline: 1px solid var(--tinte); outline-offset: -7px; }
+.kartusche .reihe { font: 600 11.5px var(--f-ui); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ocker); }
+.kartusche h1 { margin: 14px 0 6px; font: 600 64px/0.98 var(--f-titel); }
+.kartusche .unter { font: italic 400 24px/1.25 var(--f-titel); color: var(--tinte-2); }
+.kartusche .lv { margin-top: 8px; font: 400 14px var(--f-ui); color: var(--tinte-2); }
+.kartusche .ausgabe { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--linie); font: 400 13.5px var(--f-ui); color: var(--tinte-2); }
+.startinhalt { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 22px 34px 34px; }
+.startinhalt h3 { margin: 0 0 8px; font: 600 21px var(--f-titel); }
+.startinhalt .box { margin-bottom: 8px; font-size: 13.5px; }
+.bedienung { font-size: 14px; }
+.bedienung dt { font: 600 13px var(--f-ui); margin-top: 8px; }
+.bedienung dd { margin: 2px 0 0; color: var(--tinte-2); }
+
+/* ── Fußleiste: Provinzen und Zoom ─────────────────────────────── */
+.fuss { position: fixed; z-index: 50; left: 0; right: 0; bottom: 0; height: calc(var(--fuss-h) + env(safe-area-inset-bottom, 0px));
+  padding: 8px 12px env(safe-area-inset-bottom, 0px); display: flex; align-items: flex-start; gap: 10px;
+  background: var(--leiste); border-top: 1px solid var(--leiste-rand); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.provinzen { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.provinzen::-webkit-scrollbar { display: none; }
+.pknopf { flex: none; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px 0 6px; border-radius: 8px;
+  border: 1px solid var(--leiste-rand); background: transparent; cursor: pointer; font: 500 13.5px var(--f-ui); }
+.pknopf i { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 28px; padding: 0 5px; border-radius: 5px;
+  background: var(--p); color: #fff; font: 700 12px var(--f-ui); font-style: normal; }
+.pknopf.aktiv { border-color: var(--p); background: var(--p-hell); }
+.zoom { display: flex; gap: 6px; flex: none; }
+
+/* ── Minikarte ─────────────────────────────────────────────────── */
+.mini { position: fixed; z-index: 40; right: 14px; bottom: calc(var(--fuss-h) + env(safe-area-inset-bottom, 0px) + 14px);
+  width: 216px; padding: 8px; background: var(--leiste); border: 1px solid var(--leiste-rand); border-radius: 10px;
+  box-shadow: 0 6px 22px var(--schatten); cursor: pointer; }
+.mini svg { display: block; width: 100%; height: auto; }
+.mini .vp { fill: color-mix(in srgb, var(--fokus) 14%, transparent); stroke: var(--fokus); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+.mini[hidden] { display: none; }
+
+/* ── Seitenpaneele: Register und Info ──────────────────────────── */
+.paneel { position: fixed; z-index: 55; top: calc(env(safe-area-inset-top, 0px) + var(--kopf-h)); right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + var(--fuss-h));
+  width: 380px; max-width: 100%; display: flex; flex-direction: column; background: var(--papier); border-left: 1px solid var(--leiste-rand);
+  box-shadow: -8px 0 28px var(--schatten); transform: translateX(105%); visibility: hidden; transition: transform .22s ease, visibility 0s linear .22s; }
+.paneel.offen { transform: none; visibility: visible; transition: transform .22s ease, visibility 0s; }
+.paneel header { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--linie); }
+.paneel header h2 { flex: 1; margin: 0; font: 600 22px var(--f-titel); }
+.paneel .inhalt { flex: 1; overflow-y: auto; padding: 8px 14px 24px; -webkit-overflow-scrolling: touch; }
+.reg-gruppe h3 { display: flex; align-items: center; gap: 8px; margin: 16px 0 6px; font: 600 17px var(--f-titel); }
+.reg-gruppe h3 i { min-width: 28px; height: 24px; padding: 0 5px; border-radius: 4px; background: var(--p); color: #fff; font: 700 11px/24px var(--f-ui); font-style: normal; text-align: center; }
+.reg-eintrag { display: flex; align-items: baseline; gap: 10px; width: 100%; min-height: 44px; padding: 9px 8px; border: 0; border-bottom: 1px dotted var(--linie);
+  background: none; text-align: left; cursor: pointer; font: 400 14.5px/1.35 var(--f-text); }
+.reg-eintrag:hover { background: var(--flaeche); }
+.reg-eintrag b { flex: none; width: 38px; font: 700 12.5px var(--f-ui); color: var(--p); }
+.reg-eintrag small { margin-left: auto; color: var(--p); font-size: 12px; }
+.reg-eintrag em { display: block; font: 400 12px var(--f-ui); color: var(--tinte-2); font-style: normal; margin-top: 2px; }
+.reg-leer { margin: 20px 4px; color: var(--tinte-2); font: 400 14px var(--f-ui); }
+.info dl { margin: 6px 0; font-size: 14px; }
+.info dt { font: 600 12.5px var(--f-ui); color: var(--tinte-2); margin-top: 10px; }
+.info dd { margin: 2px 0 0; }
+
+.signet { position: fixed; z-index: 45; left: 14px; bottom: calc(var(--fuss-h) + env(safe-area-inset-bottom, 0px) + 10px);
+  font: 600 11px var(--f-ui); letter-spacing: 0.04em; color: var(--tinte); opacity: 0.38; pointer-events: none; }
+
+@media (max-width: 760px) {
+  :root { --kopf-h: 50px; --fuss-h: 58px; }
+  .kopf .titel span, .knopf .lbl, .pknopf span { display: none; }
+  .kopf .titel b { font-size: 18px; }
+  .suche input { width: 44px; padding: 0; color: transparent; cursor: pointer; }
+  .suche input::placeholder { color: transparent; }
+  .suche.offen input::placeholder { color: var(--tinte-3); }
+  #k-mini { display: none; }
+  .suche.offen input { width: min(60vw, 260px); padding: 0 10px 0 34px; color: inherit; cursor: text; }
+  .paneel { width: 100%; top: auto; height: 72vh; border-left: 0; border-top: 1px solid var(--leiste-rand); border-radius: 16px 16px 0 0;
+    transform: translateY(105%); box-shadow: 0 -8px 28px var(--schatten); }
+  .paneel.offen { transform: none; }
+  .mini { width: 150px; }
+  .zoom .optional { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .paneel, .landname, .karte-kachel { transition: none; }
+}
+@media print { .kopf, .fuss, .mini, .paneel { display: none; } }
