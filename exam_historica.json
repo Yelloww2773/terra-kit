@@ -1,0 +1,1213 @@
+{
+ "standard": "3.1",
+ "meta": {
+  "titel": "Examen Historicum Constitutionale",
+  "werk": "Terra Historica Constitutionalis",
+  "werk_version": "1.0",
+  "version": "1.0",
+  "stand": "2026-10",
+  "urheber": "(c) Oliver Bedernik",
+  "minuten": 60,
+  "karte_url": "https://claude.ai/artifact/71hdTrgX1EmR74Rr9ab8H1",
+  "proverbium": {
+   "lat": "Non scholae, sed vitae discimus.",
+   "de": "Nicht für die Schule, für das Leben lernen wir.",
+   "stelle": "nach Seneca, Epistulae morales 106,12 (dort umgekehrt als Klage formuliert)"
+  }
+ },
+ "fragen": [
+  {
+   "id": "q1",
+   "typ": "mehrfach",
+   "provinz": "A",
+   "kacheln": [
+    "A1",
+    "E8",
+    "E7"
+   ],
+   "dimension": "Kontinuität und Rezeption",
+   "sachverhalt": "In einem Seminar behauptet K: „Verfassungsgeschichte ist für heutige Fälle bedeutungslos, weil alles Recht aus der Zeit vor 1920 außer Kraft ist.“",
+   "frage": "Welche Aussagen widerlegen K zutreffend?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Das StGG über die allgemeinen Rechte der Staatsbürger ist heute als Bundesverfassungsgesetz anwendbar.",
+     "richtig": true,
+     "begruendung": "Art 149 Abs 1 B-VG rezipiert das StGG, RGBl 1867/142, ausdrücklich im Verfassungsrang.",
+     "norm": "Art 149 Abs 1 B-VG"
+    },
+    {
+     "id": "b",
+     "text": "Die Kompetenztatbestände der Art 10 bis 15 B-VG werden nach der einfachgesetzlichen Rechtslage am 1.10.1925 ausgelegt.",
+     "richtig": true,
+     "begruendung": "Versteinerungstheorie: Maßgeblich ist der Begriffsinhalt zum Inkrafttreten der Kompetenzartikel am 1.10.1925.",
+     "norm": "Art 10 bis 15 B-VG"
+    },
+    {
+     "id": "c",
+     "text": "Das Gesetz zum Schutze des Hausrechtes von 1862 steht heute im Verfassungsrang.",
+     "richtig": true,
+     "begruendung": "Art 149 Abs 1 B-VG nennt das Gesetz, RGBl 1862/88, ausdrücklich.",
+     "norm": "Art 149 Abs 1 B-VG"
+    },
+    {
+     "id": "d",
+     "text": "Der Beschluss über die grundlegenden Einrichtungen der Staatsgewalt, StGBl 1918/1, steht nach Art 149 Abs 1 B-VG im Verfassungsrang.",
+     "richtig": false,
+     "begruendung": "Falsch: Rezipiert ist nur der Zensurbeschluss vom selben Tag, StGBl 1918/3. StGBl 1918/1 enthält die Rezeptionsnorm, steht aber nicht im Verfassungsrang.",
+     "norm": "Art 149 Abs 1 B-VG"
+    }
+   ]
+  },
+  {
+   "id": "q2",
+   "typ": "einfach",
+   "provinz": "A",
+   "kacheln": [
+    "A2"
+   ],
+   "dimension": "Abgrenzung",
+   "sachverhalt": "Ein einfaches Bundesgesetz enthält eine Bestimmung über die Gebühren für Reisepässe. Der Nationalrat hat sie bei Anwesenheit der Hälfte seiner Mitglieder mit Zweidrittelmehrheit beschlossen und ausdrücklich als „Verfassungsbestimmung“ bezeichnet.",
+   "frage": "Wie ist die Bestimmung einzuordnen?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Als Verfassung im formellen, nicht aber im materiellen Sinn.",
+     "richtig": true,
+     "begruendung": "Das erschwerte Verfahren und die ausdrückliche Bezeichnung begründen den formellen Verfassungsrang; Passgebühren regeln nicht die Grundordnung des Staates.",
+     "norm": "Art 44 Abs 1 B-VG"
+    },
+    {
+     "id": "b",
+     "text": "Als Verfassung im materiellen, nicht aber im formellen Sinn.",
+     "richtig": false,
+     "begruendung": "Umgekehrt: Der Inhalt ist keine Grundordnung, das Verfahren aber das verfassungsrechtliche.",
+     "norm": "Art 44 Abs 1 B-VG"
+    },
+    {
+     "id": "c",
+     "text": "Weder formell noch materiell, weil sie in einem einfachen Bundesgesetz steht.",
+     "richtig": false,
+     "begruendung": "Art 44 Abs 1 B-VG lässt ausdrücklich Verfassungsbestimmungen in einfachen Gesetzen zu.",
+     "norm": "Art 44 Abs 1 B-VG"
+    },
+    {
+     "id": "d",
+     "text": "Formell und materiell, weil jede ordnungsgemäß beschlossene Verfassungsbestimmung ihrem Inhalt nach die Grundordnung regelt.",
+     "richtig": false,
+     "begruendung": "Richtige Prämisse zum Verfahren, falscher Schluss: Formeller und materieller Verfassungsbegriff decken sich in Österreich gerade nicht („Verfassungssplitter“).",
+     "norm": "Art 44 Abs 1 B-VG"
+    }
+   ],
+   "merke": {
+    "text": "Formell entscheidet das Verfahren, materiell der Inhalt; beide Kreise decken sich in Österreich notorisch nicht."
+   }
+  },
+  {
+   "id": "q3",
+   "typ": "mehrfach",
+   "provinz": "A",
+   "kacheln": [
+    "A3",
+    "A4"
+   ],
+   "dimension": "Chronologie",
+   "frage": "Welche Aussagen zur Zeit vor 1848 treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Die Pragmatische Sanktion erklärte die Länder für unteilbar und untrennbar und regelte die weibliche Erbfolge.",
+     "richtig": true,
+     "begruendung": "Hausgesetz Karls VI. (1713), von den Landtagen angenommen: erste gesamtstaatliche Grundordnung.",
+     "norm": "Pragmatische Sanktion 1713"
+    },
+    {
+     "id": "b",
+     "text": "Die Pragmatische Sanktion enthielt einen Katalog von Grundrechten.",
+     "richtig": false,
+     "begruendung": "Sie begründete weder Grundrechte noch eine Volksvertretung, sondern die Einheit des Herrschaftsverbandes.",
+     "norm": "Pragmatische Sanktion 1713"
+    },
+    {
+     "id": "c",
+     "text": "Österreich trat 1848 ohne Verfassungsurkunde in die Revolution ein.",
+     "richtig": true,
+     "begruendung": "Kodifikation statt Konstitution: Bis 1848 gab es keine Verfassungsurkunde.",
+     "norm": "Vormärz 1815 bis 1848"
+    },
+    {
+     "id": "d",
+     "text": "Das ABGB 1811 gewährte neben der bürgerlichen Gleichheit auch politische Teilhaberechte.",
+     "richtig": false,
+     "begruendung": "Das ABGB gewährt Gleichheit im Privatrecht; politische Teilhabe blieb im Vormärz verweigert.",
+     "norm": "ABGB 1811"
+    }
+   ]
+  },
+  {
+   "id": "q4",
+   "typ": "einfach",
+   "provinz": "B",
+   "kacheln": [
+    "B2",
+    "B5"
+   ],
+   "dimension": "Legitimationstyp",
+   "sachverhalt": "Am 25.4.1848 erlässt der Kaiser eine „Verfassungs-Urkunde des österreichischen Kaiserstaates“ einseitig, ohne Mitwirkung einer Volksvertretung.",
+   "frage": "Welcher Legitimationstyp liegt vor, und was folgt daraus?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Oktroyiert; der Monarch kann die Verfassung einseitig wieder zurücknehmen.",
+     "richtig": true,
+     "begruendung": "Eine oktroyierte Verfassung wird einseitig gewährt und ist einseitig widerruflich; genau das geschah 1851.",
+     "norm": "Pillersdorfsche Verfassung 25.4.1848"
+    },
+    {
+     "id": "b",
+     "text": "Pactiert; sie ist nur mit Zustimmung einer Volksvertretung widerruflich.",
+     "richtig": false,
+     "begruendung": "Pactiert ist eine Verfassung, die auf einer Vereinbarung mit der Volksvertretung beruht (erst 1867).",
+     "norm": "Dezemberverfassung 1867"
+    },
+    {
+     "id": "c",
+     "text": "Demokratisch; sie beruht auf der verfassunggebenden Gewalt des Volkes.",
+     "richtig": false,
+     "begruendung": "Eine Volksvertretung wirkte nicht mit; demokratisch erarbeitet war erst der Kremsierer Entwurf.",
+     "norm": "Kremsierer Entwurf 1849"
+    },
+    {
+     "id": "d",
+     "text": "Oktroyiert; sie trat mit ihrer Kundmachung wirksam in Kraft und galt bis zum Silvesterpatent.",
+     "richtig": false,
+     "begruendung": "Richtiger Typ, falsche Folge: Die Pillersdorfsche Verfassung trat nie wirksam in Kraft.",
+     "norm": "Pillersdorfsche Verfassung 25.4.1848"
+    }
+   ],
+   "merke": {
+    "text": "Oktroyiert heißt einseitig gewährt und einseitig widerruflich; pactiert heißt vereinbart und nicht einseitig widerruflich."
+   }
+  },
+  {
+   "id": "q5",
+   "typ": "mehrfach",
+   "provinz": "B",
+   "kacheln": [
+    "B3",
+    "B6"
+   ],
+   "dimension": "Kontinuität und Rezeption",
+   "sachverhalt": "Ein Bauer fragt im Jahr 1852 seinen Anwalt, ob die 1848 beschlossene Befreiung von der Robot nach dem Silvesterpatent noch gilt.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Die Befreiung gilt fort; das Silvesterpatent ließ die Grundentlastung ausdrücklich unangetastet.",
+     "richtig": true,
+     "begruendung": "Die Grundentlastung ist die einzige große Errungenschaft von 1848, die die Gegenrevolution überlebte.",
+     "norm": "Silvesterpatent 31.12.1851"
+    },
+    {
+     "id": "b",
+     "text": "Die Grundentlastung beruht auf dem Gesetz vom 7.9.1848, beschlossen auf Antrag Hans Kudlichs.",
+     "richtig": true,
+     "begruendung": "Aufhebung des Untertänigkeitsverbandes, der Robot und der grundherrlichen Lasten.",
+     "norm": "Gesetz vom 7.9.1848"
+    },
+    {
+     "id": "c",
+     "text": "Die Befreiung ist entfallen, weil das Silvesterpatent sämtliche Errungenschaften von 1848 beseitigte.",
+     "richtig": false,
+     "begruendung": "Beseitigt wurden die politischen Rechte und jede Volksvertretung, nicht die Grundentlastung.",
+     "norm": "Silvesterpatent 31.12.1851"
+    },
+    {
+     "id": "d",
+     "text": "Die Grundentlastung erfolgte ohne jede Entschädigung der bisher Berechtigten.",
+     "richtig": false,
+     "begruendung": "Sie erfolgte gegen Entschädigung der bisher Berechtigten.",
+     "norm": "Gesetz vom 7.9.1848"
+    }
+   ]
+  },
+  {
+   "id": "q6",
+   "typ": "mehrfach",
+   "provinz": "B",
+   "kacheln": [
+    "B4",
+    "B5"
+   ],
+   "dimension": "Abgrenzung",
+   "frage": "Welche Aussagen zum Kremsierer Entwurf und zur oktroyierten Märzverfassung treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Der Kremsierer Entwurf sah die Volkssouveränität vor.",
+     "richtig": true,
+     "begruendung": "„Alle Staatsgewalten gehen vom Volke aus“; für die Monarchie unannehmbar.",
+     "norm": "Kremsierer Entwurf 1849"
+    },
+    {
+     "id": "b",
+     "text": "Die Märzverfassung 1849 erfasste erstmals auch Ungarn.",
+     "richtig": true,
+     "begruendung": "Gesamtstaatsverfassung unter Aufhebung der ungarischen Sonderverfassung.",
+     "norm": "Patent vom 4.3.1849"
+    },
+    {
+     "id": "c",
+     "text": "Der Kremsierer Entwurf trat nach der Auflösung des Reichstages in Kraft.",
+     "richtig": false,
+     "begruendung": "Der Entwurf trat nie in Kraft; der Reichstag wurde am 7.3.1849 aufgelöst.",
+     "norm": "Patent vom 7.3.1849"
+    },
+    {
+     "id": "d",
+     "text": "Unter der Märzverfassung trat der Reichstag regelmäßig zusammen.",
+     "richtig": false,
+     "begruendung": "Die Märzverfassung wurde nie vollzogen; ein Reichstag trat nie zusammen.",
+     "norm": "Patent vom 4.3.1849"
+    }
+   ]
+  },
+  {
+   "id": "q7",
+   "typ": "einfach",
+   "provinz": "B",
+   "kacheln": [
+    "B6"
+   ],
+   "dimension": "Chronologie",
+   "sachverhalt": "In einer Klausur heißt es: „Am 31.12.1851 hob ein einziges kaiserliches Patent die Verfassung auf und beseitigte auch die Gleichheit vor dem Gesetz im Zivilrecht.“",
+   "frage": "Welche Korrektur ist richtig?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Es ergingen drei Erlässe; die Gleichheit vor dem Gesetz im Zivil- und Strafrecht blieb bestehen.",
+     "richtig": true,
+     "begruendung": "Drei kaiserliche Erlässe vom 31.12.1851; bestehen blieben unter anderem Grundentlastung und Gleichheit vor dem Gesetz im Zivil- und Strafrecht.",
+     "norm": "Silvesterpatent 31.12.1851"
+    },
+    {
+     "id": "b",
+     "text": "Es ergingen drei Erlässe; beseitigt wurde auch die Grundentlastung.",
+     "richtig": false,
+     "begruendung": "Die Grundentlastung blieb ausdrücklich unangetastet.",
+     "norm": "Silvesterpatent 31.12.1851"
+    },
+    {
+     "id": "c",
+     "text": "Es erging ein einziger Erlass; erhalten blieben aber die politischen Grundrechte.",
+     "richtig": false,
+     "begruendung": "Doppelt falsch: drei Erlässe, und gerade die politischen Grundrechte entfielen ersatzlos.",
+     "norm": "Silvesterpatent 31.12.1851"
+    },
+    {
+     "id": "d",
+     "text": "Die Aussage der Klausur ist zutreffend.",
+     "richtig": false,
+     "begruendung": "Sowohl die Zahl der Erlässe als auch die Gleichheit vor dem Gesetz sind falsch wiedergegeben.",
+     "norm": "Silvesterpatent 31.12.1851"
+    }
+   ]
+  },
+  {
+   "id": "q8",
+   "typ": "mehrfach",
+   "provinz": "C",
+   "kacheln": [
+    "C2",
+    "C3"
+   ],
+   "dimension": "Abgrenzung",
+   "sachverhalt": "Eine Historikerin vergleicht zwei Grundgesetze. Das erste stellt die historischen Länderrechte wieder her und gibt Ungarn seine Komitatsverfassung zurück. Das zweite schafft einen Reichsrat aus Herrenhaus und Abgeordnetenhaus, dessen Abgeordnete von den Landtagen beschickt werden.",
+   "frage": "Welche Zuordnungen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Das erste Grundgesetz ist das Oktoberdiplom vom 20.10.1860.",
+     "richtig": true,
+     "begruendung": "Wiederherstellung der historischen Länderrechte und der ungarischen Komitatsverfassung.",
+     "norm": "Oktoberdiplom 20.10.1860"
+    },
+    {
+     "id": "b",
+     "text": "Das zweite Grundgesetz ist das Februarpatent vom 26.2.1861.",
+     "richtig": true,
+     "begruendung": "Reichsrat als Zweikammerparlament, Abgeordnetenhaus von den Landtagen beschickt.",
+     "norm": "Februarpatent 26.2.1861"
+    },
+    {
+     "id": "c",
+     "text": "Das erste wurde durch das zweite formell aufgehoben.",
+     "richtig": false,
+     "begruendung": "Das Oktoberdiplom wurde formell nie aufgehoben, sondern durch das Februarpatent nur „erläutert“, in Wahrheit umgekehrt.",
+     "norm": "Februarpatent 26.2.1861"
+    },
+    {
+     "id": "d",
+     "text": "Das zweite ist föderalistisch-ständisch, das erste zentralistisch.",
+     "richtig": false,
+     "begruendung": "Vertauscht: Das Oktoberdiplom ist föderalistisch-ständisch, das Februarpatent zentralistisch.",
+     "norm": "Oktoberdiplom 1860; Februarpatent 1861"
+    }
+   ]
+  },
+  {
+   "id": "q9",
+   "typ": "einfach",
+   "provinz": "C",
+   "kacheln": [
+    "C3",
+    "C4"
+   ],
+   "dimension": "Chronologie",
+   "frage": "Was geschah 1865 mit dem Februarpatent?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Es wurde sistiert, also in seiner Wirksamkeit ausgesetzt, um den Ausgleich mit Ungarn zu ermöglichen.",
+     "richtig": true,
+     "begruendung": "Sistierung im September 1865 nach dem Boykott durch Ungarn und die Tschechen.",
+     "norm": "Februarpatent 26.2.1861"
+    },
+    {
+     "id": "b",
+     "text": "Es wurde durch das Oktoberdiplom ersetzt.",
+     "richtig": false,
+     "begruendung": "Das Oktoberdiplom stammt von 1860, ist also älter.",
+     "norm": "Oktoberdiplom 20.10.1860"
+    },
+    {
+     "id": "c",
+     "text": "Es wurde vom Reichsgericht für verfassungswidrig erklärt.",
+     "richtig": false,
+     "begruendung": "Das Reichsgericht wurde erst 1867 eingesetzt und besaß keine Normenkontrolle.",
+     "norm": "RGBl 1867/143"
+    },
+    {
+     "id": "d",
+     "text": "Es wurde durch die Dezemberverfassung aufgehoben.",
+     "richtig": false,
+     "begruendung": "Die Dezemberverfassung folgte erst 1867.",
+     "norm": "RGBl 1867/141 bis 145"
+    }
+   ]
+  },
+  {
+   "id": "q10",
+   "typ": "mehrfach",
+   "provinz": "C",
+   "kacheln": [
+    "C1",
+    "C4"
+   ],
+   "dimension": "Chronologie",
+   "sachverhalt": "Eine Studentin erklärt in ihrer Seminararbeit die Verfassungsschritte von 1860/61 und 1867 als freiwillige Liberalisierung durch Franz Joseph I.",
+   "frage": "Welche Aussagen korrigieren sie zutreffend?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Den Schritten von 1860/61 gingen die Niederlagen bei Magenta und Solferino 1859 und eine Finanzkrise voraus.",
+     "richtig": true,
+     "begruendung": "Militärische Niederlage, Finanz- und Legitimationskrise, Verfassungszugeständnis.",
+     "norm": "Oktoberdiplom 1860"
+    },
+    {
+     "id": "b",
+     "text": "Dem Ausgleich von 1867 ging die Niederlage bei Königgrätz am 3.7.1866 voraus.",
+     "richtig": true,
+     "begruendung": "Die außenpolitische Niederlage erzwang den inneren Ausgleich.",
+     "norm": "Friede von Prag 23.8.1866"
+    },
+    {
+     "id": "c",
+     "text": "Ohne Steuerbewilligung durch Vertretungskörper war kein Kredit zu erhalten; die Verfassung wurde zur Finanzierungsfrage.",
+     "richtig": true,
+     "begruendung": "Genau diese Abhängigkeit entzog dem Neoabsolutismus die Grundlage.",
+     "norm": "Neoabsolutismus 1851 bis 1860"
+    },
+    {
+     "id": "d",
+     "text": "Der Neoabsolutismus war auch ökonomisch durchwegs rückschrittlich.",
+     "richtig": false,
+     "begruendung": "Er war politisch reaktionär, ökonomisch aber modernisierend (Gewerbeordnung 1859, Eisenbahnbau).",
+     "norm": "Gewerbeordnung 1859"
+    }
+   ],
+   "merke": {
+    "text": "Kausalkette: Niederlage, Finanz- und Legitimationskrise, Verfassungszugeständnis.",
+    "lat": "necessitas frangit legem",
+    "de": "Die Not bricht das Gesetz."
+   }
+  },
+  {
+   "id": "q11",
+   "typ": "einfach",
+   "provinz": "D",
+   "kacheln": [
+    "D1"
+   ],
+   "dimension": "Abgrenzung",
+   "sachverhalt": "Nach 1867 haben Österreich und Ungarn einen gemeinsamen Monarchen und gemeinsame Angelegenheiten (Äußeres, Heerwesen und deren Finanzierung), die über Delegationen beider Parlamente behandelt werden. Eine gemeinsame Gesetzgebung im eigentlichen Sinn gibt es nicht.",
+   "frage": "Wie ist diese Staatenverbindung einzuordnen?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Als Realunion.",
+     "richtig": true,
+     "begruendung": "Mehr als eine Personalunion (gemeinsame Organe und Aufgaben), weniger als ein Bundesstaat (keine echte gemeinsame Gesetzgebung).",
+     "norm": "RGBl 1867/146"
+    },
+    {
+     "id": "b",
+     "text": "Als Personalunion.",
+     "richtig": false,
+     "begruendung": "Eine Personalunion beschränkt sich auf den gemeinsamen Monarchen; hier bestehen gemeinsame Angelegenheiten und Delegationen.",
+     "norm": "RGBl 1867/146"
+    },
+    {
+     "id": "c",
+     "text": "Als Bundesstaat.",
+     "richtig": false,
+     "begruendung": "Es fehlt eine echte gemeinsame Gesetzgebung.",
+     "norm": "RGBl 1867/146"
+    },
+    {
+     "id": "d",
+     "text": "Als monarchischer Einheitsstaat.",
+     "richtig": false,
+     "begruendung": "Zwei Staaten mit eigener Verfassung, Regierung und eigenem Parlament.",
+     "norm": "RGBl 1867/146"
+    }
+   ],
+   "merke": {
+    "text": "Realunion: zwei Staaten, ein Monarch, drei gemeinsame Materien."
+   }
+  },
+  {
+   "id": "q12",
+   "typ": "mehrfach",
+   "provinz": "D",
+   "kacheln": [
+    "D2"
+   ],
+   "dimension": "Legitimationstyp",
+   "frage": "Welche Aussagen zur Dezemberverfassung 1867 treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Sie ist pactiert und daher nicht einseitig widerruflich.",
+     "richtig": true,
+     "begruendung": "Sie kam mit Zustimmung des Reichsrates zustande; das ermöglichte ihre Rezeption 1918 und 1920.",
+     "norm": "RGBl 1867/141 bis 145"
+    },
+    {
+     "id": "b",
+     "text": "Sie besteht aus einer einzigen, geschlossenen Verfassungsurkunde.",
+     "richtig": false,
+     "begruendung": "Sie ist ein Bündel von fünf Staatsgrundgesetzen.",
+     "norm": "RGBl 1867/141 bis 145"
+    },
+    {
+     "id": "c",
+     "text": "Das StGG über die Reichsvertretung enthielt in § 14 ein Notverordnungsrecht.",
+     "richtig": true,
+     "begruendung": "Notverordnungen, wenn der Reichsrat nicht versammelt war; später faktisch Normalinstrument.",
+     "norm": "RGBl 1867/141"
+    },
+    {
+     "id": "d",
+     "text": "Das Delegationsgesetz, RGBl 1867/146, ist eines der fünf Staatsgrundgesetze.",
+     "richtig": false,
+     "begruendung": "Das Delegationsgesetz gehört zum Verfassungspaket von 1867, ist aber kein Staatsgrundgesetz.",
+     "norm": "RGBl 1867/146"
+    }
+   ]
+  },
+  {
+   "id": "q13",
+   "typ": "mehrfach",
+   "provinz": "D",
+   "kacheln": [
+    "D3"
+   ],
+   "dimension": "Fundstelle und Status",
+   "sachverhalt": "A wendet sich im Jahr 2026 gegen eine behördliche Maßnahme und beruft sich auf Grundrechte aus dem StGG 1867.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Das StGG ist heute nach Art 149 Abs 1 B-VG ein Bundesverfassungsgesetz.",
+     "richtig": true,
+     "begruendung": "Älteste in Geltung stehende Grundrechtsquelle Österreichs.",
+     "norm": "Art 149 Abs 1 B-VG"
+    },
+    {
+     "id": "b",
+     "text": "Die persönliche Freiheit nach Art 8 StGG ist heute durch das PersFrBVG ersetzt.",
+     "richtig": true,
+     "begruendung": "BVG über den Schutz der persönlichen Freiheit, BGBl 1988/684.",
+     "norm": "BGBl 1988/684"
+    },
+    {
+     "id": "c",
+     "text": "Das Fernmeldegeheimnis ist in Art 10a StGG gewährleistet.",
+     "richtig": true,
+     "begruendung": "Art 10 schützt das Briefgeheimnis, Art 10a (seit 1974) das Fernmeldegeheimnis.",
+     "norm": "Art 10a StGG"
+    },
+    {
+     "id": "d",
+     "text": "Die Grundrechte des StGG enthalten durchwegs materielle Gesetzesvorbehalte mit Verhältnismäßigkeitsprüfung.",
+     "richtig": false,
+     "begruendung": "Typisch sind bloß formelle Gesetzesvorbehalte; die materielle Schrankenprüfung kam über die EMRK hinzu.",
+     "norm": "StGG; EMRK"
+    }
+   ]
+  },
+  {
+   "id": "q14",
+   "typ": "einfach",
+   "provinz": "D",
+   "kacheln": [
+    "D4"
+   ],
+   "dimension": "Abgrenzung",
+   "sachverhalt": "1872 erhebt ein Staatsbürger beim Reichsgericht Beschwerde wegen Verletzung seines politischen Rechts auf Versammlungsfreiheit. Das Reichsgericht gibt ihm recht.",
+   "frage": "Welche Rechtsfolge hat die Entscheidung?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Das Reichsgericht stellt die Rechtsverletzung fest; den rechtswidrigen Akt hebt es nicht auf.",
+     "richtig": true,
+     "begruendung": "Das Reichsgericht entschied nur feststellend und hatte keine Normenkontrolle.",
+     "norm": "RGBl 1867/143"
+    },
+    {
+     "id": "b",
+     "text": "Das Reichsgericht hebt den rechtswidrigen Akt auf.",
+     "richtig": false,
+     "begruendung": "Gerade die Aufhebungsbefugnis fehlte; diese Lücke schloss erst der VfGH 1920.",
+     "norm": "RGBl 1867/143"
+    },
+    {
+     "id": "c",
+     "text": "Das Reichsgericht hebt das zugrunde liegende Gesetz wegen Verfassungswidrigkeit auf.",
+     "richtig": false,
+     "begruendung": "Das Reichsgericht besaß keine Normenkontrolle über Gesetze.",
+     "norm": "RGBl 1867/143"
+    },
+    {
+     "id": "d",
+     "text": "Die Sache geht an den Verwaltungsgerichtshof, der kassatorisch entscheidet.",
+     "richtig": false,
+     "begruendung": "Den Verwaltungsgerichtshof gab es 1872 noch nicht (Gesetz vom 22.10.1875, Tätigkeit ab 1876).",
+     "norm": "RGBl 1876/36"
+    }
+   ],
+   "merke": {
+    "text": "Dreischritt: Reichsgericht 1867 feststellend, Verwaltungsgerichtshof 1875 kassatorisch, Verfassungsgerichtshof 1920 mit Normenkontrolle."
+   }
+  },
+  {
+   "id": "q15",
+   "typ": "einfach",
+   "provinz": "D",
+   "kacheln": [
+    "D4"
+   ],
+   "dimension": "Fundstelle und Status",
+   "frage": "Wie ist das Gesetz über die Errichtung des Verwaltungsgerichtshofes richtig zu zitieren?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Gesetz vom 22.10.1875, RGBl 1876/36.",
+     "richtig": true,
+     "begruendung": "Gesetzesdatum 1875, Kundmachung im Reichsgesetzblatt 1876 unter Nr 36.",
+     "norm": "RGBl 1876/36"
+    },
+    {
+     "id": "b",
+     "text": "Gesetz vom 22.10.1875, RGBl 1875/36.",
+     "richtig": false,
+     "begruendung": "Häufiger Fehler: Gesetzesdatum und Kundmachungsjahr fallen auseinander.",
+     "norm": "RGBl 1876/36"
+    },
+    {
+     "id": "c",
+     "text": "StGG über die richterliche Gewalt, RGBl 1867/144.",
+     "richtig": false,
+     "begruendung": "Dieses StGG kündigte den Verwaltungsgerichtshof nur an.",
+     "norm": "RGBl 1867/144"
+    },
+    {
+     "id": "d",
+     "text": "StGG über die Einsetzung eines Reichsgerichtes, RGBl 1867/143.",
+     "richtig": false,
+     "begruendung": "Das betrifft das Reichsgericht, nicht den Verwaltungsgerichtshof.",
+     "norm": "RGBl 1867/143"
+    }
+   ]
+  },
+  {
+   "id": "q16",
+   "typ": "mehrfach",
+   "provinz": "D",
+   "kacheln": [
+    "D5"
+   ],
+   "dimension": "Abgrenzung",
+   "sachverhalt": "Nach der Wahlrechtsreform 1896 dürfen nahezu alle Männer wählen; eine Stimme in der neuen Kurie zählt aber weit weniger als eine Stimme in der Kurie des Großgrundbesitzes.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Das Wahlrecht ist 1896 beinahe allgemein, aber nicht gleich.",
+     "richtig": true,
+     "begruendung": "Fünfte, allgemeine Kurie neben den vier bestehenden: allgemein, aber grob ungleiches Stimmgewicht.",
+     "norm": "Wahlreform 1896"
+    },
+    {
+     "id": "b",
+     "text": "Erst 1907 wird das Männerwahlrecht allgemein und gleich.",
+     "richtig": true,
+     "begruendung": "Allgemeines, gleiches, direktes und geheimes Männerwahlrecht ab 24 Jahren; Kurien abgeschafft.",
+     "norm": "Wahlreform 1907"
+    },
+    {
+     "id": "c",
+     "text": "Das Frauenwahlrecht kam 1907 zugleich mit dem allgemeinen Männerwahlrecht.",
+     "richtig": false,
+     "begruendung": "Das Frauenwahlrecht kam erst 1918 mit der Republik.",
+     "norm": "Wahlrecht 1918"
+    },
+    {
+     "id": "d",
+     "text": "„Allgemein“ und „gleich“ bezeichnen denselben Wahlrechtsgrundsatz.",
+     "richtig": false,
+     "begruendung": "Allgemein betrifft, wer wählt; gleich betrifft das Gewicht der Stimme.",
+     "norm": "Art 26 Abs 1 B-VG"
+    }
+   ]
+  },
+  {
+   "id": "q17",
+   "typ": "mehrfach",
+   "provinz": "E",
+   "kacheln": [
+    "E1"
+   ],
+   "dimension": "Chronologie",
+   "sachverhalt": "Am 11.11.1918 erklärt Karl I., er verzichte „auf jeden Anteil an den Staatsgeschäften“. Am 12.11.1918 beschließt die Provisorische Nationalversammlung das Gesetz über die Staats- und Regierungsform.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Die Erklärung vom 11.11.1918 ist ein Thronverzicht für das Haus Habsburg.",
+     "richtig": false,
+     "begruendung": "Klassische Falle: Karl I. verzichtete nur auf die Ausübung der Regierungsgeschäfte; weder Abdankung noch Thronverzicht.",
+     "norm": "Erklärung vom 11.11.1918"
+    },
+    {
+     "id": "b",
+     "text": "Art 1 des Gesetzes vom 12.11.1918 erklärt Deutschösterreich zur demokratischen Republik.",
+     "richtig": true,
+     "begruendung": "Gesetz über die Staats- und Regierungsform, StGBl 1918/5.",
+     "norm": "StGBl 1918/5"
+    },
+    {
+     "id": "c",
+     "text": "Art 2 des Gesetzes vom 12.11.1918 enthielt den Anschlussartikel.",
+     "richtig": true,
+     "begruendung": "„Deutschösterreich ist ein Bestandteil der Deutschen Republik.“",
+     "norm": "StGBl 1918/5"
+    },
+    {
+     "id": "d",
+     "text": "Die Rezeptionsnorm, wonach bestehende Gesetze vorläufig in Kraft bleiben, steht im Beschluss vom 30.10.1918, StGBl 1918/1.",
+     "richtig": true,
+     "begruendung": "Beschluss über die grundlegenden Einrichtungen der Staatsgewalt.",
+     "norm": "StGBl 1918/1"
+    }
+   ]
+  },
+  {
+   "id": "q18",
+   "typ": "einfach",
+   "provinz": "E",
+   "kacheln": [
+    "E2",
+    "F3"
+   ],
+   "dimension": "Fundstelle und Status",
+   "sachverhalt": "Ein Völkerrechtler prüft die Rechtmäßigkeit des Anschlusses von 1938 anhand der völkerrechtlichen Bindungen, die Österreich in der Zwischenkriegszeit eingegangen war.",
+   "frage": "Auf welche Bestimmung stützt sich das Anschlussverbot, das 1938 verletzt wurde?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Art 88 Staatsvertrag von Saint-Germain.",
+     "richtig": true,
+     "begruendung": "Die Unabhängigkeit Österreichs ist unabänderlich, außer mit Zustimmung des Völkerbundrates.",
+     "norm": "StGBl 1920/303"
+    },
+    {
+     "id": "b",
+     "text": "Art 4 Staatsvertrag von Wien.",
+     "richtig": false,
+     "begruendung": "Richtiger Inhalt, falsche Epoche: Der Staatsvertrag von Wien stammt von 1955.",
+     "norm": "BGBl 1955/152"
+    },
+    {
+     "id": "c",
+     "text": "Art 2 Gesetz über die Staats- und Regierungsform.",
+     "richtig": false,
+     "begruendung": "Das ist der Anschlussartikel, also das Gegenteil eines Verbots.",
+     "norm": "StGBl 1918/5"
+    },
+    {
+     "id": "d",
+     "text": "Art 149 Abs 1 B-VG.",
+     "richtig": false,
+     "begruendung": "Art 149 Abs 1 B-VG rezipiert den Minderheitenschutz von Saint-Germain, nicht Art 88.",
+     "norm": "Art 149 Abs 1 B-VG"
+    }
+   ]
+  },
+  {
+   "id": "q19",
+   "typ": "mehrfach",
+   "provinz": "E",
+   "kacheln": [
+    "E3"
+   ],
+   "dimension": "Fundstelle und Status",
+   "sachverhalt": "Ein Nachfahre des Hauses Habsburg-Lothringen möchte bei der nächsten Bundespräsidentenwahl kandidieren. Seine Cousine, österreichische Staatsbürgerin, möchte ihren früheren Adelstitel im Reisepass führen.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Der Ausschluss von Mitgliedern ehemals regierender Häuser von der Wählbarkeit stand in Art 60 Abs 3 B-VG und ist seit 2011 beseitigt.",
+     "richtig": true,
+     "begruendung": "Wahlrechtsänderungsgesetz 2011 strich Art 60 Abs 3 zweiter Satz B-VG.",
+     "norm": "BGBl I 2011/43"
+    },
+    {
+     "id": "b",
+     "text": "Das Habsburgergesetz wurde 2011 aufgehoben.",
+     "richtig": false,
+     "begruendung": "Das Habsburgergesetz blieb ausdrücklich unberührt und steht weiterhin im Verfassungsrang.",
+     "norm": "StGBl 1919/209"
+    },
+    {
+     "id": "c",
+     "text": "Das Adelsaufhebungsgesetz steht im Verfassungsrang und verbietet die Führung von Adelsbezeichnungen.",
+     "richtig": true,
+     "begruendung": "Rezipiert nach Art 149 Abs 1 B-VG; kein „von“, keine Titel.",
+     "norm": "StGBl 1919/211"
+    },
+    {
+     "id": "d",
+     "text": "Nach dem EuGH darf Österreich das Adelsverbot gegenüber Unionsbürgern nie anwenden, weil es die Freizügigkeit beschränkt.",
+     "richtig": false,
+     "begruendung": "Gegenteil: Als Ausdruck der republikanischen Identität kann es eine Beschränkung der Freizügigkeit rechtfertigen (EuGH 22.12.2010, C-208/09, Sayn-Wittgenstein).",
+     "norm": "EuGH C-208/09"
+    }
+   ]
+  },
+  {
+   "id": "q20",
+   "typ": "einfach",
+   "provinz": "E",
+   "kacheln": [
+    "E4",
+    "E8"
+   ],
+   "dimension": "Kontinuität und Rezeption",
+   "frage": "Warum enthält das B-VG 1920 keinen eigenen Grundrechtskatalog, und wie wurde die Lücke geschlossen?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Wegen weltanschaulichen Dissenses über Ehe- und Schulrecht und die Kirche; Art 149 B-VG rezipiert das StGG 1867.",
+     "richtig": true,
+     "begruendung": "Torso-Verfassung: Rezeption älterer Grundrechtstexte im Verfassungsrang.",
+     "norm": "Art 149 Abs 1 B-VG"
+    },
+    {
+     "id": "b",
+     "text": "Weil die EMRK bereits galt; Art 149 B-VG rezipierte sie.",
+     "richtig": false,
+     "begruendung": "Die EMRK wurde erst 1958 ratifiziert.",
+     "norm": "BGBl 1958/210"
+    },
+    {
+     "id": "c",
+     "text": "Weil Kelsen Grundrechte grundsätzlich ablehnte; die Lücke schloss die Novelle 1929.",
+     "richtig": false,
+     "begruendung": "Die Novelle 1929 betraf vor allem den Bundespräsidenten, nicht die Grundrechte.",
+     "norm": "BGBl 1929/392"
+    },
+    {
+     "id": "d",
+     "text": "Weil Saint-Germain einen Grundrechtskatalog untersagte; Art 149 B-VG rezipierte nur den Minderheitenschutz.",
+     "richtig": false,
+     "begruendung": "Kein solches Verbot; Art 149 rezipiert insbesondere das StGG 1867.",
+     "norm": "Art 149 Abs 1 B-VG"
+    }
+   ]
+  },
+  {
+   "id": "q21",
+   "typ": "mehrfach",
+   "provinz": "E",
+   "kacheln": [
+    "E5"
+   ],
+   "dimension": "Abgrenzung",
+   "sachverhalt": "Der Nationalrat beschließt mit Zweidrittelmehrheit ein Bundesverfassungsgesetz, das den Bundesrat abschafft und alle Gesetzgebungskompetenzen der Länder auf den Bund überträgt.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Es liegt eine Gesamtänderung vor, weil das bundesstaatliche Grundprinzip berührt ist.",
+     "richtig": true,
+     "begruendung": "Abschaffung des Bundesrates und Entzug aller Landeskompetenzen beseitigen den Bundesstaat in seinem Kern.",
+     "norm": "Art 44 Abs 3 B-VG"
+    },
+    {
+     "id": "b",
+     "text": "Nach dem Verfahren im Nationalrat ist zwingend eine Volksabstimmung durchzuführen.",
+     "richtig": true,
+     "begruendung": "Jede Gesamtänderung ist einer Abstimmung des gesamten Bundesvolkes zu unterziehen.",
+     "norm": "Art 44 Abs 3 B-VG"
+    },
+    {
+     "id": "c",
+     "text": "Die Zweidrittelmehrheit im Nationalrat genügt, weil ein Bundesverfassungsgesetz vorliegt.",
+     "richtig": false,
+     "begruendung": "Richtige Prämisse, falscher Schluss: Das genügt für Teiländerungen, nicht für Gesamtänderungen.",
+     "norm": "Art 44 Abs 1 und 3 B-VG"
+    },
+    {
+     "id": "d",
+     "text": "Eine Volksabstimmung findet nur statt, wenn ein Drittel der Mitglieder des Nationalrates sie verlangt.",
+     "richtig": false,
+     "begruendung": "Diese Regel gilt für Teiländerungen; bei Gesamtänderungen ist die Volksabstimmung obligatorisch.",
+     "norm": "Art 44 Abs 3 B-VG"
+    }
+   ],
+   "merke": {
+    "text": "Gesamtänderung: Berührung eines Baugesetzes; Volksabstimmung zwingend. Teiländerung: nur auf Verlangen eines Drittels.",
+    "lat": "pouvoir constituant",
+    "de": "Bei einer Gesamtänderung entscheidet die verfassunggebende Gewalt, das Volk."
+   }
+  },
+  {
+   "id": "q22",
+   "typ": "mehrfach",
+   "provinz": "E",
+   "kacheln": [
+    "E6"
+   ],
+   "dimension": "Abgrenzung",
+   "sachverhalt": "Ein Gericht in den USA und ein österreichisches Landesverwaltungsgericht halten jeweils ein Bundesgesetz, das sie anwenden müssten, für verfassungswidrig.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Das amerikanische Gericht wendet das Gesetz im Einzelfall nicht an.",
+     "richtig": true,
+     "begruendung": "Diffuse Kontrolle seit Marbury v Madison (1803), Wirkung inter partes.",
+     "norm": "Marbury v Madison"
+    },
+    {
+     "id": "b",
+     "text": "Das österreichische Verwaltungsgericht darf das Gesetz selbst unangewendet lassen.",
+     "richtig": false,
+     "begruendung": "Es muss beim VfGH die Aufhebung beantragen; Art 135 Abs 4 B-VG erklärt Art 89 B-VG auf die Verwaltungsgerichte für anwendbar, ein Verwerfungsrecht besteht nicht.",
+     "norm": "Art 89 Abs 2, Art 135 Abs 4, Art 140 B-VG"
+    },
+    {
+     "id": "c",
+     "text": "Nur der VfGH kann das Gesetz mit Wirkung für alle aufheben.",
+     "richtig": true,
+     "begruendung": "Konzentrierte Verfassungsgerichtsbarkeit, Aufhebung erga omnes.",
+     "norm": "Art 140 B-VG"
+    },
+    {
+     "id": "d",
+     "text": "Die Aufhebung durch den VfGH wirkt grundsätzlich auf den Zeitpunkt der Erlassung des Gesetzes zurück.",
+     "richtig": false,
+     "begruendung": "Grundsätzlich ex nunc; Rückwirkung nur ausnahmsweise, insbesondere für den Anlassfall.",
+     "norm": "Art 140 B-VG"
+    }
+   ],
+   "merke": {
+    "text": "Österreich: ein Gericht, Aufhebung für alle, grundsätzlich für die Zukunft.",
+    "lat": "erga omnes, ex nunc",
+    "de": "Wirkung gegenüber allen, ab jetzt."
+   }
+  },
+  {
+   "id": "q23",
+   "typ": "einfach",
+   "provinz": "G",
+   "kacheln": [
+    "G1",
+    "E7"
+   ],
+   "dimension": "Kontinuität und Rezeption",
+   "sachverhalt": "Die Unabhängigkeitserklärung vom 27.4.1945 kündigt eine Wiederherstellung der demokratischen Republik „im Geiste der Verfassung von 1920“ an.",
+   "frage": "Welche Fassung des B-VG wurde 1945 tatsächlich wieder in Wirksamkeit gesetzt, und durch welchen Akt?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Die Fassung 1929, durch das Verfassungs-Überleitungsgesetz, StGBl 1945/4.",
+     "richtig": true,
+     "begruendung": "Die Formel „im Geiste der Verfassung von 1920“ täuscht; in Geltung gesetzt wurde die Fassung 1929.",
+     "norm": "StGBl 1945/4"
+    },
+    {
+     "id": "b",
+     "text": "Die Fassung 1920, durch die Unabhängigkeitserklärung, StGBl 1945/1.",
+     "richtig": false,
+     "begruendung": "Die Unabhängigkeitserklärung nennt 1920, setzt das B-VG aber nicht selbst in Wirksamkeit.",
+     "norm": "StGBl 1945/1"
+    },
+    {
+     "id": "c",
+     "text": "Die Fassung 1929, durch das Rechts-Überleitungsgesetz, StGBl 1945/6.",
+     "richtig": false,
+     "begruendung": "Richtige Fassung, falscher Akt: Das R-ÜG leitet einfachgesetzliches Recht über.",
+     "norm": "StGBl 1945/6"
+    },
+    {
+     "id": "d",
+     "text": "Die Fassung 1934, weil sie die zuletzt geltende Verfassung war.",
+     "richtig": false,
+     "begruendung": "Die Maiverfassung kam verfassungswidrig zustande; angeknüpft wurde an 1929.",
+     "norm": "BGBl II 1934/1"
+    }
+   ]
+  },
+  {
+   "id": "q24",
+   "typ": "mehrfach",
+   "provinz": "F",
+   "kacheln": [
+    "F1",
+    "F2"
+   ],
+   "dimension": "Legitimationstyp",
+   "sachverhalt": "Am 4.3.1933 treten alle drei Präsidenten des Nationalrates zurück. Die Regierung spricht von einer „Selbstausschaltung“ des Parlaments, regiert mit Verordnungen und lässt 1934 eine neue Verfassung kundmachen.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Die Verordnungen stützten sich auf das Kriegswirtschaftliche Ermächtigungsgesetz 1917.",
+     "richtig": true,
+     "begruendung": "Wiederbelebung eines Ermächtigungsgesetzes aus dem Ersten Weltkrieg.",
+     "norm": "KWEG 1917"
+    },
+    {
+     "id": "b",
+     "text": "Durch den Rücktritt der drei Präsidenten war der Nationalrat rechtlich aufgelöst.",
+     "richtig": false,
+     "begruendung": "Der Nationalrat war führungslos, aber nicht aufgelöst; er hätte jederzeit einberufen werden können.",
+     "norm": "B-VG idF 1929"
+    },
+    {
+     "id": "c",
+     "text": "Die Maiverfassung 1934 kam verfassungswidrig zustande.",
+     "richtig": true,
+     "begruendung": "Kundmachung auf Grundlage des KWEG, flankiert von einem Ermächtigungsgesetz des Rumpf-Nationalrates: doppelt verfassungswidrig.",
+     "norm": "BGBl II 1934/1"
+    },
+    {
+     "id": "d",
+     "text": "Gerade die Verfassungswidrigkeit von 1934 ermöglichte 1945 die Anknüpfung an das B-VG 1929.",
+     "richtig": true,
+     "begruendung": "Die Unrechtmäßigkeit von 1934 ist die Bedingung der Rechtskontinuität von 1945.",
+     "norm": "StGBl 1945/4"
+    }
+   ]
+  },
+  {
+   "id": "q25",
+   "typ": "einfach",
+   "provinz": "F",
+   "kacheln": [
+    "F4"
+   ],
+   "dimension": "Abgrenzung",
+   "sachverhalt": "Ein Gutachten soll klären, ob völkerrechtliche Verträge, die Österreich vor 1938 geschlossen hat, nach 1945 fortgelten.",
+   "frage": "Welche Theorie und welche Begründung entsprechen der herrschenden Auffassung?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Okkupationstheorie: Österreich bestand als Völkerrechtssubjekt fort; die Verträge gelten fort.",
+     "richtig": true,
+     "begruendung": "Identität und Kontinuität; gestützt auf Moskauer Deklaration, Unabhängigkeitserklärung und Staatsvertrag 1955.",
+     "norm": "Moskauer Deklaration 1943"
+    },
+    {
+     "id": "b",
+     "text": "Annexionstheorie: Österreich ging unter; die Verträge gelten fort, weil der Staatsvertrag 1955 dies anordnet.",
+     "richtig": false,
+     "begruendung": "Die Annexionstheorie ist nicht herrschend, und der Staatsvertrag ist als Wiederherstellung formuliert.",
+     "norm": "BGBl 1955/152"
+    },
+    {
+     "id": "c",
+     "text": "Okkupationstheorie: Österreich ging 1938 unter und wurde 1955 neu gegründet.",
+     "richtig": false,
+     "begruendung": "Widerspruch in sich: Nach der Okkupationstheorie ging Österreich gerade nicht unter.",
+     "norm": "Moskauer Deklaration 1943"
+    },
+    {
+     "id": "d",
+     "text": "Annexionstheorie, gestützt auf die Moskauer Deklaration 1943.",
+     "richtig": false,
+     "begruendung": "Die Moskauer Deklaration erklärte den Anschluss für null und nichtig und stützt die Okkupationstheorie.",
+     "norm": "Moskauer Deklaration 1943"
+    }
+   ],
+   "merke": {
+    "text": "Die herrschende Okkupationstheorie begründet Identität und Kontinuität der Republik.",
+    "lat": "ex iniuria ius non oritur",
+    "de": "Aus Unrecht entsteht kein Recht."
+   }
+  },
+  {
+   "id": "q26",
+   "typ": "mehrfach",
+   "provinz": "G",
+   "kacheln": [
+    "G3"
+   ],
+   "dimension": "Fundstelle und Status",
+   "sachverhalt": "Bei einer Feier am 26. Oktober erklärt eine Rednerin, an diesem Tag sei 1955 der Staatsvertrag unterzeichnet worden, der Österreich zur Neutralität verpflichte.",
+   "frage": "Welche Aussagen treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Der Staatsvertrag wurde am 15.5.1955 unterzeichnet.",
+     "richtig": true,
+     "begruendung": "Staatsvertrag von Wien, BGBl 1955/152, in Kraft am 27.7.1955.",
+     "norm": "BGBl 1955/152"
+    },
+    {
+     "id": "b",
+     "text": "Die Neutralität beruht auf einem eigenen Bundesverfassungsgesetz vom 26.10.1955.",
+     "richtig": true,
+     "begruendung": "Neutralitäts-BVG, BGBl 1955/211, einseitiger Akt und nicht Teil des Staatsvertrages.",
+     "norm": "BGBl 1955/211"
+    },
+    {
+     "id": "c",
+     "text": "Die Neutralität ist im Staatsvertrag von Wien festgelegt.",
+     "richtig": false,
+     "begruendung": "Der Staatsvertrag enthält keine Neutralitätsverpflichtung; die Verknüpfung war politisch.",
+     "norm": "BGBl 1955/152"
+    },
+    {
+     "id": "d",
+     "text": "Der Nationalfeiertag am 26. Oktober bezieht sich auf das Neutralitätsgesetz.",
+     "richtig": true,
+     "begruendung": "Seit 1965 Nationalfeiertag, Bezugspunkt ist das Neutralitäts-BVG.",
+     "norm": "BGBl 1955/211"
+    }
+   ],
+   "merke": {
+    "text": "Staatsvertrag und Neutralität sind zwei verschiedene Rechtsakte.",
+    "lat": "pacta sunt servanda",
+    "de": "Verträge sind einzuhalten."
+   }
+  },
+  {
+   "id": "q27",
+   "typ": "mehrfach",
+   "provinz": "G",
+   "kacheln": [
+    "G4"
+   ],
+   "dimension": "Fundstelle und Status",
+   "frage": "Welche Aussagen zur Verfassungsentwicklung seit 1958 treffen zu?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "Der Verfassungsrang der EMRK wurde durch BGBl 1964/59 rückwirkend klargestellt.",
+     "richtig": true,
+     "begruendung": "Seither prüft der VfGH Konventionsrechte wie Verfassungsrechte.",
+     "norm": "BGBl 1964/59"
+    },
+    {
+     "id": "b",
+     "text": "Der EU-Beitritt wurde als Gesamtänderung einer Volksabstimmung unterzogen.",
+     "richtig": true,
+     "begruendung": "Volksabstimmung am 12.6.1994; Beitritt am 1.1.1995.",
+     "norm": "BGBl 1994/744"
+    },
+    {
+     "id": "c",
+     "text": "Die Verwaltungsgerichtsbarkeits-Novelle 2012 wurde mit 1.1.2014 wirksam.",
+     "richtig": true,
+     "begruendung": "Neun Landesverwaltungsgerichte, BVwG und BFG ersetzen den administrativen Instanzenzug.",
+     "norm": "BGBl I 2012/51"
+    },
+    {
+     "id": "d",
+     "text": "Die Grundrechte-Charta ist seit 2009 in jedem innerstaatlichen Verfahren anwendbar, auch ohne Bezug zum Unionsrecht.",
+     "richtig": false,
+     "begruendung": "Regel ohne ihre Grenze: Die Charta gilt nur im Anwendungsbereich des Unionsrechts.",
+     "norm": "Art 51 GRC"
+    }
+   ]
+  },
+  {
+   "id": "q28",
+   "typ": "einfach",
+   "provinz": "L",
+   "kacheln": [
+    "L3"
+   ],
+   "dimension": "Kontinuität und Rezeption",
+   "frage": "Welche Zuordnung der drei Kontinuitätsbrücken ist vollständig richtig?",
+   "optionen": [
+    {
+     "id": "a",
+     "text": "1918 Rezeptionsnorm in StGBl 1918/1; 1920 Art 149 B-VG; 1945 V-ÜG und R-ÜG.",
+     "richtig": true,
+     "begruendung": "Zweimal, 1918 und 1945, wurde an einen bestehenden Text angeknüpft, statt neu zu beginnen.",
+     "norm": "StGBl 1918/1; Art 149 B-VG; StGBl 1945/4, 6"
+    },
+    {
+     "id": "b",
+     "text": "1918 Art 149 B-VG; 1920 Rezeptionsnorm; 1945 Staatsvertrag von Wien.",
+     "richtig": false,
+     "begruendung": "Zeitlich vertauscht; der Staatsvertrag ist kein Überleitungsakt von 1945.",
+     "norm": "Art 149 B-VG"
+    },
+    {
+     "id": "c",
+     "text": "1918 Zensurbeschluss StGBl 1918/3; 1920 Saint-Germain; 1945 Unabhängigkeitserklärung allein.",
+     "richtig": false,
+     "begruendung": "Der Zensurbeschluss enthält keine Rezeptionsnorm; 1945 tragen V-ÜG und R-ÜG.",
+     "norm": "StGBl 1918/3"
+    },
+    {
+     "id": "d",
+     "text": "1918 Völkermanifest; 1920 Novelle 1929; 1945 Moskauer Deklaration.",
+     "richtig": false,
+     "begruendung": "Keiner dieser Akte leitet Recht über.",
+     "norm": "StGBl 1945/4"
+    }
+   ],
+   "merke": {
+    "text": "Die Anknüpfungstechnik ist das eigentliche Charakteristikum der österreichischen Verfassungsgeschichte."
+   }
+  }
+ ]
+}

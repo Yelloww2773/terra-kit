@@ -1,0 +1,2214 @@
+{
+ "standard": "3.1",
+ "meta": {
+  "titel": "Terra Historica Constitutionalis",
+  "kurz": "HIC",
+  "untertitel": "Geschichte des österreichischen Verfassungsrechts",
+  "kicker": "Gliederungspunkt IV: von der Pragmatischen Sanktion bis zur Verwaltungsgerichtsbarkeits-Novelle",
+  "lehrveranstaltung": "STEOP · Einführung in die Rechtswissenschaften, Gliederungspunkt IV",
+  "version": "1.0",
+  "stand": "2026-10",
+  "typ": "werk",
+  "urheber": "(c) Oliver Bedernik",
+  "ort": "Wien"
+ },
+ "modul": {
+  "domaene": "recht",
+  "primaerquelle": "RIS, Bundesrecht konsolidiert (Fassung Oktober 2026); für die Zeit vor 1867 Zitierung nach Datum",
+  "sekundaerquelle": "Grabenwarter/Kodek/Pabel/Spitzer, Einführung in die Rechtswissenschaften, Abschnitt IV (WU)",
+  "anker": "Fundstelle oder Datum",
+  "stand_art": "Rechtsstand",
+  "terminussprache": "Latein",
+  "pruefdimensionen": [
+   "Chronologie",
+   "Legitimationstyp",
+   "Kontinuität und Rezeption",
+   "Abgrenzung",
+   "Fundstelle und Status"
+  ]
+ },
+ "quellen": [
+  {
+   "kurz": "RIS",
+   "voll": "Rechtsinformationssystem des Bundes, Bundesrecht konsolidiert"
+  },
+  {
+   "kurz": "GKPS",
+   "voll": "Grabenwarter/Kodek/Pabel/Spitzer, Einführung in die Rechtswissenschaften, Abschnitt IV (WU)"
+  },
+  {
+   "kurz": "THC",
+   "voll": "Terra Historica Constitutionalis, Wissenslandkarte, Stand September 2026 (Vorlage dieser Fassung)"
+  }
+ ],
+ "motto": {
+  "lat": "Historia magistra vitae.",
+  "de": "Die Geschichte ist die Lehrmeisterin des Lebens.",
+  "stelle": "nach Cicero, De oratore 2,36"
+ },
+ "provinzen": [
+  {
+   "nr": "I",
+   "code": "A",
+   "name_lat": "Prolegomena",
+   "name_de": "Einleitung und Vorgeschichte bis 1848",
+   "leitfrage": "Warum ist Verfassungsgeschichte in Österreich geltendes Auslegungsmaterial und nicht bloß Bildungsgut?",
+   "kompakt": [
+    "Verfassungsgeschichte wirkt über fortgeltendes Recht, die Versteinerungstheorie und die historische Interpretation in das geltende Recht hinein.",
+    "Verfassung im formellen Sinn meint erhöhte Bestandskraft, im materiellen Sinn den Inhalt der staatlichen Grundordnung.",
+    "Bis 1848 kennt Österreich keine Verfassungsurkunde; erste gesamtstaatliche Grundordnung ist die Pragmatische Sanktion.",
+    "Der Vormärz setzt auf Kodifikation statt Konstitution: bürgerliche Gleichheit im Privatrecht, keine politische Teilhabe."
+   ],
+   "anker": [
+    "Art 44 B-VG",
+    "Art 149 Abs 1 B-VG",
+    "Art 10 bis 15 B-VG"
+   ],
+   "seiten": "Rz 1 bis 4",
+   "kacheln": [
+    {
+     "code": "A1",
+     "titel": "Wozu Verfassungsgeschichte?",
+     "anker": "Art 149 Abs 1 B-VG",
+     "seite": "Rz 1",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die Verfassungsgeschichte ist im österreichischen Recht kein bloßes Bildungsgut, sondern geltendes Auslegungsmaterial."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Fortgeltendes Recht:** Art 149 Abs 1 B-VG erklärt Normen aus 1862, 1867, 1918 und 1919 ausdrücklich zu Bundesverfassungsgesetzen; das StGG 1867 ist heute anwendbares Grundrechtsrecht ([[E8]]).",
+        "**Versteinerungstheorie:** Die Kompetenztatbestände der Art 10 bis 15 B-VG werden nach der einfachgesetzlichen Rechtslage zum Versteinerungszeitpunkt 1.10.1925 ausgelegt ([[E7]]).",
+        "**Historische Interpretation:** eine der vier klassischen Auslegungsmethoden neben Wortlaut, System und Zweck; im Verfassungsrecht von besonderem Gewicht.",
+        "**Legitimationsfrage:** Nur wer die Brüche 1933/34, 1938 und 1945 kennt, kann die Rechtskontinuität der Zweiten Republik begründen ([[F4]])."
+       ],
+       "titel": "Vier Anknüpfungspunkte"
+      },
+      {
+       "typ": "merke",
+       "text": "Das öffentliche Recht trägt seine Entstehungsgeschichte als Auslegungslast mit sich."
+      }
+     ]
+    },
+    {
+     "code": "A2",
+     "titel": "Verfassungsbegriff",
+     "anker": "Art 44 Abs 1 B-VG",
+     "seite": "Rz 2",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Verfassung im formellen Sinn sind alle Normen, die in einem erschwerten Verfahren erzeugt und geändert werden; Verfassung im materiellen Sinn alle Normen, die ihrem Inhalt nach die Grundordnung des Staates regeln."
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Formell und materiell",
+       "links": "Formeller Sinn",
+       "rechts": "Materieller Sinn",
+       "kriterien": [
+        {
+         "kriterium": "Anknüpfung",
+         "links": "Erzeugungsverfahren und erhöhte Bestandskraft",
+         "rechts": "Inhalt der Regelung"
+        },
+        {
+         "kriterium": "Merkmale",
+         "links": "Art 44 Abs 1 B-VG: Anwesenheit von mindestens der Hälfte der Mitglieder, Zweidrittelmehrheit im Nationalrat, ausdrückliche Bezeichnung als Verfassungsgesetz oder Verfassungsbestimmung",
+         "rechts": "Staatsorganisation, Staatsfunktionen, Grundrechte, Verhältnis zwischen Bürger und Staat"
+        },
+        {
+         "kriterium": "Rang",
+         "links": "Verfassungsrang kraft Verfahren",
+         "rechts": "unabhängig vom Rang"
+        }
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Die beiden Kreise decken sich in Österreich notorisch nicht. Formelles Verfassungsrecht ohne materiellen Gehalt war jahrzehntelang Massenware („Verfassungssplitter“, zeitweise über tausend Bestimmungen in einfachen Gesetzen). Dagegen richtete sich die Verfassungsbereinigung 2008 ([[G4]])."
+      },
+      {
+       "typ": "latinum",
+       "lat": "constitutio",
+       "de": "Anordnung, Satzung; Wurzel des Verfassungsbegriffs",
+       "stelle": "Fachterminus"
+      }
+     ]
+    },
+    {
+     "code": "A3",
+     "titel": "Vorgeschichte: Ständestaat und Hausmacht",
+     "anker": "Pragmatische Sanktion",
+     "seite": "Rz 3",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Vor 1848 gibt es in Österreich keine Verfassung im modernen Sinn. Die Habsburgermonarchie ist zunächst Staatenverbindung, nicht Staat; ihre erste gesamtstaatliche Grundordnung ist ein Hausgesetz."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "Bis 1806",
+       "ereignisse": [
+        {
+         "datum": "Mittelalter",
+         "text": "Dualismus von Fürst und Landständen (Prälaten, Herren, Ritter, Städte); die Landtage bewilligen Steuern gegen Zugeständnisse."
+        },
+        {
+         "datum": "1526",
+         "text": "Personalunion Österreich, Böhmen und Ungarn nach der Schlacht bei Mohács: Beginn der Habsburgermonarchie als Staatenverbindung."
+        },
+        {
+         "datum": "1713/1720 ff",
+         "text": "Pragmatische Sanktion Karls VI., von den Landtagen angenommen: Unteilbarkeit und Untrennbarkeit der Länder, weibliche Erbfolge."
+        },
+        {
+         "datum": "1740 bis 1790",
+         "text": "Aufgeklärter Absolutismus unter Maria Theresia und Josef II.: Zentralverwaltung, Trennung von Justiz und Verwaltung, 1781 Toleranzpatent und Aufhebung der Leibeigenschaft."
+        },
+        {
+         "datum": "1804/1806",
+         "text": "Erbliches Kaisertum Österreich unter Franz II./I.; 1806 Niederlegung der römisch-deutschen Krone und Ende des Heiligen Römischen Reiches."
+        }
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Die Pragmatische Sanktion ist kein Verfassungsgesetz heutigen Typs. Sie begründete weder Grundrechte noch eine Volksvertretung, sondern die Einheit des Herrschaftsverbandes, und wird genau deshalb als frühester gesamtstaatlicher Rechtstitel geprüft."
+      },
+      {
+       "typ": "latinum",
+       "lat": "indivisibiliter ac inseparabiliter",
+       "de": "unteilbar und untrennbar",
+       "stelle": "Pragmatische Sanktion 1713"
+      }
+     ]
+    },
+    {
+     "code": "A4",
+     "titel": "Vormärz",
+     "anker": "1815 bis 1848",
+     "seite": "Rz 4",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Der Vormärz ist die Epoche der Restauration zwischen Wiener Kongress und Märzrevolution: Kodifikation statt Konstitution."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Wiener Kongress 1814/15:** Restauration, Legitimitätsprinzip, Deutscher Bund als Staatenbund mit Bundesversammlung in Frankfurt unter österreichischem Präsidium.",
+        "**System Metternich:** Zensur, Polizeistaat, Karlsbader Beschlüsse 1819, Verbot politischer Vereine.",
+        "**Kodifikation statt Konstitution:** Das ABGB 1811 gewährt bürgerliche Gleichheit im Privatrecht; politische Teilhabe bleibt verweigert.",
+        "**Opposition:** Bildungsbürgertum, Studenten, beginnendes Industrieproletariat; Forderungen nach Verfassung, Pressefreiheit, Volksvertretung und Bauernbefreiung."
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Österreich tritt 1848 ohne jede Verfassungsurkunde in die Revolution ein, ebenso wie Preußen, aber anders als die süddeutschen Staaten, die seit 1818/20 konstitutionelle Verfassungen besaßen."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "II",
+   "code": "B",
+   "name_lat": "Primordia Constitutionis",
+   "name_de": "Frühkonstitutionalismus 1848 bis 1851",
+   "leitfrage": "Wie folgen 1848 bis 1851 Zugeständnis und Rücknahme aufeinander, und was überlebt die Gegenrevolution?",
+   "kompakt": [
+    "1848 ist keine einzelne Zäsur, sondern eine Kette von Zugeständnissen und Rücknahmen.",
+    "Die Pillersdorfsche Verfassung ist oktroyiert und trat nie wirksam in Kraft.",
+    "Der Kremsierer Entwurf ist der einzige demokratisch erarbeitete Verfassungstext des 19. Jahrhunderts und trat nie in Kraft.",
+    "Die oktroyierte Märzverfassung 1849 wurde nie vollzogen und 1851 durch das Silvesterpatent aufgehoben.",
+    "Bleibend ist vor allem die Grundentlastung von 1848."
+   ],
+   "anker": [
+    "25.4.1848",
+    "4.3.1849",
+    "31.12.1851"
+   ],
+   "seiten": "Rz 5 bis 10",
+   "kacheln": [
+    {
+     "code": "B1",
+     "titel": "Der revolutionäre Ablauf 1848",
+     "anker": "13.3. bis 2.12.1848",
+     "seite": "Rz 5",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die Revolution von 1848 erzwingt in rascher Folge Verfassungszusagen, die die Gegenrevolution bis zum Jahresende wieder entwertet."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "1848",
+       "ereignisse": [
+        {
+         "datum": "13.3.1848",
+         "text": "Aufstand in Wien; Sturz und Flucht Metternichs; Verfassungszusage Ferdinands I.; Aufhebung der Zensur, Nationalgarde und akademische Legion."
+        },
+        {
+         "datum": "März/April 1848",
+         "text": "Ungarn erzwingt die Aprilgesetze: eigenes verantwortliches Ministerium und Landtag auf Repräsentativbasis; die ungarische Sonderstellung ist geboren."
+        },
+        {
+         "datum": "25.4.1848",
+         "text": "Oktroyierung der Pillersdorfschen Verfassung ([[B2]])."
+        },
+        {
+         "datum": "15.5.1848",
+         "text": "Sturmpetition gegen das Zensuswahlrecht; Zusage eines einkammrigen konstituierenden Reichstages; danach Flucht des Hofes nach Innsbruck."
+        },
+        {
+         "datum": "22.7.1848",
+         "text": "Zusammentritt des Reichstages in Wien; im November Verlegung nach Kremsier (Kroměříž)."
+        },
+        {
+         "datum": "Oktober 1848",
+         "text": "Oktoberaufstand; Rückeroberung Wiens durch Windisch-Graetz und Jelačić; Standrecht."
+        },
+        {
+         "datum": "2.12.1848",
+         "text": "Thronverzicht Ferdinands I.; Franz Joseph I. besteigt den Thron, ungebunden durch die Zusagen seines Vorgängers."
+        }
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Prüfungsrelevant ist die Reihenfolge: Oktroi im April, revolutionärer Druck im Mai, gewählter Reichstag im Juli, Gegenrevolution im Oktober und Dezember."
+      }
+     ]
+    },
+    {
+     "code": "B2",
+     "titel": "Die Pillersdorfsche Verfassung",
+     "anker": "25.4.1848",
+     "seite": "Rz 6",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "„Verfassungs-Urkunde des österreichischen Kaiserstaates“, benannt nach Innenminister Franz Freiherr von Pillersdorf; oktroyiert, also einseitig vom Monarchen erlassen und nicht mit einer Volksvertretung vereinbart."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Geltungsbereich:** nur die deutsch-slawischen Erbländer; Ungarn und Lombardo-Venetien ausgenommen, der spätere Dualismus ist angelegt.",
+        "**Konstitutionelle Monarchie:** Kaiser als Träger der vollziehenden Gewalt, Gesetzgebung gemeinsam mit dem Reichstag.",
+        "**Zweikammersystem** aus Senat und Kammer der Abgeordneten.",
+        "**Grundrechte:** Pressefreiheit, Glaubensfreiheit, Petitionsrecht, Vereins- und Versammlungsfreiheit, Gleichheit vor dem Gesetz.",
+        "**Ministerverantwortlichkeit** gegenüber dem Reichstag: angelegt, nicht ausgeformt."
+       ],
+       "titel": "Inhalt"
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Die Pillersdorfsche Verfassung trat nie wirksam in Kraft. Die Wahlordnung vom Mai 1848 schloss Arbeiter, Dienstboten und Taglöhner aus; die Sturmpetition vom 15.5.1848 erzwang stattdessen einen konstituierenden Reichstag."
+      }
+     ]
+    },
+    {
+     "code": "B3",
+     "titel": "Konstituierender Reichstag und Grundentlastung",
+     "anker": "Gesetz vom 7.9.1848",
+     "seite": "Rz 7",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Der im Juni 1848 indirekt gewählte Reichstag (Männerwahlrecht mit Ausschlüssen) trat am 22.7.1848 in Wien zusammen und wurde nach dem Oktoberaufstand nach Kremsier verlegt (Eröffnung dort am 22.11.1848)."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Grundentlastung** auf Antrag Hans Kudlichs, Gesetz vom 7.9.1848: Aufhebung des Untertänigkeitsverbandes, der Robot und der grundherrlichen Lasten, gegen Entschädigung der bisher Berechtigten.",
+        "Die Grundherrschaft endet als Rechtsinstitut: Die Bauern werden freie Eigentümer, der Staat übernimmt Verwaltung und Gerichtsbarkeit auf lokaler Ebene.",
+        "**Ende:** Auflösung des Reichstages am 7.3.1849 durch ein militärisch abgesichertes Patent; führende Abgeordnete werden verhaftet oder fliehen."
+       ],
+       "titel": "Die bleibende Leistung"
+      },
+      {
+       "typ": "merke",
+       "text": "Die Grundentlastung ist die einzige große Errungenschaft von 1848, die die Gegenrevolution überlebt hat; das Silvesterpatent 1851 ließ sie ausdrücklich unangetastet ([[B6]])."
+      }
+     ]
+    },
+    {
+     "code": "B4",
+     "titel": "Der Kremsierer Verfassungsentwurf",
+     "anker": "März 1849",
+     "seite": "Rz 8",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Der vom Verfassungsausschuss des Reichstages erarbeitete Entwurf lag Anfang März 1849 vor. Er ist der einzige demokratisch erarbeitete Verfassungstext des österreichischen 19. Jahrhunderts und trat nie in Kraft."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Volkssouveränität:** „Alle Staatsgewalten gehen vom Volke aus“; für die Monarchie unannehmbar, weil die Formel das monarchische Prinzip aufhebt.",
+        "Umfassender **Grundrechtskatalog** an der Spitze des Textes.",
+        "**Föderalismus** mit Kreiseinteilung; Gleichberechtigung aller Volksstämme und Sprachen.",
+        "**Zweikammersystem** aus Volkskammer und Länderkammer; dem Kaiser nur ein suspensives Veto.",
+        "Ein **Reichsgericht** als Hüter der Verfassung."
+       ],
+       "titel": "Kerngehalt"
+      },
+      {
+       "typ": "feinheit",
+       "text": "Wirkungsgeschichte: Der Entwurf wurde zum Steinbruch späterer Texte. Grundrechtskatalog und Nationalitätenartikel flossen 1867 in das StGG ein ([[D3]]); das föderale Modell und der Gedanke der Verfassungsgerichtsbarkeit wirken bis in das B-VG 1920 nach."
+      },
+      {
+       "typ": "latinum",
+       "lat": "omnis potestas a populo",
+       "de": "Alle Staatsgewalt geht vom Volk aus; Gegensatz zum monarchischen Prinzip",
+       "stelle": "neulateinische Formel der Volkssouveränität"
+      }
+     ]
+    },
+    {
+     "code": "B5",
+     "titel": "Die oktroyierte Märzverfassung",
+     "anker": "Patent vom 4.3.1849",
+     "seite": "Rz 9",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Am 4.3.1849 oktroyierte die Krone eine eigene „Reichsverfassung für das Kaiserthum Oesterreich“, benannt nach Innenminister Graf Stadion; drei Tage später wurde der Reichstag aufgelöst."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Gesamtstaatsverfassung:** erfasst erstmals auch Ungarn; zentralistischer Einheitsstaat unter Aufhebung der ungarischen Sonderverfassung.",
+        "**Konstitutionelle Fassade:** Reichstag aus Ober- und Unterhaus, Ministerverantwortlichkeit, Reichsgericht; starkes Notverordnungsrecht und absolutes Veto des Kaisers.",
+        "Begleitet vom **Grundrechtspatent** vom 4.3.1849.",
+        "**Vollzug:** nie in Vollzug gesetzt, ein Reichstag trat nie zusammen; Ausnahmezustand und Standrecht blieben das faktische Regierungsinstrument. Ungarn kapitulierte erst bei Világos am 13.8.1849.",
+        "**Bleibend:** Provisorisches Gemeindegesetz vom 17.3.1849; die Gemeindeselbstverwaltung lebt bis heute fort (Art 115 ff B-VG)."
+       ],
+       "titel": "Merkmale"
+      },
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Prüfungsweiche: Legitimationstypen",
+       "kopf": [
+        "Typ",
+        "Entstehung",
+        "Beispiele"
+       ],
+       "zeilen": [
+        [
+         "oktroyiert",
+         "einseitig vom Monarchen gewährt (französisch octroyer: bewilligen, aufdrängen) und von ihm widerruflich",
+         "1848, 1849; Rücknahme 1851"
+        ],
+        [
+         "pactiert",
+         "Vereinbarung mit der Volksvertretung",
+         "Dezemberverfassung 1867"
+        ],
+        [
+         "demokratisch",
+         "verfassunggebende Gewalt des Volkes",
+         "Kremsier 1849 als Entwurf, B-VG 1920"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "B6",
+     "titel": "Das Silvesterpatent",
+     "anker": "31.12.1851",
+     "seite": "Rz 10",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Drei kaiserliche Erlässe vom 31.12.1851 beseitigen die konstitutionelle Ordnung; sie sind der formale Schlussstein der Gegenrevolution."
+      },
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Die drei Erlässe",
+       "kopf": [
+        "Erlass",
+        "Regelungsgehalt"
+       ],
+       "zeilen": [
+        [
+         "Erster",
+         "Aufhebung der Märzverfassung 1849, die für erloschen erklärt wird"
+        ],
+        [
+         "Zweiter",
+         "Aufhebung des Grundrechtspatents; die politischen Grundrechte entfallen ersatzlos"
+        ],
+        [
+         "Dritter",
+         "„Grundsätze für organische Einrichtungen“: monarchisches Prinzip, nur beratender Reichsrat, Bürokratie und Kirche als Stützen der Herrschaft"
+        ]
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Was überlebt: Grundentlastung, Aufhebung der Untertänigkeit, Gleichheit vor dem Gesetz im Zivil- und Strafrecht und die Trennung von Justiz und Verwaltung auf höherer Ebene. Beseitigt werden die politischen Rechte und jede Volksvertretung."
+      },
+      {
+       "typ": "latinum",
+       "lat": "princeps legibus solutus",
+       "de": "Der Fürst ist an die Gesetze nicht gebunden; Formel des Absolutismus",
+       "stelle": "nach Ulpian, D. 1,3,31"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "III",
+   "code": "C",
+   "name_lat": "Dominatio Restituta",
+   "name_de": "Neoabsolutismus und monarchischer Einheitsstaat 1851 bis 1867",
+   "leitfrage": "Warum führt der Neoabsolutismus über Oktoberdiplom und Februarpatent zwangsläufig zum Ausgleich?",
+   "kompakt": [
+    "Nach 1851 regiert Franz Joseph I. absolut; das Bach’sche System ist politisch reaktionär und ökonomisch modernisierend zugleich.",
+    "Militärische Niederlagen und Finanznot machen die Verfassung zur Finanzierungsfrage.",
+    "Das Oktoberdiplom 1860 ist föderalistisch-ständisch, das Februarpatent 1861 zentralistisch.",
+    "Königgrätz 1866 erzwingt den Ausgleich mit Ungarn 1867."
+   ],
+   "anker": [
+    "20.10.1860",
+    "26.2.1861",
+    "3.7.1866"
+   ],
+   "seiten": "Rz 11 bis 14",
+   "kacheln": [
+    {
+     "code": "C1",
+     "titel": "Der Neoabsolutismus",
+     "anker": "1851 bis 1860",
+     "seite": "Rz 11",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Nach dem Silvesterpatent regiert Franz Joseph I. absolut. Prägende Figur ist Innenminister Alexander Bach; die Epoche heißt danach das Bach’sche System."
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Zwei Gesichter",
+       "links": "Herrschaftsstruktur",
+       "rechts": "Modernisierung",
+       "kriterien": [
+        {
+         "kriterium": "Staat",
+         "links": "monarchischer Einheitsstaat; historische Länderverfassungen aufgehoben, Ungarn in Verwaltungsdistrikte zerlegt",
+         "rechts": "Durchführung der Grundentlastung"
+        },
+        {
+         "kriterium": "Träger und Recht",
+         "links": "Bürokratie und Polizei („Bach-Husaren“), zentralisierte Steuer- und Zollhoheit",
+         "rechts": "Strafgesetz 1852, Gewerbeordnung 1859 mit Gewerbefreiheit, Handels- und Wechselrecht"
+        },
+        {
+         "kriterium": "Kirche und Wirtschaft",
+         "links": "Konkordat 1855: Ehe-, Schul- und Zensurkompetenzen weitgehend an die Kirche",
+         "rechts": "Zollunion mit Ungarn 1850, Eisenbahn- und Telegraphennetz"
+        }
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Krise: Die Niederlagen bei Magenta und Solferino 1859 und der drohende Staatsbankrott entziehen dem System die Legitimation. Verfassung wird zur Finanzierungsfrage: ohne Steuerbewilligung durch Vertretungskörper kein Kredit."
+      }
+     ]
+    },
+    {
+     "code": "C2",
+     "titel": "Das Oktoberdiplom",
+     "anker": "20.10.1860",
+     "seite": "Rz 12",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Ein „ständiges und unwiderrufliches Staatsgrundgesetz“: der erste Rückweg zur Verfassungsstaatlichkeit, in föderalistisch-ständischer Ausprägung."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "Gesetzgebung durch den Kaiser unter Mitwirkung der Landtage und eines verstärkten Reichsrates.",
+        "Wiederherstellung der historischen Länderrechte; Ungarn erhält seine Komitatsverfassung zurück.",
+        "Nur wenige gemeinsame Materien (Finanzen, Handel, Heer) verbleiben beim Reichsrat."
+       ]
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Das Oktoberdiplom wurde formell nie aufgehoben. Es scheiterte politisch (den Ungarn zu wenig, den deutschösterreichischen Liberalen zu ständisch) und wurde durch das Februarpatent nur „erläutert“, in Wahrheit umgekehrt ([[C3]])."
+      }
+     ]
+    },
+    {
+     "code": "C3",
+     "titel": "Das Februarpatent",
+     "anker": "26.2.1861",
+     "seite": "Rz 13",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Als Ausführung des Oktoberdiploms deklariert, in Wahrheit dessen zentralistische Umkehrung; verantwortlich ist Staatsminister Anton von Schmerling."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Reichsrat als Zweikammerparlament:** Herrenhaus (Erzherzöge, Adel, Kirchenfürsten, Ernannte) und Abgeordnetenhaus, von den Landtagen beschickt.",
+        "**Engerer und weiterer Reichsrat:** für die cisleithanischen beziehungsweise für die gesamtstaatlichen Angelegenheiten.",
+        "**Landesordnungen und Landtagswahlordnungen** als Beilagen: institutionelle Wurzel der heutigen Länder und Landtage.",
+        "**Kurienwahlrecht** mit hohem Zensus: Großgrundbesitz, Städte, Handelskammern, Landgemeinden."
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Scheitern: Ungarn und die Tschechen boykottierten den Reichsrat. 1865 wurde das Februarpatent sistiert, also in seiner Wirksamkeit ausgesetzt, um den Ausgleich mit Ungarn zu ermöglichen."
+      }
+     ]
+    },
+    {
+     "code": "C4",
+     "titel": "Der Weg zum Ausgleich",
+     "anker": "1865 bis 1867",
+     "seite": "Rz 14",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die außenpolitische Niederlage von 1866 erzwingt den inneren Ausgleich mit Ungarn."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "1865 bis 1867",
+       "ereignisse": [
+        {
+         "datum": "September 1865",
+         "text": "Sistierung des Februarpatents; Verhandlungen mit der ungarischen Führung um Deák und Andrássy."
+        },
+        {
+         "datum": "3.7.1866",
+         "text": "Niederlage bei Königgrätz gegen Preußen."
+        },
+        {
+         "datum": "23.8.1866",
+         "text": "Friede von Prag: Ausscheiden Österreichs aus Deutschland, Auflösung des Deutschen Bundes."
+        },
+        {
+         "datum": "1867",
+         "text": "Ausgleich mit Ungarn und Dezemberverfassung für die österreichische Reichshälfte ([[D1]], [[D2]])."
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Kausalkette für die Klausur: militärische Niederlage, Finanz- und Legitimationskrise, Verfassungszugeständnis. Das Muster wiederholt sich 1859/60 und 1866/67 und erklärt, warum österreichische Verfassungsschritte selten aus freiem Entschluss erfolgen."
+      },
+      {
+       "typ": "latinum",
+       "lat": "necessitas frangit legem",
+       "de": "Die Not bricht das Gesetz; hier präziser: Die Not erzwingt erst das Gesetz",
+       "stelle": "Rechtssprichwort"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "IV",
+   "code": "D",
+   "name_lat": "Monarchia Bipartita",
+   "name_de": "Konstitutionalismus in der Doppelmonarchie 1867 bis 1918",
+   "leitfrage": "Was schafft die Dezemberverfassung 1867, was davon gilt heute noch, und woran scheitert die Monarchie?",
+   "kompakt": [
+    "Der Ausgleich 1867 begründet eine Realunion: zwei Staaten, ein Monarch, drei gemeinsame Angelegenheiten.",
+    "Die Dezemberverfassung ist ein pactiertes Bündel von Staatsgrundgesetzen.",
+    "Das StGG über die allgemeinen Rechte der Staatsbürger gilt bis heute im Verfassungsrang.",
+    "Reichsgericht 1867 und Verwaltungsgerichtshof 1875 bereiten den Verfassungsgerichtshof vor.",
+    "Die Monarchie scheitert am Nationalitätenkonflikt, nicht am Verfassungstext."
+   ],
+   "anker": [
+    "RGBl 1867/141 bis 146",
+    "RGBl 1876/36"
+   ],
+   "seiten": "Rz 15 bis 20",
+   "kacheln": [
+    {
+     "code": "D1",
+     "titel": "Der österreichisch-ungarische Ausgleich",
+     "anker": "RGBl 1867/146",
+     "seite": "Rz 15",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Ungarn: Gesetzesartikel XII/1867; Österreich: Gesetz vom 21.12.1867 über die allen Ländern der österreichischen Monarchie gemeinsamen Angelegenheiten (Delegationsgesetz). Ergebnis ist die Doppelmonarchie: zwei Staaten, ein Monarch, drei gemeinsame Materien."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Delegationen:** je 60 Mitglieder beider Parlamente; getrennte Beratung, schriftlicher Verkehr, bei Uneinigkeit gemeinsame Abstimmung ohne Debatte."
+       ]
+      },
+      {
+       "typ": "schema",
+       "variante": "fluss",
+       "titel": "Aufbau der Doppelmonarchie",
+       "knoten": [
+        {
+         "id": "m",
+         "text": "Monarch: Kaiser von Österreich und König von Ungarn",
+         "zeile": 1,
+         "spalte": 2,
+         "art": "start"
+        },
+        {
+         "id": "c",
+         "text": "Cisleithanien: im Reichsrat vertretene Königreiche und Länder",
+         "zeile": 2,
+         "spalte": 1,
+         "art": "station"
+        },
+        {
+         "id": "g",
+         "text": "Gemeinsam: Äußeres, Heerwesen und deren Finanzierung",
+         "zeile": 2,
+         "spalte": 2,
+         "art": "station"
+        },
+        {
+         "id": "t",
+         "text": "Transleithanien: Länder der Stephanskrone",
+         "zeile": 2,
+         "spalte": 3,
+         "art": "station"
+        },
+        {
+         "id": "d",
+         "text": "Delegationen: je 60 Mitglieder beider Parlamente",
+         "zeile": 3,
+         "spalte": 2,
+         "art": "ergebnis"
+        }
+       ],
+       "kanten": [
+        {
+         "von": "m",
+         "nach": "c"
+        },
+        {
+         "von": "m",
+         "nach": "g"
+        },
+        {
+         "von": "m",
+         "nach": "t"
+        },
+        {
+         "von": "c",
+         "nach": "d"
+        },
+        {
+         "von": "g",
+         "nach": "d"
+        },
+        {
+         "von": "t",
+         "nach": "d"
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Rechtlich eine Realunion: mehr als eine Personalunion, weil gemeinsame Organe und Aufgaben bestehen; weniger als ein Bundesstaat, weil eine echte gemeinsame Gesetzgebung fehlt."
+      },
+      {
+       "typ": "feinheit",
+       "text": "„Cis-“ und „Transleithanien“ bezeichnen die Lage diesseits und jenseits der Leitha. Daneben bestand ein Zoll- und Handelsbündnis, alle zehn Jahre neu zu verhandeln und regelmäßig Anlass zur Krise um die Quote, also den Beitrag beider Reichshälften zu den gemeinsamen Ausgaben."
+      }
+     ]
+    },
+    {
+     "code": "D2",
+     "titel": "Die Dezemberverfassung",
+     "anker": "RGBl 1867/141 bis 145",
+     "seite": "Rz 16",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Keine geschlossene Urkunde, sondern ein Bündel von fünf Staatsgrundgesetzen für Cisleithanien, kundgemacht am 21.12.1867: der eigentliche Beginn des österreichischen Konstitutionalismus."
+      },
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Die Staatsgrundgesetze und das Delegationsgesetz",
+       "kopf": [
+        "Gesetz",
+        "Fundstelle",
+        "Regelungsgehalt"
+       ],
+       "zeilen": [
+        [
+         "StGG über die Reichsvertretung",
+         "RGBl 1867/141",
+         "Reichsrat als Zweikammerparlament; Gesetzgebung nur mit Zustimmung beider Häuser und kaiserlicher Sanktion; Notverordnungsrecht in § 14"
+        ],
+        [
+         "StGG über die allgemeinen Rechte der Staatsbürger",
+         "RGBl 1867/142",
+         "Grundrechtskatalog; gilt nach Art 149 Abs 1 B-VG bis heute als Bundesverfassungsgesetz"
+        ],
+        [
+         "StGG über die Einsetzung eines Reichsgerichtes",
+         "RGBl 1867/143",
+         "Kompetenzkonflikte, vermögensrechtliche Ansprüche gegen den Staat, Beschwerden wegen Verletzung politischer Rechte; Vorläufer des Verfassungsgerichtshofes"
+        ],
+        [
+         "StGG über die richterliche Gewalt",
+         "RGBl 1867/144",
+         "Unabhängigkeit, Unabsetzbarkeit und Unversetzbarkeit der Richter; Trennung von Justiz und Verwaltung; Ankündigung eines Verwaltungsgerichtshofes"
+        ],
+        [
+         "StGG über die Ausübung der Regierungs- und Vollzugsgewalt",
+         "RGBl 1867/145",
+         "Stellung des Kaisers, Gegenzeichnung, Ministerverantwortlichkeit (Ministerverantwortlichkeitsgesetz 1867 samt Staatsgerichtshof)"
+        ],
+        [
+         "Delegationsgesetz",
+         "RGBl 1867/146",
+         "gemeinsame Angelegenheiten mit Ungarn; kein Staatsgrundgesetz, aber Teil des Verfassungspakets von 1867"
+        ]
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Die Dezemberverfassung ist pactiert: Sie kam mit Zustimmung des Reichsrates zustande und ist daher nicht einseitig widerruflich. Genau diese Qualität macht ihre Rezeption 1918 und 1920 möglich."
+      }
+     ]
+    },
+    {
+     "code": "D3",
+     "titel": "Das StGG 1867: der lebende Grundrechtskatalog",
+     "anker": "RGBl 1867/142",
+     "seite": "Rz 17",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Das Staatsgrundgesetz über die allgemeinen Rechte der Staatsbürger ist die älteste in Geltung stehende Grundrechtsquelle Österreichs und daher in jeder Grundrechtsklausur mitzuprüfen."
+      },
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Der Katalog",
+       "kopf": [
+        "Artikel",
+        "Gewährleistung"
+       ],
+       "zeilen": [
+        [
+         "Art 2",
+         "Gleichheit vor dem Gesetz; heute überlagert durch Art 7 B-VG"
+        ],
+        [
+         "Art 3",
+         "gleicher Zugang zu öffentlichen Ämtern"
+        ],
+        [
+         "Art 4",
+         "Freizügigkeit der Person und des Vermögens"
+        ],
+        [
+         "Art 5",
+         "Unverletzlichkeit des Eigentums"
+        ],
+        [
+         "Art 6",
+         "Liegenschaftserwerb und Erwerbsfreiheit"
+        ],
+        [
+         "Art 8",
+         "persönliche Freiheit; ersetzt durch das PersFrBVG, BGBl 1988/684"
+        ],
+        [
+         "Art 9",
+         "Hausrecht in Verbindung mit dem Gesetz zum Schutze des Hausrechtes, RGBl 1862/88"
+        ],
+        [
+         "Art 10, 10a",
+         "Briefgeheimnis; Fernmeldegeheimnis (Art 10a, seit 1974)"
+        ],
+        [
+         "Art 11",
+         "Petitionsrecht"
+        ],
+        [
+         "Art 12",
+         "Versammlungs- und Vereinsfreiheit"
+        ],
+        [
+         "Art 13",
+         "Freiheit der Meinungsäußerung; Zensurverbot"
+        ],
+        [
+         "Art 14",
+         "Glaubens- und Gewissensfreiheit"
+        ],
+        [
+         "Art 15",
+         "korporative Religionsausübung gesetzlich anerkannter Kirchen"
+        ],
+        [
+         "Art 16",
+         "häusliche Religionsausübung"
+        ],
+        [
+         "Art 17",
+         "Freiheit der Wissenschaft und ihrer Lehre; Schulwesen"
+        ],
+        [
+         "Art 17a",
+         "Freiheit des künstlerischen Schaffens (seit 1982)"
+        ],
+        [
+         "Art 18",
+         "Freiheit der Berufswahl und Berufsausbildung"
+        ],
+        [
+         "Art 19",
+         "Gleichberechtigung der Volksstämme und Landessprachen"
+        ]
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Die Rechte des StGG sind klassische Abwehrrechte mit häufig bloß formellen Gesetzesvorbehalten. Die materielle Schrankenprüfung, also die Verhältnismäßigkeit, kam erst über die EMRK hinzu ([[G4]]). Art 19 StGG gilt nach herrschender Auffassung als durch Art 7 des Staatsvertrages von Wien und die übrigen Minderheitenschutzbestimmungen überlagert."
+      },
+      {
+       "typ": "latinum",
+       "lat": "status negativus, positivus, activus",
+       "de": "Abwehr, Leistung, Teilhabe: Statuslehre zur Ordnung der Grundrechte",
+       "stelle": "Georg Jellinek, System der subjektiven öffentlichen Rechte (1892)"
+      }
+     ]
+    },
+    {
+     "code": "D4",
+     "titel": "Reichsgericht und Verwaltungsgerichtshof",
+     "anker": "RGBl 1867/143; RGBl 1876/36",
+     "seite": "Rz 18",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "1867 schafft Grundrechte, aber noch keine wirksame Verfassungsgerichtsbarkeit. Zwei Gerichte bereiten sie vor."
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Zwei Gerichte",
+       "links": "Reichsgericht 1867",
+       "rechts": "Verwaltungsgerichtshof 1875",
+       "kriterien": [
+        {
+         "kriterium": "Rechtsgrundlage",
+         "links": "StGG über die Einsetzung eines Reichsgerichtes, RGBl 1867/143",
+         "rechts": "Gesetz vom 22.10.1875, kundgemacht RGBl 1876/36, in Ausführung des StGG über die richterliche Gewalt; Tätigkeit ab 1876"
+        },
+        {
+         "kriterium": "Zuständigkeit",
+         "links": "Kompetenzkonflikte, vermögensrechtliche Ansprüche gegen den Staat, Beschwerden wegen Verletzung politischer Rechte",
+         "rechts": "Kontrolle der Verwaltung auf Rechtmäßigkeit, nicht auf Zweckmäßigkeit"
+        },
+        {
+         "kriterium": "Wirkung",
+         "links": "nur feststellend: keine Aufhebung des rechtswidrigen Aktes, keine Normenkontrolle über Gesetze",
+         "rechts": "kassatorisch"
+        },
+        {
+         "kriterium": "Heute",
+         "links": "Vorläufer des Verfassungsgerichtshofes 1920",
+         "rechts": "älteste bis heute bestehende Höchstgerichtsbarkeit des öffentlichen Rechts"
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Dreischritt: Reichsgericht 1867, Verwaltungsgerichtshof 1875, Verfassungsgerichtshof 1920 ([[E6]])."
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Gesetzesdatum und Kundmachungsjahr fallen auseinander: Der Verwaltungsgerichtshof wurde durch das Gesetz vom 22.10.1875 errichtet, kundgemacht aber erst im RGBl 1876 unter Nr 36."
+      }
+     ]
+    },
+    {
+     "code": "D5",
+     "titel": "Die Entwicklung des Wahlrechts",
+     "anker": "1861 bis 1918",
+     "seite": "Rz 19",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Der Weg vom Kurien- und Zensuswahlrecht zum allgemeinen und gleichen Wahlrecht dauert mehr als ein halbes Jahrhundert."
+      },
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Wahlrechtsreformen",
+       "kopf": [
+        "Jahr",
+        "Reform"
+       ],
+       "zeilen": [
+        [
+         "1861",
+         "Abgeordnetenhaus von den Landtagen beschickt; Kurienwahlrecht mit Steuerzensus"
+        ],
+        [
+         "1873",
+         "direkte Reichsratswahlen in vier Kurien: Großgrundbesitz, Städte und Märkte, Handels- und Gewerbekammern, Landgemeinden"
+        ],
+        [
+         "1882",
+         "Reform Taaffe: Zensus auf fünf Gulden gesenkt („Fünfguldenmänner“)"
+        ],
+        [
+         "1896",
+         "Reform Badeni: fünfte, allgemeine Wählerkurie; Wahlrecht für nahezu alle Männer, aber stark ungleiches Stimmgewicht"
+        ],
+        [
+         "1907",
+         "allgemeines, gleiches, direktes und geheimes Männerwahlrecht ab 24 Jahren (Beck); Kurien für das Abgeordnetenhaus abgeschafft"
+        ],
+        [
+         "1918",
+         "Frauenwahlrecht, erst mit der Republik"
+        ]
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Heute Art 26 Abs 1 B-VG: allgemein, gleich, unmittelbar, persönlich, frei und geheim, nach den Grundsätzen der Verhältniswahl."
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "„Allgemein“ (jeder wählt) und „gleich“ (jede Stimme zählt gleich viel) sind verschiedene Wahlrechtsgrundsätze. 1896 ist das Wahlrecht beinahe allgemein, aber grob ungleich; erst 1907 fallen beide zusammen."
+      }
+     ]
+    },
+    {
+     "code": "D6",
+     "titel": "Krise und Ende der Monarchie",
+     "anker": "§ 14 StGG über die Reichsvertretung",
+     "seite": "Rz 20",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die Monarchie scheitert nicht am fehlenden Verfassungstext, sondern an der Unfähigkeit, den Nationalitätenkonflikt in parlamentarische Verfahren zu übersetzen."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Badenische Sprachenverordnungen 1897** für Böhmen und Mähren: Tschechisch als innere Amtssprache gleichgestellt; deutschnationale Obstruktion macht das Parlament arbeitsunfähig.",
+        "**Mährischer Ausgleich 1905:** nationale Kataster und getrennte Wahlkörper als Modell eines Interessenausgleichs.",
+        "Dauerkonflikt um Sprache, Schule und Beamtenposten; Art 19 StGG ist Rechtsgrundlage und Streitgegenstand zugleich."
+       ],
+       "titel": "Nationalitätenkonflikt"
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**§ 14 StGG über die Reichsvertretung:** kaiserliche Notverordnungen, wenn der Reichsrat nicht versammelt ist, nachträglich vorzulegen; faktisch Normalinstrument der Regierungen.",
+        "**März 1914:** Vertagung des Reichsrates, bis Mai 1917 keine Einberufung; Kriegsabsolutismus.",
+        "**1917:** Wiedereinberufung durch Kaiser Karl I.; das Kriegswirtschaftliche Ermächtigungsgesetz 1917 erlaubt weitreichende Verordnungen und wird 1933 wiederbelebt ([[F1]]).",
+        "**16.10.1918:** Völkermanifest Karls I. mit dem Angebot eines Bundesstaates; zu spät, die Nationalräte konstituieren sich bereits als eigene Staaten."
+       ],
+       "titel": "Regieren ohne Parlament"
+      },
+      {
+       "typ": "merke",
+       "text": "Die Verfassungsordnung von 1867 war formal modern, ihr Trägerstaat aber multinational und ihr Parlament blockiert."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "V",
+   "code": "E",
+   "name_lat": "Res Publica Prima",
+   "name_de": "Die Entstehung der Ersten Republik 1918 bis 1929",
+   "leitfrage": "Wie entsteht die Republik durch Rezeption statt Bruch, und welche Gestaltentscheidungen des B-VG prägen bis heute?",
+   "kompakt": [
+    "Die Republik übernimmt 1918 den einfachgesetzlichen Rechtsbestand der Monarchie (Rezeption).",
+    "Saint-Germain formt den Staat von außen und ist teilweise bis heute Verfassungsrecht.",
+    "Das B-VG 1920 ist ein Kompromiss; ein eigener Grundrechtskatalog fehlt, daher Art 149 B-VG.",
+    "Der Verfassungsgerichtshof ist das Modell der konzentrierten Verfassungsgerichtsbarkeit.",
+    "Das B-VG gilt im Kern in der Fassung der Novelle 1929."
+   ],
+   "anker": [
+    "StGBl 1918/1 und 5",
+    "BGBl 1920/1",
+    "BGBl 1929/392",
+    "Art 149 B-VG"
+   ],
+   "seiten": "Rz 21 bis 28",
+   "kacheln": [
+    {
+     "code": "E1",
+     "titel": "Die Gründungsakte 1918",
+     "anker": "StGBl 1918/1, 3 und 5",
+     "seite": "Rz 21",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die Republik entsteht durch revolutionäre Selbstermächtigung, übernimmt aber das bestehende Recht: Rezeption statt Bruch."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "Oktober 1918 bis Februar 1919",
+       "ereignisse": [
+        {
+         "datum": "21.10.1918",
+         "text": "Die deutschsprachigen Abgeordneten des 1911 gewählten Reichsrates konstituieren sich als Provisorische Nationalversammlung für Deutschösterreich."
+        },
+        {
+         "datum": "30.10.1918",
+         "text": "Beschluss über die grundlegenden Einrichtungen der Staatsgewalt, StGBl 1918/1: Staatsrat, Staatskanzlei, Staatsregierung, Staatskanzler Karl Renner; Rezeptionsnorm. Am selben Tag: Beschluss über die Aufhebung der Zensur, StGBl 1918/3."
+        },
+        {
+         "datum": "11.11.1918",
+         "text": "Karl I. verzichtet „auf jeden Anteil an den Staatsgeschäften“."
+        },
+        {
+         "datum": "12.11.1918",
+         "text": "Gesetz über die Staats- und Regierungsform, StGBl 1918/5: demokratische Republik (Art 1), Anschlussartikel (Art 2)."
+        },
+        {
+         "datum": "16.2.1919",
+         "text": "Wahl der Konstituierenden Nationalversammlung; erstmals allgemeines und gleiches Wahlrecht für Frauen und Männer nach Verhältniswahl."
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Rezeption: Die Republik übernimmt den einfachgesetzlichen Bestand der Monarchie, um ein Rechtsvakuum zu vermeiden. Deshalb gelten etwa das ABGB 1811 und das StGG 1867 weiter; Verfassungsrecht wird neu geschaffen, das übrige Recht übergeleitet."
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Die Erklärung vom 11.11.1918 ist weder Abdankung noch Thronverzicht für das Haus Habsburg, sondern nur ein Verzicht auf die Ausübung der Regierungsgeschäfte."
+      }
+     ]
+    },
+    {
+     "code": "E2",
+     "titel": "Der Staatsvertrag von Saint-Germain",
+     "anker": "StGBl 1920/303",
+     "seite": "Rz 22",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Unterzeichnet am 10.9.1919, in Kraft am 16.7.1920; der Vertrag formt den Staat von außen und ist teilweise bis heute Verfassungsrecht."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Name:** Aus „Deutschösterreich“ wird die „Republik Österreich“; der Anschlussartikel ist aufzuheben.",
+        "**Anschlussverbot (Art 88):** Die Unabhängigkeit Österreichs ist unabänderlich, außer mit Zustimmung des Völkerbundrates.",
+        "**Minderheitenschutz:** Abschnitt V des III. Teiles; nach Art 149 Abs 1 B-VG im Verfassungsrang.",
+        "**Grenzen:** Verlust Südtirols sowie Böhmens und Mährens; Militär- und Reparationsbestimmungen."
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Die Kärntner Volksabstimmung vom 10.10.1920 beruht auf dem Vertrag. Das Burgenland kam 1921 hinzu; Ödenburg (Sopron) verblieb nach einer Abstimmung bei Ungarn."
+      }
+     ]
+    },
+    {
+     "code": "E3",
+     "titel": "Habsburgergesetz und Adelsaufhebungsgesetz",
+     "anker": "StGBl 1919/209 und 211",
+     "seite": "Rz 23",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Beide Gesetze vom 3.4.1919 stehen nach Art 149 Abs 1 B-VG im Verfassungsrang und gelten fort."
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Die beiden Gesetze",
+       "links": "Habsburgergesetz, StGBl 1919/209",
+       "rechts": "Adelsaufhebungsgesetz, StGBl 1919/211",
+       "kriterien": [
+        {
+         "kriterium": "Gegenstand",
+         "links": "Landesverweisung der Mitglieder des Hauses Habsburg-Lothringen, sofern sie nicht auf ihre Herrschaftsansprüche verzichten und sich als treue Staatsbürger bekennen",
+         "rechts": "Aufhebung des Adels, seiner äußeren Ehrenvorzüge und der damit verbundenen Titel"
+        },
+        {
+         "kriterium": "Vermögen und Vollzug",
+         "links": "Übernahme des hofärarischen Vermögens in Staatseigentum",
+         "rechts": "keine Adelsbezeichnungen, kein „von“, keine Prädikate; Durchführung durch Vollzugsanweisung"
+        },
+        {
+         "kriterium": "Bedeutung heute",
+         "links": "weiterhin in Geltung",
+         "rechts": "justiziabel; Ausdruck des Gleichheitssatzes und der republikanischen Identität, die nach EuGH 22.12.2010, C-208/09, Sayn-Wittgenstein, sogar eine Beschränkung der Freizügigkeit rechtfertigen kann"
+        }
+       ]
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Der Ausschluss von Mitgliedern regierender oder ehemals regierender Häuser von der Wählbarkeit zum Bundespräsidenten stand in Art 60 Abs 3 zweiter Satz B-VG und fiel mit dem Wahlrechtsänderungsgesetz 2011, BGBl I 2011/43. Das Habsburgergesetz selbst blieb ausdrücklich unberührt."
+      }
+     ]
+    },
+    {
+     "code": "E4",
+     "titel": "Das Bundes-Verfassungsgesetz 1920",
+     "anker": "BGBl 1920/1",
+     "seite": "Rz 24",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Beschlossen am 1.10.1920, in Kraft am 10.11.1920, maßgeblich verfasst von Hans Kelsen. Das B-VG ist ein Kompromiss zwischen Christlichsozialen (föderalistisch, präsidial, wertgebunden) und Sozialdemokraten (zentralistisch, parlamentarisch, laizistisch)."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Parlamentarische Bundesrepublik:** Nationalrat als Zentralorgan, Bundesregierung vom Nationalrat gewählt, schwacher Bundespräsident, gewählt von der Bundesversammlung.",
+        "**Bundesstaat** aus selbständigen Ländern (heute neun, Art 2 Abs 2 B-VG) mit einem Bundesrat, der nur ein Einspruchsrecht besitzt: unitarischer Bundesstaat.",
+        "**Verfassungsgerichtsbarkeit** mit Normenkontrolle ([[E6]]).",
+        "**Strenge Rechtsstaatlichkeit:** Legalitätsprinzip (heute Art 18 B-VG) und Rechtsschutz gegen Verwaltungsakte."
+       ],
+       "titel": "Gestaltentscheidungen"
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "Ein eigener Grundrechtskatalog scheiterte am weltanschaulichen Dissens über Ehe- und Schulrecht und das Verhältnis zur Kirche.",
+        "Lösung: Art 149 B-VG rezipiert das StGG 1867 und weitere ältere Texte im Verfassungsrang ([[E8]]).",
+        "Folge: Der Grundrechtsbestand ist bis heute zersplittert: StGG 1867, EMRK, einzelne Bundesverfassungsgesetze, Grundrechte-Charta im Anwendungsbereich des Unionsrechts."
+       ],
+       "titel": "Die Torso-Verfassung"
+      },
+      {
+       "typ": "feinheit",
+       "text": "Kelsens Programm ist der Stufenbau der Rechtsordnung: Jede Norm erzeugt sich aufgrund einer höheren, und die Verfassung ist die Erzeugungsregel der Gesetze, nicht bloß ein politisches Bekenntnis."
+      },
+      {
+       "typ": "latinum",
+       "lat": "lex superior derogat legi inferiori",
+       "de": "Das höherrangige Gesetz verdrängt das niederrangige",
+       "stelle": "Rechtsgrundsatz; Grundlage des Stufenbaus nach Merkl und Kelsen"
+      }
+     ]
+    },
+    {
+     "code": "E5",
+     "titel": "Die leitenden Grundprinzipien",
+     "anker": "Art 44 Abs 3 B-VG",
+     "seite": "Rz 25",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die Bundesverfassung enthält Prinzipien, deren Änderung eine Gesamtänderung darstellt und daher zusätzlich eine obligatorische Volksabstimmung erfordert („Baugesetze“)."
+      },
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Die Baugesetze",
+       "kopf": [
+        "Prinzip",
+        "Gehalt"
+       ],
+       "zeilen": [
+        [
+         "demokratisch",
+         "Art 1 B-VG: Österreich ist eine demokratische Republik, ihr Recht geht vom Volk aus"
+        ],
+        [
+         "republikanisch",
+         "gewähltes, zeitlich begrenztes und verantwortliches Staatsoberhaupt statt Monarch"
+        ],
+        [
+         "bundesstaatlich",
+         "Art 2 B-VG: Länder mit eigener Gesetzgebung und Vollziehung, Kompetenzverteilung, Bundesrat"
+        ],
+        [
+         "rechtsstaatlich",
+         "Legalitätsprinzip, Rechtsschutz, Normenkontrolle durch den Verfassungsgerichtshof"
+        ],
+        [
+         "gewaltentrennend",
+         "Trennung der Staatsfunktionen"
+        ],
+        [
+         "liberal",
+         "Bindung aller Staatsgewalt an die Grundrechte"
+        ]
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Der EU-Beitritt 1994 wurde als Gesamtänderung qualifiziert, weil Rechtserzeugung und Rechtsschutz teilweise auf die Unionsebene verlagert wurden, und daher einer Volksabstimmung unterzogen ([[G4]])."
+      },
+      {
+       "typ": "latinum",
+       "lat": "pouvoir constituant, pouvoir constitué",
+       "de": "verfassunggebende und verfasste Gewalt; eine Gesamtänderung greift auf die erstere zurück, deshalb entscheidet das Volk",
+       "stelle": "nach Sieyès (1789)",
+       "sprache": "fr"
+      }
+     ]
+    },
+    {
+     "code": "E6",
+     "titel": "Der VfGH als Weltneuheit",
+     "anker": "Art 137 ff B-VG",
+     "seite": "Rz 26",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Das B-VG 1920 schuf erstmals ein eigenes Gericht mit der Befugnis, Gesetze wegen Verfassungswidrigkeit aufzuheben: das österreichische Modell der konzentrierten Verfassungsgerichtsbarkeit."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "Normenkontrolle über Gesetze und Verordnungen",
+        "Kompetenzfeststellung",
+        "Wahlanfechtung",
+        "Staatsgerichtsbarkeit gegen oberste Organe",
+        "Kausalgerichtsbarkeit (Art 137 B-VG)",
+        "Beschwerde gegen Erkenntnisse der Verwaltungsgerichte (Art 144 B-VG, in dieser Form seit 2014)"
+       ],
+       "titel": "Zuständigkeiten heute"
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Zwei Modelle",
+       "links": "Konzentriert: Österreich 1920",
+       "rechts": "Diffus: USA seit 1803",
+       "kriterien": [
+        {
+         "kriterium": "Prüfer",
+         "links": "ein einziges Gericht",
+         "rechts": "jedes Gericht, inzident"
+        },
+        {
+         "kriterium": "Rechtsfolge",
+         "links": "Aufhebung des Gesetzes",
+         "rechts": "Nichtanwendung im Einzelfall (Marbury v Madison)"
+        },
+        {
+         "kriterium": "Wirkung",
+         "links": "erga omnes, grundsätzlich ex nunc",
+         "rechts": "inter partes, faktisch verstärkt durch stare decisis"
+        },
+        {
+         "kriterium": "Leitbild",
+         "links": "Verfassungsgericht als negativer Gesetzgeber (Kelsen)",
+         "rechts": "richterliches Prüfungsrecht"
+        }
+       ]
+      },
+      {
+       "typ": "latinum",
+       "lat": "erga omnes, inter partes",
+       "de": "gegenüber allen beziehungsweise nur zwischen den Parteien",
+       "stelle": "Fachterminus"
+      }
+     ]
+    },
+    {
+     "code": "E7",
+     "titel": "Die Novellen 1925 und 1929",
+     "anker": "BGBl 1929/392",
+     "seite": "Rz 27",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die Novelle 1925 vollendet die Kompetenzverteilung, die Novelle 1929 stärkt den Bundespräsidenten; in dieser Fassung gilt das B-VG im Kern bis heute."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "Ausbau und Präzisierung der Kompetenzverteilung (Art 10 bis 15 B-VG) und Neuordnung der mittelbaren Bundesverwaltung.",
+        "Inkrafttreten der Kompetenzartikel am 1.10.1925: **Versteinerungszeitpunkt**. Kompetenzbegriffe sind grundsätzlich in dem Sinn auszulegen, den ihnen die einfachgesetzliche Rechtslage an diesem Tag gab.",
+        "Ergänzend: Gesichtspunktetheorie und intrasystematische Fortentwicklung."
+       ],
+       "titel": "B-VG-Novelle 1925"
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "Volkswahl des Bundespräsidenten (praktisch erstmals 1951), Amtszeit sechs Jahre.",
+        "Ernennung und Entlassung der Bundesregierung durch den Bundespräsidenten (heute Art 70 B-VG).",
+        "Auflösungsrecht gegenüber dem Nationalrat (Art 29 B-VG), Notverordnungsrecht (Art 18 Abs 3 bis 5 B-VG), Oberbefehl über das Bundesheer.",
+        "Neuordnung der Bestellung der Mitglieder des Verfassungsgerichtshofes."
+       ],
+       "titel": "B-VG-Novelle 1929, BGBl 1929/392"
+      },
+      {
+       "typ": "merke",
+       "text": "Das B-VG gilt grundsätzlich in der Fassung von 1929, wiederverlautbart mit BGBl 1930/1. Die Zweite Republik hat 1945 die Fassung 1929 wieder in Kraft gesetzt ([[G1]])."
+      }
+     ]
+    },
+    {
+     "code": "E8",
+     "titel": "Art 149 Abs 1 B-VG: der Rezeptionskatalog",
+     "anker": "Art 149 B-VG",
+     "seite": "Rz 28",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Art 149 Abs 1 B-VG ist die Brücke zur Monarchie: Die folgenden Vorschriften gelten ausdrücklich als Bundesverfassungsgesetze weiter."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "Staatsgrundgesetz über die allgemeinen Rechte der Staatsbürger, RGBl 1867/142",
+        "Gesetz zum Schutze des Hausrechtes, RGBl 1862/88",
+        "Beschluss der Provisorischen Nationalversammlung vom 30.10.1918 über die Aufhebung der Zensur, StGBl 1918/3",
+        "Habsburgergesetz, StGBl 1919/209",
+        "Adelsaufhebungsgesetz, StGBl 1919/211",
+        "Gesetz über das Staatswappen und das Staatssiegel, StGBl 1919/257",
+        "Abschnitt V des III. Teiles des Staatsvertrages von Saint-Germain (Minderheitenschutz)"
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Art 149 Abs 2 B-VG hebt umgekehrt einzelne ältere Bestimmungen auf, etwa Art 20 StGG über die Suspendierung von Grundrechten; die Bestimmung ist Geltungs- und Aufhebungsnorm zugleich."
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Am 30.10.1918 ergingen zwei Beschlüsse: StGBl 1918/1 über die grundlegenden Einrichtungen der Staatsgewalt (mit der Rezeptionsnorm) und StGBl 1918/3 über die Aufhebung der Zensur. Nur der Zensurbeschluss steht heute nach Art 149 Abs 1 B-VG im Verfassungsrang."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "VI",
+   "code": "F",
+   "name_lat": "Res Publica Oppressa",
+   "name_de": "Ständestaat und Nationalsozialismus 1933 bis 1945",
+   "leitfrage": "Wie wurde die Verfassungsordnung 1933 bis 1938 zerstört, und warum ermöglicht gerade das die Kontinuität von 1945?",
+   "kompakt": [
+    "1933 wird der Nationalrat ausgeschaltet und mit Verordnungen nach dem Ermächtigungsgesetz 1917 regiert.",
+    "Die Maiverfassung 1934 errichtet einen autoritären Ständestaat und kam verfassungswidrig zustande.",
+    "Der Anschluss 1938 verstieß gegen Saint-Germain und das B-VG.",
+    "Nach der herrschenden Okkupationstheorie bestand Österreich als Völkerrechtssubjekt fort."
+   ],
+   "anker": [
+    "BGBl II 1934/1",
+    "BGBl 1938/75",
+    "Art 88 Staatsvertrag von Saint-Germain"
+   ],
+   "seiten": "Rz 29 bis 32",
+   "kacheln": [
+    {
+     "code": "F1",
+     "titel": "Die Ausschaltung des Parlaments",
+     "anker": "4.3.1933",
+     "seite": "Rz 29",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Eine Geschäftsordnungskrise wird von der Regierung Dollfuß zum Anlass genommen, ohne Parlament zu regieren."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "1933 und 1934",
+       "ereignisse": [
+        {
+         "datum": "4.3.1933",
+         "text": "Abstimmung über den Eisenbahnerstreik: Alle drei Nationalratspräsidenten (Renner, Ramek, Straffner) treten zurück, um mitstimmen zu können; der Nationalrat ist führungslos, aber nicht aufgelöst. Die Regierung spricht von „Selbstausschaltung“."
+        },
+        {
+         "datum": "7.3.1933",
+         "text": "Regieren durch Verordnungen auf Grundlage des Kriegswirtschaftlichen Ermächtigungsgesetzes 1917: Vorzensur, Versammlungsverbote."
+        },
+        {
+         "datum": "15.3.1933",
+         "text": "Die Polizei verhindert die Wiederaufnahme der Sitzung; der Nationalrat ist faktisch ausgeschaltet."
+        },
+        {
+         "datum": "Mai 1933",
+         "text": "Der Verfassungsgerichtshof wird beschlussunfähig gemacht: regierungsnahe Richter treten zurück, eine Verordnung ändert die Verfahrensvoraussetzungen."
+        },
+        {
+         "datum": "1933/34",
+         "text": "Verbot von KPÖ und NSDAP; Februarkämpfe ab 12.2.1934 und Verbot der Sozialdemokratie."
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Alle Schritte waren verfassungswidrig. Das Ermächtigungsgesetz 1917 ermächtigte nicht zur Verfassungsdurchbrechung, und der Nationalrat hätte jederzeit wieder einberufen werden können. Die herrschende Lehre spricht von einem Staatsstreich von oben."
+      }
+     ]
+    },
+    {
+     "code": "F2",
+     "titel": "Die Maiverfassung",
+     "anker": "BGBl II 1934/1",
+     "seite": "Rz 30",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die „Verfassung des Bundesstaates Österreich“ vom 1.5.1934 errichtet einen autoritären Ständestaat auf katholisch-korporativer Grundlage. Die Präambel („Im Namen Gottes, des Allmächtigen, von dem alles Recht ausgeht“) ist der bewusste Gegenentwurf zur Volkssouveränität."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Erlassungsweg:** Kundmachung durch die Bundesregierung auf Grundlage des Kriegswirtschaftlichen Ermächtigungsgesetzes, flankiert von einem Ermächtigungsgesetz des Rumpf-Nationalrates vom 30.4.1934: doppelt verfassungswidrig.",
+        "**Berufsständische Ordnung:** Gesetzgebung über vier vorberatende Organe (Staatsrat, Bundeskulturrat, Bundeswirtschaftsrat, Länderrat) und einen Bundestag ohne Initiativrecht.",
+        "**Machtkonzentration** bei Bundespräsident und Bundeskanzler; Vaterländische Front als Einheitsorganisation.",
+        "**Bundesgerichtshof:** Verfassungs- und Verwaltungsgerichtshof werden verschmolzen, die Normenkontrolle faktisch entwertet.",
+        "**25.7.1934:** Juliputsch, Ermordung Dollfuß’, Nachfolger Schuschnigg."
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Weil die Verfassung 1934 nicht rechtmäßig zustande kam, konnte 1945 an das B-VG 1929 angeknüpft werden, als wäre es nie außer Kraft getreten. Die Unrechtmäßigkeit von 1934 ist die Bedingung der Rechtskontinuität von 1945 ([[G1]])."
+      }
+     ]
+    },
+    {
+     "code": "F3",
+     "titel": "Der „Anschluss“ 1938",
+     "anker": "BGBl 1938/75",
+     "seite": "Rz 31",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Österreich wird unter militärischer Drohung als Land in das Deutsche Reich eingegliedert."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "1938 und 1939",
+       "ereignisse": [
+        {
+         "datum": "12.2.1938",
+         "text": "Berchtesgadener Abkommen: erzwungene Regierungsbeteiligung der Nationalsozialisten, Seyß-Inquart wird Innenminister."
+        },
+        {
+         "datum": "9. bis 11.3.1938",
+         "text": "Die angekündigte Volksbefragung Schuschniggs wird unter Ultimatum abgesagt; Ernennung Seyß-Inquarts durch Bundespräsident Miklas unter Druck."
+        },
+        {
+         "datum": "12.3.1938",
+         "text": "Einmarsch der deutschen Wehrmacht."
+        },
+        {
+         "datum": "13.3.1938",
+         "text": "„Bundesverfassungsgesetz über die Wiedervereinigung Österreichs mit dem Deutschen Reich“, BGBl 1938/75, beschlossen von der Regierung Seyß-Inquart, dazu ein gleichlautendes deutsches Gesetz."
+        },
+        {
+         "datum": "10.4.1938",
+         "text": "Scheinvolksabstimmung ohne Wahlgeheimnis und ohne Gegenöffentlichkeit."
+        },
+        {
+         "datum": "1939",
+         "text": "Ostmarkgesetz: Auflösung der Länder, Reichsgaue, Überleitung des deutschen Rechts."
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Der Anschluss verstieß gegen Art 88 des Staatsvertrages von Saint-Germain und gegen das B-VG; er wurde unter militärischer Drohung erzwungen."
+      },
+      {
+       "typ": "latinum",
+       "lat": "ex iniuria ius non oritur",
+       "de": "Aus Unrecht entsteht kein Recht",
+       "stelle": "völkerrechtlicher Grundsatz"
+      }
+     ]
+    },
+    {
+     "code": "F4",
+     "titel": "Okkupation oder Annexion?",
+     "anker": "Moskauer Deklaration 1943",
+     "seite": "Rz 32",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die völkerrechtliche Einordnung von 1938 entscheidet darüber, ob die Zweite Republik mit der Ersten identisch ist oder ein neuer Staat."
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Zwei Theorien",
+       "links": "Okkupationstheorie (herrschend)",
+       "rechts": "Annexionstheorie",
+       "kriterien": [
+        {
+         "kriterium": "Befund 1938",
+         "links": "völkerrechtswidrige Besetzung; der Staat bestand als Völkerrechtssubjekt latent fort, nur seine Organisation war zerschlagen",
+         "rechts": "Untergang des Staates durch wirksame Einverleibung"
+        },
+        {
+         "kriterium": "1945",
+         "links": "Wiedererrichtung, keine Neugründung",
+         "rechts": "Entstehung eines neuen Staates"
+        },
+        {
+         "kriterium": "Folgen",
+         "links": "Identität und Kontinuität: Fortgeltung völkerrechtlicher Verträge, Kontinuität der Staatsbürgerschaft, Anknüpfung an das B-VG 1929",
+         "rechts": "alte Rechte und Pflichten erst durch eigenen Rechtsakt übernommen"
+        },
+        {
+         "kriterium": "Maxime",
+         "links": "ex iniuria ius non oritur",
+         "rechts": "ex factis ius oritur"
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Herrschend und offiziell vertreten wird die Okkupationstheorie. Sie stützt sich auf die Moskauer Deklaration 1943, die Unabhängigkeitserklärung 1945 und darauf, dass der Staatsvertrag 1955 als Wiederherstellung formuliert ist ([[G3]])."
+      },
+      {
+       "typ": "latinum",
+       "lat": "ex factis ius oritur",
+       "de": "Aus Tatsachen entsteht Recht; Gegenposition der Annexionstheorie",
+       "stelle": "völkerrechtlicher Grundsatz"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "VII",
+   "code": "G",
+   "name_lat": "Res Publica Secunda",
+   "name_de": "Die Zweite Republik seit 1945",
+   "leitfrage": "Wie knüpft die Zweite Republik an 1929 an, und welche Schichten prägen das Verfassungsrecht seit 1955?",
+   "kompakt": [
+    "1945 wird das B-VG in der Fassung 1929 durch das Verfassungs-Überleitungsgesetz wieder in Wirksamkeit gesetzt.",
+    "Die Besatzungszeit erklärt den sparsamen Einsatz von Verfassungsrecht bis 1955.",
+    "Staatsvertrag und Neutralitätsgesetz sind getrennte Rechtsakte.",
+    "EMRK, EU-Beitritt und Verwaltungsgerichtsbarkeits-Novelle prägen das heutige System."
+   ],
+   "anker": [
+    "StGBl 1945/1, 4 und 6",
+    "BGBl 1955/152 und 211",
+    "BGBl 1964/59",
+    "BGBl I 2012/51"
+   ],
+   "seiten": "Rz 33 bis 36",
+   "kacheln": [
+    {
+     "code": "G1",
+     "titel": "Die Wiedererrichtung",
+     "anker": "StGBl 1945/4",
+     "seite": "Rz 33",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die Zweite Republik entsteht als Wiederherstellung: Anschluss nichtig, B-VG 1929 wieder in Wirksamkeit, NS-Recht gefiltert übergeleitet."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "1943 bis 1945",
+       "ereignisse": [
+        {
+         "datum": "1.11.1943",
+         "text": "Moskauer Deklaration: Anschluss null und nichtig, Österreich erstes Opfer der Hitlerschen Aggression; zugleich Mitverantwortungsklausel."
+        },
+        {
+         "datum": "27.4.1945",
+         "text": "Unabhängigkeitserklärung, StGBl 1945/1: Anschluss null und nichtig, Wiederherstellung der demokratischen Republik „im Geiste der Verfassung von 1920“; Provisorische Staatsregierung Renner (SPÖ, ÖVP, KPÖ)."
+        },
+        {
+         "datum": "1.5.1945",
+         "text": "Verfassungs-Überleitungsgesetz, StGBl 1945/4: B-VG in der Fassung von 1929 wieder in Wirksamkeit; Vorläufige Verfassung, StGBl 1945/5; Rechts-Überleitungsgesetz, StGBl 1945/6: NS-Normen gelten vorläufig weiter, soweit sie nicht mit einem freien und demokratischen Österreich unvereinbar oder typisch nationalsozialistisch sind."
+        },
+        {
+         "datum": "25.11.1945",
+         "text": "Erste freie Nationalratswahl; danach volle Wiederherstellung der B-VG-Ordnung."
+        }
+       ]
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Die Formel „im Geiste der Verfassung von 1920“ täuscht: In Geltung gesetzt wurde die Fassung 1929 ([[E7]])."
+      }
+     ]
+    },
+    {
+     "code": "G2",
+     "titel": "Die Besatzungszeit",
+     "anker": "1945 bis 1955",
+     "seite": "Rz 34",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Vier Besatzungszonen und die Vier-Sektoren-Verwaltung Wiens; oberste Instanz ist der Alliierte Rat."
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Erstes Kontrollabkommen (4.7.1945):** Jede Maßnahme der österreichischen Regierung bedurfte der Zustimmung des Alliierten Rates; Anerkennung der Regierung Renner durch alle vier Mächte im Oktober 1945.",
+        "**Zweites Kontrollabkommen (28.6.1946):** Einfache Gesetze galten als genehmigt, wenn der Alliierte Rat nicht binnen 31 Tagen widersprach; Verfassungsgesetze bedurften weiterhin der einstimmigen ausdrücklichen Genehmigung.",
+        "**Entnazifizierung:** Verbotsgesetz 1945, Kriegsverbrechergesetz 1945, Nationalsozialistengesetz 1947; das Verbotsgesetz steht bis heute im Verfassungsrang."
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Das zweite Kontrollabkommen erklärt, warum die frühe Zweite Republik Verfassungsrecht sparsam einsetzte: Jede Verfassungsänderung hätte auch die Zustimmung der Sowjetunion erfordert."
+      }
+     ]
+    },
+    {
+     "code": "G3",
+     "titel": "Staatsvertrag und Neutralität",
+     "anker": "BGBl 1955/152; BGBl 1955/211",
+     "seite": "Rz 35",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Der Staatsvertrag von Wien vom 15.5.1955, BGBl 1955/152, stellt Österreich als unabhängigen und demokratischen Staat wieder her (in Kraft am 27.7.1955); die Neutralität folgt aus einem eigenen Bundesverfassungsgesetz vom 26.10.1955, BGBl 1955/211."
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Zwei Rechtsakte",
+       "links": "Staatsvertrag von Wien",
+       "rechts": "Neutralitäts-BVG",
+       "kriterien": [
+        {
+         "kriterium": "Rechtsnatur",
+         "links": "völkerrechtlicher Vertrag; wesentliche Bestimmungen zugleich innerstaatliches Verfassungsrecht",
+         "rechts": "einseitiger Akt in Form eines Bundesverfassungsgesetzes, nicht Teil des Staatsvertrages"
+        },
+        {
+         "kriterium": "Kern",
+         "links": "Art 1 Wiederherstellung; Art 4 Anschlussverbot; Art 7 Minderheitenrechte in Kärnten, Burgenland und Steiermark; Art 8 und 9 demokratische Einrichtungen, Auflösung nationalsozialistischer Organisationen",
+         "rechts": "immerwährende Neutralität „aus freien Stücken“: keine Militärbündnisse, keine fremden Stützpunkte, keine Teilnahme an Kriegen"
+        },
+        {
+         "kriterium": "Zusammenhang",
+         "links": "Abzug der Besatzungstruppen bis 25.10.1955",
+         "rechts": "politisch mit dem Moskauer Memorandum vom April 1955 verknüpft, nicht rechtlich"
+        }
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Auslandseinsätze, die Teilnahme an der Gemeinsamen Außen- und Sicherheitspolitik und an Sanktionen der Union haben den Neutralitätsbegriff auf einen militärischen Kern reduziert. Beitritt zur UNO am 14.12.1955, zum Europarat 1956."
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Der Nationalfeiertag am 26. Oktober (seit 1965) bezieht sich auf das Neutralitätsgesetz, nicht auf den Staatsvertrag."
+      },
+      {
+       "typ": "latinum",
+       "lat": "pacta sunt servanda",
+       "de": "Verträge sind einzuhalten",
+       "stelle": "Art 26 Wiener Vertragsrechtskonvention"
+      }
+     ]
+    },
+    {
+     "code": "G4",
+     "titel": "Verfassungsentwicklung seit 1958",
+     "anker": "BGBl 1964/59; BGBl 1994/744; BGBl I 2012/51",
+     "seite": "Rz 36",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Drei Entwicklungen prägen das heutige Verfassungsrecht: Grundrechtsschutz durch die EMRK, Europäisierung durch den EU-Beitritt und die Reform des Rechtsschutzes durch die Verwaltungsgerichtsbarkeit."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "1958 bis 2014",
+       "ereignisse": [
+        {
+         "datum": "1958",
+         "text": "EMRK ratifiziert, BGBl 1958/210."
+        },
+        {
+         "datum": "1964",
+         "text": "BVG BGBl 1964/59 stellt rückwirkend den Verfassungsrang der EMRK klar; Konventionsrechte werden wie Verfassungsrechte geprüft."
+        },
+        {
+         "datum": "1994/95",
+         "text": "BVG über den Beitritt zur EU, BGBl 1994/744; Volksabstimmung am 12.6.1994 mit rund 66,6 % Zustimmung; Beitritt am 1.1.1995."
+        },
+        {
+         "datum": "2003 bis 2005",
+         "text": "Österreich-Konvent: Versuch einer Gesamtreform ohne verbindliches Ergebnis."
+        },
+        {
+         "datum": "2007",
+         "text": "Senkung des Wahlalters auf 16 Jahre."
+        },
+        {
+         "datum": "2008",
+         "text": "Erstes Bundesverfassungsrechtsbereinigungsgesetz, BGBl I 2008/2."
+        },
+        {
+         "datum": "2011",
+         "text": "BVG über die Rechte von Kindern."
+        },
+        {
+         "datum": "2012",
+         "text": "Die Grundrechte-Charta ist im Anwendungsbereich des Unionsrechts wie ein verfassungsgesetzlich gewährleistetes Recht geltend zu machen (VfGH 14.3.2012, U 466/11)."
+        },
+        {
+         "datum": "2014",
+         "text": "Verwaltungsgerichtsbarkeits-Novelle 2012, BGBl I 2012/51, wirksam: neun Landesverwaltungsgerichte, BVwG und BFG ersetzen den administrativen Instanzenzug und die Unabhängigen Verwaltungssenate."
+        }
+       ]
+      },
+      {
+       "typ": "feinheit",
+       "text": "Der Grundrechtsbestand ist dreischichtig: StGG 1867 mit formellen Gesetzesvorbehalten, EMRK im Verfassungsrang mit materiellen Schranken und Verhältnismäßigkeit, Grundrechte-Charta seit 2009 im Anwendungsbereich des Unionsrechts."
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Wer in der Grundrechtsprüfung nur eine Schicht prüft, verliert Punkte: StGG, EMRK und Grundrechte-Charta sind nebeneinander anwendbar."
+      },
+      {
+       "typ": "aktualisierung",
+       "text": "Seit 1.9.2025 ist die Amtsverschwiegenheit aufgehoben; an ihre Stelle treten Informationspflicht und Recht auf Zugang zu Informationen (Art 22a B-VG, IFG). In der Vorlage noch nicht enthalten.",
+       "datum": "2025-09-01",
+       "quelle": "BGBl I 2024/5 (RIS)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "VIII",
+   "code": "L",
+   "name_lat": "Repetitorium",
+   "name_de": "Chronik, Normen und Prüfungsweichen",
+   "leitfrage": "Wie ordne ich jede Prüfungsfrage zur Verfassungsgeschichte nach Typ, Zeit und Kontinuität ein?",
+   "kompakt": [
+    "Neun Stationen tragen die gesamte Chronik.",
+    "Vier Weichen und drei Kontinuitätsbrücken ordnen jede Prüfungsfrage."
+   ],
+   "anker": [
+    "Art 149 B-VG",
+    "StGBl 1945/4"
+   ],
+   "kacheln": [
+    {
+     "code": "L1",
+     "titel": "Chronik in neun Stationen",
+     "anker": "1713 bis 1995",
+     "seite": "Rz 37",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Chronik",
+       "kopf": [
+        "Datum",
+        "Ereignis und verfassungsrechtliche Bedeutung"
+       ],
+       "zeilen": [
+        [
+         "1713 ff",
+         "Pragmatische Sanktion: Unteilbarkeit und Untrennbarkeit der Erbmonarchie, erste gesamtstaatliche Grundordnung"
+        ],
+        [
+         "1848",
+         "Märzrevolution, Pillersdorfsche Verfassung (oktroyiert, nie vollzogen), konstituierender Reichstag, Grundentlastung"
+        ],
+        [
+         "1849",
+         "Kremsierer Entwurf (demokratisch, nie in Kraft); oktroyierte Märzverfassung samt Grundrechtspatent, ebenfalls nie vollzogen"
+        ],
+        [
+         "1851",
+         "Silvesterpatent: Aufhebung von Verfassung und Grundrechten, Rückkehr zum Absolutismus"
+        ],
+        [
+         "1860/61",
+         "Oktoberdiplom (föderalistisch-ständisch) und Februarpatent (zentralistisch, Landesordnungen)"
+        ],
+        [
+         "1867",
+         "Ausgleich mit Ungarn (Realunion) und Dezemberverfassung mit fünf Staatsgrundgesetzen, pactiert"
+        ],
+        [
+         "1918 bis 1920",
+         "Republikgründung mit Rezeption, Saint-Germain, B-VG 1920 samt Verfassungsgerichtsbarkeit"
+        ],
+        [
+         "1934/1938",
+         "Ständestaatsverfassung ohne Legitimation; Anschluss und Zerschlagung der Staatsorganisation"
+        ],
+        [
+         "1945/1955/1995",
+         "Wiedererrichtung über V-ÜG und R-ÜG, Staatsvertrag und Neutralität, EU-Beitritt als Gesamtänderung"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "L2",
+     "titel": "Normenverzeichnis",
+     "anker": "RIS",
+     "seite": "Rz 38",
+     "relevanz": "vertiefung",
+     "bausteine": [
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Fundstellen und Status",
+       "kopf": [
+        "Norm",
+        "Fundstelle",
+        "Status"
+       ],
+       "zeilen": [
+        [
+         "Gesetz zum Schutze des Hausrechtes",
+         "RGBl 1862/88",
+         "in Geltung, Verfassungsrang (Art 149 B-VG)"
+        ],
+        [
+         "StGG über die allgemeinen Rechte der Staatsbürger",
+         "RGBl 1867/142",
+         "in Geltung, Verfassungsrang"
+        ],
+        [
+         "StGG über Reichsvertretung, Reichsgericht, richterliche Gewalt, Vollzugsgewalt",
+         "RGBl 1867/141, 143, 144, 145",
+         "historisch, 1918/20 überholt"
+        ],
+        [
+         "Delegationsgesetz",
+         "RGBl 1867/146",
+         "historisch"
+        ],
+        [
+         "Gesetz über die Errichtung eines Verwaltungsgerichtshofes",
+         "RGBl 1876/36",
+         "historisch, Institution fortbestehend"
+        ],
+        [
+         "Beschluss über die grundlegenden Einrichtungen der Staatsgewalt",
+         "StGBl 1918/1",
+         "historisch; Rezeptionsnorm"
+        ],
+        [
+         "Beschluss über die Aufhebung der Zensur",
+         "StGBl 1918/3",
+         "in Geltung, Verfassungsrang (Art 149 B-VG)"
+        ],
+        [
+         "Gesetz über die Staats- und Regierungsform",
+         "StGBl 1918/5",
+         "historisch; Anschlussartikel beseitigt"
+        ],
+        [
+         "Habsburgergesetz",
+         "StGBl 1919/209",
+         "in Geltung, Verfassungsrang"
+        ],
+        [
+         "Adelsaufhebungsgesetz",
+         "StGBl 1919/211",
+         "in Geltung, Verfassungsrang"
+        ],
+        [
+         "Staatsvertrag von Saint-Germain",
+         "StGBl 1920/303",
+         "Abschnitt V des III. Teiles im Verfassungsrang"
+        ],
+        [
+         "Bundes-Verfassungsgesetz",
+         "BGBl 1920/1, idF 1929, wiederverlautbart BGBl 1930/1",
+         "in Geltung"
+        ],
+        [
+         "B-VG-Novelle 1929",
+         "BGBl 1929/392",
+         "maßgebliche Fassung"
+        ],
+        [
+         "Verfassung des Bundesstaates Österreich",
+         "BGBl II 1934/1",
+         "historisch, verfassungswidrig zustande gekommen"
+        ],
+        [
+         "BVG über die Wiedervereinigung mit dem Deutschen Reich",
+         "BGBl 1938/75",
+         "null und nichtig"
+        ],
+        [
+         "Unabhängigkeitserklärung",
+         "StGBl 1945/1",
+         "Gründungsakt der Zweiten Republik"
+        ],
+        [
+         "Verfassungs-Überleitungsgesetz, Vorläufige Verfassung, Rechts-Überleitungsgesetz",
+         "StGBl 1945/4, 5, 6",
+         "Überleitungsrecht"
+        ],
+        [
+         "Staatsvertrag von Wien",
+         "BGBl 1955/152",
+         "in Geltung, Art 7 im Verfassungsrang"
+        ],
+        [
+         "BVG über die Neutralität Österreichs",
+         "BGBl 1955/211",
+         "in Geltung"
+        ],
+        [
+         "Europäische Menschenrechtskonvention",
+         "BGBl 1958/210; Verfassungsrang durch BGBl 1964/59",
+         "in Geltung"
+        ],
+        [
+         "BVG über den Beitritt zur Europäischen Union",
+         "BGBl 1994/744",
+         "in Geltung"
+        ],
+        [
+         "Erstes Bundesverfassungsrechtsbereinigungsgesetz",
+         "BGBl I 2008/2",
+         "in Geltung"
+        ],
+        [
+         "Verwaltungsgerichtsbarkeits-Novelle 2012",
+         "BGBl I 2012/51",
+         "wirksam seit 1.1.2014"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "L3",
+     "titel": "Prüfungsweichen und roter Faden",
+     "anker": "Art 149 B-VG",
+     "seite": "Rz 39",
+     "relevanz": "kern",
+     "bausteine": [
+      {
+       "typ": "kern",
+       "punkte": [
+        "**Legitimationstyp:** oktroyiert (1848, 1849), pactiert (1867), demokratisch (1920), autoritär gesetzt (1934), fremdbestimmt (1938).",
+        "**Zentralismus oder Föderalismus:** Märzverfassung 1849 und Februarpatent 1861 zentralistisch, Oktoberdiplom 1860 und Kremsier föderalistisch, B-VG 1920 Kompromiss.",
+        "**Grundrechte:** vorhanden (1848/49, 1867, EMRK) oder ausgespart (B-VG 1920 im Kern, daher Art 149).",
+        "**Kontrolle:** keine (1851), bloß feststellend (Reichsgericht 1867), kassatorisch (Verfassungsgerichtshof ab 1920), ausgeschaltet (1933/34)."
+       ],
+       "titel": "Vier Weichen für jede Prüfungsfrage"
+      },
+      {
+       "typ": "kern",
+       "punkte": [
+        "**1918:** Rezeptionsnorm des Beschlusses StGBl 1918/1; das einfache Recht der Monarchie gilt weiter.",
+        "**1920:** Art 149 B-VG; die Grundrechte von 1862 und 1867 werden Verfassungsrecht der Republik.",
+        "**1945:** V-ÜG und R-ÜG; das B-VG 1929 lebt wieder auf, das NS-Recht wird gefiltert übergeleitet."
+       ],
+       "titel": "Drei Kontinuitätsbrücken"
+      },
+      {
+       "typ": "merke",
+       "text": "Österreich hat seit 1848 fünf Verfassungstypen durchlaufen (oktroyierter Konstitutionalismus, Neoabsolutismus, pactierter Konstitutionalismus, demokratische Republik, autoritärer Ständestaat) und ist zweimal, 1918 und 1945, an einen bestehenden Text angeknüpft, statt neu zu beginnen. Diese Anknüpfungstechnik ist das eigentliche Charakteristikum der österreichischen Verfassungsgeschichte."
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "lexicon": [
+  {
+   "begriff": "leges fundamentales",
+   "bedeutung": "die vorkonstitutionellen Grundgesetze des Reiches",
+   "kachel": "A2"
+  },
+  {
+   "begriff": "pactum unionis, pactum subiectionis",
+   "bedeutung": "Vereinigungs- und Unterwerfungsvertrag; vertragstheoretische Deutungsmuster der Staatsentstehung",
+   "kachel": "A2"
+  },
+  {
+   "begriff": "octroyer",
+   "bedeutung": "bewilligen, aufdrängen; daher „oktroyierte“ Verfassung",
+   "kachel": "B5",
+   "sprache": "fr"
+  },
+  {
+   "begriff": "patere legem quam ipse fecisti",
+   "bedeutung": "Erdulde das Gesetz, das du selbst gegeben hast; Gegenformel des Rechtsstaats zum Absolutismus",
+   "kachel": "B6"
+  },
+  {
+   "begriff": "ex nunc, ex tunc",
+   "bedeutung": "Wirkung ab jetzt beziehungsweise von Anfang an",
+   "kachel": "E6"
+  },
+  {
+   "begriff": "stare decisis",
+   "bedeutung": "Bindung an frühere Entscheidungen (Präjudizienbindung)",
+   "kachel": "E6"
+  },
+  {
+   "begriff": "lex posterior derogat legi priori",
+   "bedeutung": "Das spätere Gesetz verdrängt das frühere",
+   "kachel": "E4"
+  }
+ ],
+ "selbsttest": [
+  {
+   "frage": "Warum ist die Dezemberverfassung 1867 nicht einseitig widerruflich?",
+   "antwort": "Weil sie pactiert ist: Sie kam mit Zustimmung des Reichsrates zustande.",
+   "kachel": "D2"
+  },
+  {
+   "frage": "Worin unterscheidet sich das Reichsgericht 1867 vom Verfassungsgerichtshof 1920?",
+   "antwort": "Das Reichsgericht konnte Rechtsverletzungen nur feststellen und besaß keine Normenkontrolle; der Verfassungsgerichtshof hebt verfassungswidrige Gesetze auf.",
+   "kachel": "D4"
+  },
+  {
+   "frage": "Was unterscheidet das Wahlrecht 1896 von 1907?",
+   "antwort": "1896 beinahe allgemein, aber grob ungleich (fünfte Kurie); 1907 allgemein und gleich, Kurien abgeschafft.",
+   "kachel": "D5"
+  },
+  {
+   "frage": "Welche Fassung des B-VG setzte das Verfassungs-Überleitungsgesetz 1945 wieder in Wirksamkeit?",
+   "antwort": "Die Fassung 1929, wiederverlautbart mit BGBl 1930/1.",
+   "kachel": "G1"
+  },
+  {
+   "frage": "Was besagt die Versteinerungstheorie, und welcher Stichtag gilt?",
+   "antwort": "Kompetenzbegriffe sind im Sinn der einfachgesetzlichen Rechtslage am 1.10.1925 auszulegen.",
+   "kachel": "E7"
+  },
+  {
+   "frage": "Welcher Beschluss vom 30.10.1918 steht heute im Verfassungsrang?",
+   "antwort": "Der Beschluss über die Aufhebung der Zensur, StGBl 1918/3 (Art 149 Abs 1 B-VG), nicht der Beschluss über die grundlegenden Einrichtungen, StGBl 1918/1.",
+   "kachel": "E8"
+  },
+  {
+   "frage": "Warum ermöglicht die Verfassungswidrigkeit der Maiverfassung 1934 die Kontinuität von 1945?",
+   "antwort": "Weil sie nie rechtmäßig zustande kam, konnte an das B-VG 1929 angeknüpft werden, als wäre es nie außer Kraft getreten.",
+   "kachel": "F2"
+  },
+  {
+   "frage": "Wo stand der Ausschluss der Habsburger von der Wählbarkeit zum Bundespräsidenten, und wann fiel er?",
+   "antwort": "In Art 60 Abs 3 zweiter Satz B-VG; er fiel 2011 (BGBl I 2011/43), das Habsburgergesetz blieb unberührt.",
+   "kachel": "E3"
+  },
+  {
+   "frage": "Worauf bezieht sich der Nationalfeiertag am 26. Oktober?",
+   "antwort": "Auf das Neutralitätsgesetz vom 26.10.1955, nicht auf den Staatsvertrag.",
+   "kachel": "G3"
+  }
+ ],
+ "quellenkritik": [
+  {
+   "quelle": "THC, Rz 18 und 38",
+   "befund": "Gesetz über die Errichtung eines Verwaltungsgerichtshofes zitiert als RGBl 1875/36.",
+   "richtig": "Gesetz vom 22.10.1875, kundgemacht im RGBl 1876 unter Nr 36.",
+   "kachel": "D4"
+  },
+  {
+   "quelle": "THC, Rz 23",
+   "befund": "Das Habsburgergesetz sei 2011 hinsichtlich der Wählbarkeit zum Bundespräsidenten geändert worden.",
+   "richtig": "Geändert wurde Art 60 Abs 3 B-VG (BGBl I 2011/43); das Habsburgergesetz blieb ausdrücklich unberührt.",
+   "kachel": "E3"
+  },
+  {
+   "quelle": "THC, Rz 28 und 39",
+   "befund": "Im Rezeptionskatalog „Beschluss vom 30.10.1918, StGBl 3“ ohne Inhalt; zugleich StGBl 1918/1 als „die“ Rezeptionsnorm.",
+   "richtig": "Art 149 Abs 1 B-VG rezipiert den Zensurbeschluss StGBl 1918/3; die Rezeptionsnorm steht im Beschluss StGBl 1918/1, der nicht im Verfassungsrang steht.",
+   "kachel": "E8"
+  },
+  {
+   "quelle": "THC, Rz 4",
+   "befund": "Österreich sei 1848 der einzige große deutsche Staat ohne Verfassungsurkunde gewesen.",
+   "richtig": "Auch Preußen besaß vor Dezember 1848 keine Verfassungsurkunde; der Kontrast besteht zu den süddeutschen Staaten.",
+   "kachel": "A4"
+  },
+  {
+   "quelle": "THC, Rz 17",
+   "befund": "Art 10 StGG schütze Brief- und Fernmeldegeheimnis; Art 17a fehlt im Katalog.",
+   "richtig": "Art 10 Briefgeheimnis, Art 10a (seit 1974) Fernmeldegeheimnis; Art 17a (seit 1982) Freiheit des künstlerischen Schaffens.",
+   "kachel": "D3"
+  },
+  {
+   "quelle": "THC, Rz 24",
+   "befund": "Das B-VG 1920 habe einen Bundesstaat mit neun Ländern geschaffen.",
+   "richtig": "Die Stammfassung zählte Wien noch zu Niederösterreich; eigenes Land ist Wien seit 1.1.1922, das Burgenland kam 1921 hinzu. Heute neun Länder.",
+   "kachel": "E4"
+  },
+  {
+   "quelle": "THC, Rz 1",
+   "befund": "Merksatz „ius publicum sequitur historiam“ als lateinischer Merksatz geführt.",
+   "richtig": "Kein klassischer Beleg; hier als deutscher Merksatz ohne Latinum-Status übernommen.",
+   "kachel": "A1"
+  }
+ ],
+ "aenderungen": [
+  {
+   "version": "1.0",
+   "datum": "2026-10-16",
+   "text": "Überführung der Wissenslandkarte Terra Historica Constitutionalis (Stand September 2026) in den Terra-Standard 3.1; sieben Korrekturen laut Quellenkritik; Aktualisierung Informationsfreiheit ergänzt"
+  }
+ ]
+}

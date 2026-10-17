@@ -1,0 +1,1151 @@
+{
+ "standard": "3.1",
+ "meta": {
+  "titel": "Terra Exemplaris",
+  "kurz": "EXE",
+  "untertitel": "Referenzwerk des Terra-Standards",
+  "kicker": "Prüfwerk des Terra-Kits: jeder Baustein, jede Schemavariante, jeder Umbruchsonderfall",
+  "version": "0.2",
+  "stand": "2026-10",
+  "typ": "referenz",
+  "urheber": "(c) Oliver Bedernik",
+  "reihe": "Lernskripten zur Prüfungsvorbereitung",
+  "ort": "Wien"
+ },
+ "modul": {
+  "domaene": "gemischt",
+  "primaerquelle": "RIS, Bundesrecht konsolidiert (Fassung Oktober 2026)",
+  "sekundaerquelle": "Grabenwarter/Kodek/Pabel/Spitzer, Einführung in die Rechtswissenschaften (WU)",
+  "anker": "Normzitat (Provinz A), Formel mit Gleichungsnummer (Provinz B)",
+  "stand_art": "Rechtsstand",
+  "terminussprache": "Latein",
+  "pruefdimensionen": [
+   "Subsumtion",
+   "Abgrenzung",
+   "Rechnung",
+   "Wirkungsrichtung"
+  ]
+ },
+ "quellen": [
+  {
+   "kurz": "RIS",
+   "voll": "Rechtsinformationssystem des Bundes, Bundesrecht konsolidiert"
+  },
+  {
+   "kurz": "GKPS",
+   "voll": "Grabenwarter/Kodek/Pabel/Spitzer, Einführung in die Rechtswissenschaften (WU)"
+  }
+ ],
+ "motto": {
+  "lat": "Festina lente.",
+  "de": "Eile mit Weile.",
+  "stelle": "Sueton, Divus Augustus 25,4 (dort griechisch: σπεῦδε βραδέως)"
+ },
+ "provinzen": [
+  {
+   "nr": "I",
+   "code": "A",
+   "name_lat": "Provincia Interpretationis",
+   "name_de": "Auslegung und Lückenfüllung",
+   "leitfrage": "Wie gewinne ich aus dem Gesetzestext den Obersatz, und was tue ich, wenn der Text schweigt?",
+   "kompakt": [
+    "Auslegung ermittelt den Sinn einer Norm innerhalb des möglichen Wortsinns (§ 6 ABGB).",
+    "Der Kanon kennt vier Methoden: grammatikalisch, systematisch, historisch und teleologisch.",
+    "Jenseits des Wortsinns beginnt die Rechtsfortbildung durch Analogie oder teleologische Reduktion (§ 7 ABGB).",
+    "Analogie setzt eine planwidrige Lücke voraus; fehlt die Planwidrigkeit, ist der Umkehrschluss geboten.",
+    "Im Strafrecht ist Analogie zulasten des Täters verboten (§ 1 StGB, Art 7 EMRK)."
+   ],
+   "anker": [
+    "§§ 6, 7 ABGB",
+    "§ 1 StGB",
+    "Art 7 EMRK",
+    "Art 22a B-VG"
+   ],
+   "seiten": "Referenz",
+   "kacheln": [
+    {
+     "code": "A1",
+     "titel": "Grundnorm der Auslegung",
+     "anker": "§ 6 ABGB",
+     "seite": "Referenz",
+     "relevanz": "kern",
+     "test": "Definition mit Normwortlaut, Kern, Merke, Feinheit, Latinum, Textmarker, interner Verweis",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Auslegung ist die Ermittlung des Sinngehalts einer Norm innerhalb ihres möglichen Wortsinns. § 6 ABGB nennt die Auslegungsmittel in einem einzigen Satz.",
+       "zitat": {
+        "text": "Einem Gesetze darf in der Anwendung kein anderer Verstand beygelegt werden, als welcher aus der eigenthümlichen Bedeutung der Worte in ihrem Zusammenhange und aus der klaren Absicht des Gesetzgebers hervorleuchtet.",
+        "quelle": "§ 6 ABGB (RIS)"
+       }
+      },
+      {
+       "typ": "kern",
+       "titel": "Im Wortlaut angelegte Methoden",
+       "punkte": [
+        "**Bedeutung der Worte** → grammatikalische Auslegung",
+        "**in ihrem Zusammenhange** → systematische Auslegung",
+        "**Absicht des Gesetzgebers** → historische und teleologische Auslegung"
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Der mögliche Wortsinn ist die Grenze zwischen Auslegung (§ 6 ABGB) und Rechtsfortbildung (§ 7 ABGB); zur Abgrenzung im Einzelnen [[A3]]."
+      },
+      {
+       "typ": "feinheit",
+       "text": "§ 6 ABGB gilt nach stRsp uneingeschränkt auch im öffentlichen Recht (VwGH 14.5.1992, 92/16/0015). Eine **starre Rangfolge** der Methoden legt er nicht fest; ob der Wille des historischen Gesetzgebers (subjektive Theorie) oder der heutige Sinn der Norm (objektive Theorie) maßgeblich ist, entscheiden Lehre und Rsp, die beide Ansätze überwiegend verbinden."
+      },
+      {
+       "typ": "latinum",
+       "lat": "Scire leges non hoc est verba earum tenere, sed vim ac potestatem.",
+       "de": "Gesetze kennen heißt nicht, ihre Worte festzuhalten, sondern ihren Sinn und ihre Tragweite.",
+       "stelle": "Celsus, D. 1,3,17"
+      }
+     ]
+    },
+    {
+     "code": "A2",
+     "titel": "Analogie und Lückenfüllung",
+     "anker": "§ 7 ABGB",
+     "seite": "Referenz",
+     "relevanz": "kern",
+     "test": "Flussdiagramm mit Verzweigung und Sperre, Klausurfalle",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Analogie überträgt die Rechtsfolge einer Norm auf einen gesetzlich nicht geregelten, aber wertungsmäßig gleichen Sachverhalt. Voraussetzung ist eine planwidrige Lücke.",
+       "zitat": {
+        "text": "Läßt sich ein Rechtsfall weder aus den Worten, noch aus dem natürlichen Sinne eines Gesetzes entscheiden, so muß auf ähnliche, in den Gesetzen bestimmt entschiedene Fälle, und auf die Gründe anderer damit verwandten Gesetze Rücksicht genommen werden. Bleibt der Rechtsfall noch zweifelhaft; so muß solcher mit Hinsicht auf die sorgfältig gesammelten und reiflich erwogenen Umstände nach den natürlichen Rechtsgrundsätzen entschieden werden.",
+        "quelle": "§ 7 ABGB (RIS)"
+       }
+      },
+      {
+       "typ": "kern",
+       "titel": "Stufen des § 7 ABGB",
+       "punkte": [
+        "**Gesetzesanalogie** (Einzelanalogie): Rückgriff auf eine einzelne ähnliche Norm",
+        "**Rechtsanalogie** (Gesamtanalogie): Rückgriff auf den Grundgedanken mehrerer verwandter Normen",
+        "**natürliche Rechtsgrundsätze**: letzte Stufe, wenn der Fall weiterhin zweifelhaft bleibt"
+       ]
+      },
+      {
+       "typ": "schema",
+       "variante": "fluss",
+       "titel": "Prüfschema Lückenfüllung",
+       "knoten": [
+        {
+         "id": "s",
+         "text": "Sachverhalt S, Norm N",
+         "zeile": 1,
+         "spalte": 2,
+         "art": "start"
+        },
+        {
+         "id": "f1",
+         "text": "Erfasst der mögliche Wortsinn von N den Fall S?",
+         "zeile": 2,
+         "spalte": 2,
+         "art": "frage"
+        },
+        {
+         "id": "e1",
+         "text": "Auslegung, § 6 ABGB",
+         "zeile": 3,
+         "spalte": 1,
+         "art": "ergebnis"
+        },
+        {
+         "id": "f2",
+         "text": "Planwidrige Lücke?",
+         "zeile": 3,
+         "spalte": 3,
+         "art": "frage"
+        },
+        {
+         "id": "f3",
+         "text": "Strafrecht und Analogie zulasten des Täters?",
+         "zeile": 4,
+         "spalte": 2,
+         "art": "frage"
+        },
+        {
+         "id": "e2",
+         "text": "Umkehrschluss: N gilt nicht",
+         "zeile": 4,
+         "spalte": 4,
+         "art": "ergebnis"
+        },
+        {
+         "id": "e3",
+         "text": "Analogieverbot, § 1 StGB, Art 7 EMRK",
+         "zeile": 5,
+         "spalte": 1,
+         "art": "sperre"
+        },
+        {
+         "id": "e4",
+         "text": "Analogie, § 7 ABGB",
+         "zeile": 5,
+         "spalte": 3,
+         "art": "ergebnis"
+        }
+       ],
+       "kanten": [
+        {
+         "von": "s",
+         "nach": "f1"
+        },
+        {
+         "von": "f1",
+         "nach": "e1",
+         "label": "ja"
+        },
+        {
+         "von": "f1",
+         "nach": "f2",
+         "label": "nein"
+        },
+        {
+         "von": "f2",
+         "nach": "e2",
+         "label": "nein"
+        },
+        {
+         "von": "f2",
+         "nach": "f3",
+         "label": "ja"
+        },
+        {
+         "von": "f3",
+         "nach": "e3",
+         "label": "ja"
+        },
+        {
+         "von": "f3",
+         "nach": "e4",
+         "label": "nein"
+        }
+       ]
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Das strafrechtliche Analogieverbot gilt nur zulasten des Täters (in malam partem). Analogie zu seinen Gunsten (in bonam partem) ist nach hM zulässig."
+      },
+      {
+       "typ": "latinum",
+       "lat": "Ubi eadem ratio, ibi idem ius.",
+       "de": "Wo derselbe Grund, dort dasselbe Recht.",
+       "stelle": "gemeinrechtliches Rechtssprichwort"
+      }
+     ]
+    },
+    {
+     "code": "A3",
+     "titel": "Extensive Auslegung und Analogie",
+     "anker": "§§ 6, 7 ABGB",
+     "seite": "Referenz",
+     "relevanz": "kern",
+     "test": "Abgrenzungstabelle, Beispiel, Feinheit",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Beide erweitern den Anwendungsbereich einer Norm. Sie unterscheiden sich allein danach, ob der mögliche Wortsinn überschritten wird ([[A1]])."
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Gegenüberstellung",
+       "links": "Extensive Auslegung",
+       "rechts": "Analogie",
+       "kriterien": [
+        {
+         "kriterium": "Wortsinn",
+         "links": "bleibt innerhalb des möglichen Wortsinns",
+         "rechts": "überschreitet den möglichen Wortsinn"
+        },
+        {
+         "kriterium": "Rechtsgrundlage",
+         "links": "§ 6 ABGB",
+         "rechts": "§ 7 ABGB"
+        },
+        {
+         "kriterium": "Voraussetzung",
+         "links": "auslegungsbedürftiger Begriff",
+         "rechts": "planwidrige Lücke und Wertungsgleichheit"
+        },
+        {
+         "kriterium": "Strafrecht, zulasten des Täters",
+         "links": "zulässig",
+         "rechts": "unzulässig (§ 1 StGB, Art 7 EMRK)"
+        },
+        {
+         "kriterium": "Begründungslast",
+         "links": "geringer",
+         "rechts": "erhöht"
+        }
+       ]
+      },
+      {
+       "typ": "beispiel",
+       "sachverhalt": "Eine (gedachte) Norm knüpft an „Fahrzeuge“ an. Ist ein E-Scooter erfasst?",
+       "loesung": "Nach allgemeinem Sprachgebrauch ist ein E-Scooter ein Fahrzeug. Die Subsumtion bleibt im Wortsinn: extensive Auslegung, keine Analogie."
+      },
+      {
+       "typ": "feinheit",
+       "text": "Das Spiegelbild der Analogie ist die **teleologische Reduktion**: Eine Norm wird trotz ihres Wortlauts nicht angewendet, weil ihr Zweck den Fall nicht erfasst (verdeckte Lücke). Auch sie ist Rechtsfortbildung mit erhöhter Begründungslast."
+      }
+     ]
+    },
+    {
+     "code": "A4",
+     "titel": "Meilensteine des österreichischen Rechts",
+     "anker": "Art 22a B-VG",
+     "seite": "Referenz",
+     "relevanz": "vertiefung",
+     "test": "Zeitleiste, Aktualisierung",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Die historische Auslegung fragt nach Entstehungszeit und Regelungsabsicht einer Norm. Ihre Bezugspunkte sind Kodifikationen und Verfassungsreformen."
+      },
+      {
+       "typ": "schema",
+       "variante": "zeitleiste",
+       "titel": "Zeitleiste",
+       "ereignisse": [
+        {
+         "datum": "1811",
+         "text": "ABGB kundgemacht (JGS 946/1811), in Kraft seit 1. Jänner 1812"
+        },
+        {
+         "datum": "1920",
+         "text": "Bundes-Verfassungsgesetz beschlossen am 1. Oktober, in Kraft am 10. November"
+        },
+        {
+         "datum": "1929",
+         "text": "B-VG-Novelle 1929: Stärkung des Bundespräsidenten"
+        },
+        {
+         "datum": "1995",
+         "text": "Beitritt zur Europäischen Union am 1. Jänner"
+        },
+        {
+         "datum": "2014",
+         "text": "Verwaltungsgerichtsbarkeits-Novelle 2012 wirksam: neun Landesverwaltungsgerichte, BVwG und BFG"
+        },
+        {
+         "datum": "2025",
+         "text": "Informationsfreiheit ersetzt die Amtsverschwiegenheit (1. September)"
+        }
+       ]
+      },
+      {
+       "typ": "aktualisierung",
+       "text": "Seit 1. September 2025 ist die Amtsverschwiegenheit aufgehoben. An ihre Stelle treten eine proaktive Informationspflicht und ein Recht auf Zugang zu Informationen (Art 22a B-VG, IFG). Ältere Lehrbuchauflagen beschreiben noch die frühere Rechtslage.",
+       "datum": "2025-09-01",
+       "quelle": "BGBl I 5/2024 (RIS)"
+      }
+     ]
+    },
+    {
+     "code": "A5",
+     "titel": "Stufenbau der Rechtsordnung",
+     "anker": "Art 44 Abs 3 B-VG",
+     "seite": "Referenz",
+     "relevanz": "auslassbar",
+     "beleg_auslassbar": "Testfall: in der Referenz-Lehrveranstaltung als nicht prüfungsrelevant ausgewiesen",
+     "test": "freies SVG mit Stilklassen, Relevanz auslassbar mit Beleg, terraübergreifender Verweis",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Nach der Stufenbaulehre (Merkl, Kelsen) leitet jede Norm ihre Geltung aus einer höherrangigen ab. Höherrangiges Recht regelt die Erzeugung des niederrangigen und setzt sich im Konflikt durch."
+      },
+      {
+       "typ": "schema",
+       "variante": "svg",
+       "titel": "Stufenbau (vereinfacht)",
+       "svg": "<svg viewBox=\"0 0 400 230\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\"><polygon class=\"t-akzent\" points=\"160,10 240,10 256,50 144,50\"/><text class=\"t-text\" x=\"200\" y=\"35\" text-anchor=\"middle\">Baugesetze</text><polygon class=\"t-flaeche\" points=\"142,55 258,55 274,95 126,95\"/><text class=\"t-text\" x=\"200\" y=\"80\" text-anchor=\"middle\">Bundesverfassungsrecht</text><polygon class=\"t-flaeche\" points=\"124,100 276,100 292,140 108,140\"/><text class=\"t-text\" x=\"200\" y=\"125\" text-anchor=\"middle\">Gesetze</text><polygon class=\"t-flaeche\" points=\"106,145 294,145 310,185 90,185\"/><text class=\"t-text\" x=\"200\" y=\"170\" text-anchor=\"middle\">Verordnungen</text><polygon class=\"t-flaeche\" points=\"88,190 312,190 328,226 72,226\"/><text class=\"t-text\" x=\"200\" y=\"213\" text-anchor=\"middle\">Bescheide und Urteile</text><line class=\"t-linie\" x1=\"350\" y1=\"20\" x2=\"350\" y2=\"220\"/><text class=\"t-klein\" x=\"356\" y=\"30\">höher</text><text class=\"t-klein\" x=\"356\" y=\"222\">niedriger</text></svg>",
+       "hoehe_mm": 60,
+       "beschreibung": "Pyramide mit fünf Stufen von oben nach unten: Baugesetze, Bundesverfassungsrecht, Gesetze, Verordnungen, Bescheide und Urteile; Pfeil von höher zu niedriger."
+      },
+      {
+       "typ": "merke",
+       "text": "Die Änderung eines Baugesetzes ist eine Gesamtänderung der Bundesverfassung und bedarf einer Volksabstimmung (Art 44 Abs 3 B-VG)."
+      },
+      {
+       "typ": "feinheit",
+       "text": "Unionsrecht steht außerhalb dieser Pyramide: Es genießt Anwendungsvorrang, verdrängt widersprechendes nationales Recht also im Einzelfall, ohne es aufzuheben. Vertiefung in [[ADM:A4]]."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "II",
+   "code": "B",
+   "name_lat": "Provincia Valoris",
+   "name_de": "Zeitwert des Geldes und Buchung",
+   "leitfrage": "Was ist eine künftige Zahlung heute wert, und wie schlägt sich ein Geschäftsfall in der Buchhaltung nieder?",
+   "kompakt": [
+    "Der Barwert diskontiert eine künftige Zahlung auf den heutigen Zeitpunkt.",
+    "Je höher Zinssatz und Laufzeit, desto niedriger der Barwert.",
+    "Der Endwert ist das Spiegelbild: Aufzinsung statt Abzinsung.",
+    "Jeder Geschäftsfall wird doppelt gebucht; Soll und Haben sind stets gleich hoch."
+   ],
+   "anker": [
+    "Gl. (1) und (2)",
+    "§ 1000 ABGB",
+    "§ 456 UGB",
+    "§ 10 UStG"
+   ],
+   "seiten": "Referenz",
+   "kacheln": [
+    {
+     "code": "B1",
+     "titel": "Barwert",
+     "anker": "Gl. (1)",
+     "seite": "Referenz",
+     "relevanz": "kern",
+     "test": "Formel, Rechenweg, Kurve mit zwei Reihen, vier gerahmte Bausteine (Obergrenze), Austriacum",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Der Barwert (present value) ist der heutige Wert einer künftigen Zahlung, ermittelt durch Abzinsung mit dem Kalkulationszinssatz."
+      },
+      {
+       "typ": "formel",
+       "tex": "PV = \\frac{C_n}{(1+i)^n}",
+       "nummer": "(1)",
+       "variablen": [
+        {
+         "symbol": "PV",
+         "bedeutung": "Barwert"
+        },
+        {
+         "symbol": "C_n",
+         "bedeutung": "Zahlung im Zeitpunkt n"
+        },
+        {
+         "symbol": "i",
+         "bedeutung": "Zinssatz je Periode, dezimal"
+        },
+        {
+         "symbol": "n",
+         "bedeutung": "Anzahl der Perioden"
+        }
+       ]
+      },
+      {
+       "typ": "rechenweg",
+       "aufgabe": "Welchen Barwert hat eine Zahlung von 10.000 € in drei Jahren bei 5 % jährlich?",
+       "schritte": [
+        {
+         "text": "Aufzinsungsfaktor bilden",
+         "tex": "q = 1 + i = 1{,}05"
+        },
+        {
+         "text": "Faktor potenzieren",
+         "tex": "q^3 = 1{,}05^3 = 1{,}157625"
+        },
+        {
+         "text": "Zahlung durch den Faktor teilen",
+         "tex": "PV = \\frac{10{.}000}{1{,}157625} = 8{.}638{,}38"
+        }
+       ],
+       "ergebnis": "8.638,38 €"
+      },
+      {
+       "typ": "schema",
+       "variante": "kurve",
+       "titel": "Barwert von 10.000 € nach Laufzeit",
+       "x": {
+        "label": "Laufzeit n",
+        "einheit": "Jahre"
+       },
+       "y": {
+        "label": "Barwert",
+        "einheit": "€"
+       },
+       "reihen": [
+        {
+         "name": "i = 5 %",
+         "punkte": [
+          [
+           0,
+           10000.0
+          ],
+          [
+           1,
+           9523.81
+          ],
+          [
+           2,
+           9070.29
+          ],
+          [
+           3,
+           8638.38
+          ],
+          [
+           4,
+           8227.02
+          ],
+          [
+           5,
+           7835.26
+          ],
+          [
+           6,
+           7462.15
+          ],
+          [
+           7,
+           7106.81
+          ],
+          [
+           8,
+           6768.39
+          ],
+          [
+           9,
+           6446.09
+          ],
+          [
+           10,
+           6139.13
+          ]
+         ]
+        },
+        {
+         "name": "i = 10 %",
+         "punkte": [
+          [
+           0,
+           10000.0
+          ],
+          [
+           1,
+           9090.91
+          ],
+          [
+           2,
+           8264.46
+          ],
+          [
+           3,
+           7513.15
+          ],
+          [
+           4,
+           6830.13
+          ],
+          [
+           5,
+           6209.21
+          ],
+          [
+           6,
+           5644.74
+          ],
+          [
+           7,
+           5131.58
+          ],
+          [
+           8,
+           4665.07
+          ],
+          [
+           9,
+           4240.98
+          ],
+          [
+           10,
+           3855.43
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Barwert und Zinssatz bewegen sich gegenläufig."
+      },
+      {
+       "typ": "klausurfalle",
+       "text": "Mit **einfacher** Verzinsung ergäbe sich 10.000 / (1 + 0,05 · 3) = 8.695,65 €. Der Barwert setzt Zinseszins voraus; die Differenz von 57,27 € ist ein typischer Fehler."
+      },
+      {
+       "typ": "austriacum",
+       "text": "Gesetzliche Zinsen betragen 4 % jährlich. Bei Zahlungsverzug zwischen Unternehmern aus unternehmensbezogenen Geschäften gelten 9,2 Prozentpunkte über dem Basiszinssatz, maßgeblich ist der Satz am ersten Kalendertag des Halbjahres. Ist der Schuldner für die Verzögerung nicht verantwortlich, bleibt es bei 4 %.",
+       "norm": "§ 1000 Abs 1 ABGB, § 456 UGB"
+      },
+      {
+       "typ": "latinum",
+       "lat": "Bis dat, qui cito dat.",
+       "de": "Doppelt gibt, wer schnell gibt.",
+       "stelle": "Sprichwort nach Publilius Syrus, Sententiae (inopi beneficium bis dat, qui dat celeriter)"
+      }
+     ]
+    },
+    {
+     "code": "B2",
+     "titel": "Doppelte Buchführung: Wareneinkauf auf Ziel",
+     "anker": "§ 10 Abs 1 UStG",
+     "seite": "Referenz",
+     "relevanz": "kern",
+     "test": "T-Konto mit Summenprobe",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Jeder Geschäftsfall berührt mindestens zwei Konten. Die Summe der Sollbuchungen entspricht stets der Summe der Habenbuchungen."
+      },
+      {
+       "typ": "schema",
+       "variante": "tkonto",
+       "titel": "Kauf von Waren um 1.000 € netto auf Ziel, 20 % Umsatzsteuer",
+       "buchungssatz": "Wareneinkauf 1.000 € und Vorsteuer 200 € an Lieferverbindlichkeiten 1.200 €",
+       "konten": [
+        {
+         "name": "Wareneinkauf",
+         "soll": [
+          {
+           "text": "Lieferverbindlichkeiten",
+           "betrag": 1000
+          }
+         ],
+         "haben": []
+        },
+        {
+         "name": "Vorsteuer",
+         "soll": [
+          {
+           "text": "Lieferverbindlichkeiten",
+           "betrag": 200
+          }
+         ],
+         "haben": []
+        },
+        {
+         "name": "Lieferverbindlichkeiten",
+         "soll": [],
+         "haben": [
+          {
+           "text": "Wareneinkauf, Vorsteuer",
+           "betrag": 1200
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Beim vorsteuerabzugsberechtigten Unternehmer ist die Vorsteuer eine Forderung gegenüber dem Finanzamt und kein Aufwand."
+      },
+      {
+       "typ": "latinum",
+       "lat": "Pecunia non olet.",
+       "de": "Geld stinkt nicht.",
+       "stelle": "nach Sueton, Divus Vespasianus 23"
+      }
+     ]
+    },
+    {
+     "code": "B3",
+     "titel": "Barwert und Endwert",
+     "anker": "Gl. (1), (2)",
+     "seite": "Referenz",
+     "relevanz": "vertiefung",
+     "test": "zweite Formelnummer, Abgrenzung mit Zahlen, Lücke",
+     "bausteine": [
+      {
+       "typ": "definition",
+       "text": "Der Endwert (future value) ist der künftige Wert einer heutigen Zahlung, ermittelt durch Aufzinsung."
+      },
+      {
+       "typ": "formel",
+       "tex": "FV = C_0 \\cdot (1+i)^n",
+       "nummer": "(2)",
+       "variablen": [
+        {
+         "symbol": "FV",
+         "bedeutung": "Endwert"
+        },
+        {
+         "symbol": "C_0",
+         "bedeutung": "heutige Zahlung"
+        }
+       ]
+      },
+      {
+       "typ": "schema",
+       "variante": "abgrenzung",
+       "titel": "Gegenüberstellung",
+       "links": "Barwert",
+       "rechts": "Endwert",
+       "kriterien": [
+        {
+         "kriterium": "Blickrichtung",
+         "links": "von der Zukunft auf heute",
+         "rechts": "von heute in die Zukunft"
+        },
+        {
+         "kriterium": "Operation",
+         "links": "Abzinsung (Division)",
+         "rechts": "Aufzinsung (Multiplikation)"
+        },
+        {
+         "kriterium": "10.000 €, 5 %, 3 Jahre",
+         "links": "8.638,38 €",
+         "rechts": "11.576,25 €"
+        },
+        {
+         "kriterium": "Wirkung eines höheren Zinssatzes",
+         "links": "Barwert sinkt",
+         "rechts": "Endwert steigt"
+        }
+       ]
+      },
+      {
+       "typ": "luecke",
+       "text": "Stetige Verzinsung, PV = C · e^(−r · t), war in der Unterlage nicht enthalten und wurde sinngemäß ergänzt.",
+       "grund": "Folie fehlt in der Referenzunterlage (Testfall)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "III",
+   "code": "L",
+   "name_lat": "Repetitorium",
+   "name_de": "Prüfungsroute, Fallmatrix und Siglen",
+   "leitfrage": "Wie bringe ich den Stoff in der Prüfung sicher zur Anwendung?",
+   "kompakt": [
+    "Methodenfragen werden entlang der Prüfungsroute gelöst.",
+    "Die Fallmatrix zeigt alle Methoden auf einen Blick."
+   ],
+   "anker": [
+    "§§ 6, 7 ABGB"
+   ],
+   "kacheln": [
+    {
+     "code": "L1",
+     "titel": "Prüfungsroute Methodenlehre",
+     "anker": "§§ 6, 7 ABGB",
+     "seite": "Referenz",
+     "relevanz": "kern",
+     "test": "Kern als nummerierte Route, Verweis in Fließtext",
+     "bausteine": [
+      {
+       "typ": "kern",
+       "titel": "Route",
+       "punkte": [
+        "Norm identifizieren und Tatbestand in Merkmale zerlegen",
+        "Wortlaut ermitteln (grammatikalisch)",
+        "Zusammenhang prüfen (systematisch)",
+        "Entstehung und Zweck heranziehen (historisch, teleologisch)",
+        "Wortsinn überschritten? Dann Lücke und Planwidrigkeit prüfen ([[A2]])",
+        "Ergebnis subsumieren und begründen"
+       ]
+      },
+      {
+       "typ": "merke",
+       "text": "Das Ergebnis allein überzeugt nicht; der Weg dorthin muss begründet sein."
+      }
+     ]
+    },
+    {
+     "code": "L2",
+     "titel": "Fallmatrix der Methoden",
+     "anker": "§§ 6, 7 ABGB",
+     "seite": "Referenz",
+     "relevanz": "kern",
+     "test": "breite Tabelle mit sieben Spalten: Querformatseite",
+     "bausteine": [
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Methoden im Vergleich",
+       "breit": true,
+       "kopf": [
+        "Methode",
+        "Leitfrage",
+        "Mittel",
+        "Grenze",
+        "Grundlage",
+        "Typischer Fehler",
+        "Terminus"
+       ],
+       "zeilen": [
+        [
+         "Grammatikalisch",
+         "Was bedeuten die Worte?",
+         "allgemeiner und juristischer Sprachgebrauch, Legaldefinitionen",
+         "möglicher Wortsinn",
+         "§ 6 ABGB",
+         "Wortlaut ohne Zusammenhang für eindeutig halten",
+         "verba legis"
+        ],
+        [
+         "Systematisch",
+         "Was sagen Stellung und Nachbarnormen?",
+         "Aufbau des Gesetzes, Stufenbau, verfassungskonforme Auslegung",
+         "möglicher Wortsinn",
+         "§ 6 ABGB",
+         "Normhierarchie übersehen",
+         "argumentum a rubrica"
+        ],
+        [
+         "Historisch",
+         "Was wollte der Gesetzgeber?",
+         "Gesetzesmaterialien (ErläutRV, AB)",
+         "Materialien im eindeutigen Widerspruch zum Wortlaut sind bedeutungslos (VwGH 23.2.2001, 98/06/0240)",
+         "§ 6 ABGB",
+         "Materialien über den Wortlaut stellen",
+         "mens legislatoris"
+        ],
+        [
+         "Teleologisch",
+         "Welchen Zweck verfolgt die Norm?",
+         "ratio legis, Wertungen der Rechtsordnung",
+         "möglicher Wortsinn",
+         "§ 6 ABGB",
+         "eigenen Zweck unterschieben",
+         "ratio legis"
+        ],
+        [
+         "Analogie",
+         "Ist eine planwidrige Lücke zu schließen?",
+         "ähnliche Normen, Rechtsgrundgedanken",
+         "Analogieverbot zulasten im Strafrecht",
+         "§ 7 ABGB",
+         "Planwidrigkeit nicht begründen",
+         "argumentum per analogiam"
+        ],
+        [
+         "Teleologische Reduktion",
+         "Erfasst der Wortlaut zu viel?",
+         "Normzweck",
+         "erhöhte Begründungslast",
+         "Rechtsfortbildung, von Lehre und Rsp anerkannt",
+         "mit restriktiver Auslegung verwechseln",
+         "cessante ratione legis cessat lex ipsa"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "L3",
+     "titel": "Siglen wichtiger Rechtsvorschriften",
+     "anker": "RIS",
+     "seite": "Referenz",
+     "relevanz": "vertiefung",
+     "test": "überhohe Tabelle: Teilung nur zwischen Zeilen, Kopfzeile wiederholt, Vermerk Fortsetzung",
+     "bausteine": [
+      {
+       "typ": "schema",
+       "variante": "tabelle",
+       "titel": "Siglenverzeichnis",
+       "kopf": [
+        "Sigle",
+        "Bezeichnung",
+        "Rechtsgebiet"
+       ],
+       "zeilen": [
+        [
+         "ABGB",
+         "Allgemeines bürgerliches Gesetzbuch",
+         "Zivilrecht"
+        ],
+        [
+         "AEUV",
+         "Vertrag über die Arbeitsweise der Europäischen Union",
+         "Unionsrecht"
+        ],
+        [
+         "AktG",
+         "Aktiengesetz",
+         "Gesellschaftsrecht"
+        ],
+        [
+         "AngG",
+         "Angestelltengesetz",
+         "Arbeitsrecht"
+        ],
+        [
+         "ArbVG",
+         "Arbeitsverfassungsgesetz",
+         "Arbeitsrecht"
+        ],
+        [
+         "ASVG",
+         "Allgemeines Sozialversicherungsgesetz",
+         "Sozialrecht"
+        ],
+        [
+         "AußStrG",
+         "Außerstreitgesetz",
+         "Verfahrensrecht"
+        ],
+        [
+         "AVG",
+         "Allgemeines Verwaltungsverfahrensgesetz 1991",
+         "Verwaltungsverfahren"
+        ],
+        [
+         "BAO",
+         "Bundesabgabenordnung",
+         "Abgabenverfahren"
+        ],
+        [
+         "B-VG",
+         "Bundes-Verfassungsgesetz",
+         "Verfassungsrecht"
+        ],
+        [
+         "DSG",
+         "Datenschutzgesetz",
+         "Datenschutzrecht"
+        ],
+        [
+         "EheG",
+         "Ehegesetz",
+         "Familienrecht"
+        ],
+        [
+         "EMRK",
+         "Konvention zum Schutze der Menschenrechte und Grundfreiheiten",
+         "Grundrechte"
+        ],
+        [
+         "EO",
+         "Exekutionsordnung",
+         "Verfahrensrecht"
+        ],
+        [
+         "EPG",
+         "Eingetragene Partnerschaft-Gesetz",
+         "Familienrecht"
+        ],
+        [
+         "EStG",
+         "Einkommensteuergesetz 1988",
+         "Steuerrecht"
+        ],
+        [
+         "EUV",
+         "Vertrag über die Europäische Union",
+         "Unionsrecht"
+        ],
+        [
+         "FinStrG",
+         "Finanzstrafgesetz",
+         "Finanzstrafrecht"
+        ],
+        [
+         "GewO",
+         "Gewerbeordnung 1994",
+         "Wirtschaftsverwaltungsrecht"
+        ],
+        [
+         "GmbHG",
+         "Gesetz über Gesellschaften mit beschränkter Haftung",
+         "Gesellschaftsrecht"
+        ],
+        [
+         "GRC",
+         "Charta der Grundrechte der Europäischen Union",
+         "Grundrechte"
+        ],
+        [
+         "IFG",
+         "Informationsfreiheitsgesetz",
+         "Verwaltungsrecht"
+        ],
+        [
+         "IO",
+         "Insolvenzordnung",
+         "Insolvenzrecht"
+        ],
+        [
+         "JN",
+         "Jurisdiktionsnorm",
+         "Verfahrensrecht"
+        ],
+        [
+         "KSchG",
+         "Konsumentenschutzgesetz",
+         "Zivilrecht"
+        ],
+        [
+         "KStG",
+         "Körperschaftsteuergesetz 1988",
+         "Steuerrecht"
+        ],
+        [
+         "MRG",
+         "Mietrechtsgesetz",
+         "Zivilrecht"
+        ],
+        [
+         "StGB",
+         "Strafgesetzbuch",
+         "Strafrecht"
+        ],
+        [
+         "StGG",
+         "Staatsgrundgesetz über die allgemeinen Rechte der Staatsbürger",
+         "Grundrechte"
+        ],
+        [
+         "StPO",
+         "Strafprozessordnung 1975",
+         "Strafverfahrensrecht"
+        ],
+        [
+         "UGB",
+         "Unternehmensgesetzbuch",
+         "Unternehmensrecht"
+        ],
+        [
+         "UrhG",
+         "Urheberrechtsgesetz",
+         "Immaterialgüterrecht"
+        ],
+        [
+         "UStG",
+         "Umsatzsteuergesetz 1994",
+         "Steuerrecht"
+        ],
+        [
+         "UWG",
+         "Bundesgesetz gegen den unlauteren Wettbewerb 1984",
+         "Wettbewerbsrecht"
+        ],
+        [
+         "VerG",
+         "Vereinsgesetz 2002",
+         "Vereinsrecht"
+        ],
+        [
+         "VfGG",
+         "Verfassungsgerichtshofgesetz 1953",
+         "Verfassungsrecht"
+        ],
+        [
+         "VStG",
+         "Verwaltungsstrafgesetz 1991",
+         "Verwaltungsstrafrecht"
+        ],
+        [
+         "VwGG",
+         "Verwaltungsgerichtshofgesetz 1985",
+         "Verwaltungsgerichtsbarkeit"
+        ],
+        [
+         "VwGVG",
+         "Verwaltungsgerichtsverfahrensgesetz",
+         "Verwaltungsgerichtsbarkeit"
+        ],
+        [
+         "WEG",
+         "Wohnungseigentumsgesetz 2002",
+         "Zivilrecht"
+        ],
+        [
+         "ZPO",
+         "Zivilprozessordnung",
+         "Zivilverfahrensrecht"
+        ]
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "selbsttest": [
+  {
+   "frage": "Wo verläuft die Grenze zwischen Auslegung und Analogie?",
+   "antwort": "Am möglichen Wortsinn der Norm.",
+   "kachel": "A1"
+  },
+  {
+   "frage": "Ist Analogie im Strafrecht ausnahmslos verboten?",
+   "antwort": "Nein, nur zulasten des Täters (§ 1 StGB, Art 7 EMRK).",
+   "kachel": "A2"
+  },
+  {
+   "frage": "Wie verändert sich der Barwert, wenn der Zinssatz steigt?",
+   "antwort": "Er sinkt.",
+   "kachel": "B1"
+  },
+  {
+   "frage": "Welche Verzugszinsen gelten zwischen Unternehmern, wenn der Schuldner für die Verzögerung nicht verantwortlich ist?",
+   "antwort": "4 % jährlich; der erhöhte Satz setzt Verantwortlichkeit voraus (§ 456 UGB).",
+   "kachel": "B1"
+  },
+  {
+   "frage": "Wie lautet der Buchungssatz für Waren um 1.000 € netto auf Ziel bei 20 % Umsatzsteuer?",
+   "antwort": "Wareneinkauf 1.000 € und Vorsteuer 200 € an Lieferverbindlichkeiten 1.200 €.",
+   "kachel": "B2"
+  }
+ ],
+ "lexicon": [
+  {
+   "begriff": "ratio legis",
+   "bedeutung": "Zweck und Grundgedanke einer Norm",
+   "kachel": "A1"
+  },
+  {
+   "begriff": "mens legislatoris",
+   "bedeutung": "Wille des historischen Gesetzgebers",
+   "kachel": "A1"
+  },
+  {
+   "begriff": "argumentum e contrario",
+   "bedeutung": "Umkehrschluss: die Rechtsfolge gilt nur für den geregelten Fall",
+   "kachel": "A2"
+  },
+  {
+   "begriff": "in malam partem",
+   "bedeutung": "zulasten des Betroffenen",
+   "kachel": "A2"
+  },
+  {
+   "begriff": "in bonam partem",
+   "bedeutung": "zugunsten des Betroffenen",
+   "kachel": "A2"
+  },
+  {
+   "begriff": "present value",
+   "bedeutung": "Barwert",
+   "kachel": "B1",
+   "sprache": "en"
+  }
+ ],
+ "quellenkritik": [
+  {
+   "quelle": "Online-Zinsrechner (Stand 2026)",
+   "befund": "§ 1000 ABGB sehe 4 Prozentpunkte über dem Basiszinssatz vor.",
+   "richtig": "§ 1000 Abs 1 ABGB bestimmt einen festen Satz von 4 % jährlich; nur § 456 UGB knüpft an den Basiszinssatz an.",
+   "kachel": "B1"
+  },
+  {
+   "quelle": "verbreitete Kurzformel in Lernunterlagen",
+   "befund": "„Im Strafrecht ist Analogie verboten.“",
+   "richtig": "Verboten ist nur Analogie zulasten des Täters; zu seinen Gunsten ist sie nach hM zulässig.",
+   "kachel": "A2"
+  }
+ ],
+ "aenderungen": [
+  {
+   "version": "0.2",
+   "datum": "2026-10-16",
+   "text": "Erstfassung des Referenzwerks"
+  }
+ ]
+}

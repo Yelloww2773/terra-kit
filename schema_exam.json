@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "terra-standard/schema-exam/3.1",
+  "title": "Terra-Exam",
+  "description": "(c) Oliver Bedernik · Terra-Kit · Datenmodell eines Exams; verweist auf die Kacheln genau eines Werks.",
+  "type": "object",
+  "required": ["standard", "meta", "fragen"],
+  "additionalProperties": false,
+  "properties": {
+    "standard": { "type": "string", "pattern": "^3\\.[0-9]+$" },
+    "meta": {
+      "type": "object",
+      "required": ["titel", "werk", "werk_version", "version", "stand", "urheber", "minuten", "proverbium"],
+      "additionalProperties": false,
+      "properties": {
+        "titel": { "type": "string", "pattern": "^Examen [A-Z][a-z]+( [A-Z][a-z]+)*$" },
+        "werk": { "type": "string", "pattern": "^Terra( [A-Z][a-z]+)+$" },
+        "werk_version": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+        "stand": { "type": "string", "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])$" },
+        "urheber": { "const": "(c) Oliver Bedernik" },
+        "minuten": { "type": "integer", "minimum": 10, "maximum": 240 },
+        "karte_url": { "type": "string", "pattern": "^https://" },
+        "proverbium": { "type": "object", "required": ["lat", "de", "stelle"], "additionalProperties": false,
+          "properties": { "lat": { "type": "string" }, "de": { "type": "string" }, "stelle": { "type": "string" } } }
+      }
+    },
+    "fragen": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/frage" } }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1 },
+    "frage": {
+      "type": "object",
+      "required": ["id", "typ", "provinz", "kacheln", "dimension", "frage", "optionen"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^q[1-9][0-9]?$" },
+        "typ": { "enum": ["einfach", "mehrfach"] },
+        "provinz": { "type": "string", "pattern": "^[A-GL]$" },
+        "kacheln": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^[A-GL][1-9][0-9]?$" } },
+        "dimension": { "$ref": "#/$defs/text" },
+        "sachverhalt": { "$ref": "#/$defs/text" },
+        "frage": { "$ref": "#/$defs/text" },
+        "optionen": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/option" } },
+        "merke": { "type": "object", "required": ["text"], "additionalProperties": false,
+          "properties": { "text": { "$ref": "#/$defs/text" }, "lat": { "type": "string" }, "de": { "type": "string" } } }
+      }
+    },
+    "option": {
+      "type": "object",
+      "required": ["id", "text", "richtig", "begruendung"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "enum": ["a", "b", "c", "d"] },
+        "text": { "$ref": "#/$defs/text" },
+        "richtig": { "type": "boolean" },
+        "begruendung": { "$ref": "#/$defs/text" },
+        "norm": { "type": "string" }
+      }
+    }
+  }
+}

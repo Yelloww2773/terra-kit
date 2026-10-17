@@ -1,0 +1,11 @@
+{
+  "name": "terra-kit",
+  "private": true,
+  "description": "(c) Oliver Bedernik · Terra-Kit · Schriften und Formelsatz (fest versioniert)",
+  "dependencies": {
+    "katex": "0.16.11",
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/spectral": "5.3.0",
+    "@fontsource/alegreya-sans": "5.3.0"
+  }
+}

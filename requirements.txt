@@ -1,0 +1,7 @@
+# (c) Oliver Bedernik · Terra-Kit · Python-Abhängigkeiten
+jsonschema>=4.20
+playwright>=1.42
+pypdf>=5.0
+pyphen>=0.14
+Pillow>=10.0
+genanki>=0.13
