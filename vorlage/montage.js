@@ -261,6 +261,24 @@
     p.querySelectorAll('.unit').forEach(u => {
       for (const r of u.getClientRects()) if (r.bottom > kb.bottom + TOL || r.top < kb.top - TOL || r.right > kb.right + TOL) { schnitte++; break; }
     });
+    /* Lage des Satzspiegels selbst prüfen: Er muss exakt im Seitenrand sitzen. Eine Verschiebung
+       (etwa durch zusammenfallende Abstände) verschiebt sonst den Maßstab aller übrigen Prüfungen. */
+    if (!p.classList.contains('deck')) {
+      const pr = p.getBoundingClientRect(), cs = getComputedStyle(p);
+      const dOben = kb.top - (pr.top + parseFloat(cs.paddingTop)), dUnten = (pr.bottom - parseFloat(cs.paddingBottom)) - kb.bottom;
+      if (Math.abs(dOben) > TOL || Math.abs(dUnten) > TOL)
+        bericht.fehler.push('Seite ' + (i + 1) + ': Satzspiegel verschoben (oben ' + (dOben / 3.78).toFixed(1) + ' mm, unten ' + (dUnten / 3.78).toFixed(1) + ' mm)');
+    }
+    /* Auch frei positionierte Elemente (etwa das Impressum) müssen im Satzspiegel und auf dem Blatt liegen. */
+    const blatt = p.getBoundingClientRect();
+    let frei = 0;
+    k.querySelectorAll('*').forEach(e => {
+      const st = getComputedStyle(e).position;
+      if (st !== 'absolute' && st !== 'fixed') return;
+      const r = e.getBoundingClientRect();
+      if (r.height && (r.bottom > kb.bottom + TOL || r.bottom > blatt.bottom - TOL)) frei++;
+    });
+    if (frei) bericht.fehler.push('Seite ' + (i + 1) + ': ' + frei + ' frei positionierte(s) Element(e) außerhalb des Satzspiegels');
     const nurKopf = k.children.length === 1 && k.querySelector('.provkopf') && !k.querySelector('.kachel');
     const a = ['deck', 'titelei', 'spalten', 'quer'].find(x => p.classList.contains(x)) || 'normal';
     const erste = k.querySelector('.unit');
