@@ -21,7 +21,7 @@ import skript as S  # noqa: E402
 import karte as K  # noqa: E402
 from validate import validiere_exam  # noqa: E402
 
-VERSION = "3.1.1"
+VERSION = "3.1.0"
 esc = S.esc
 TYP = {"einfach": "Einfachauswahl", "mehrfach": "Mehrfachauswahl"}
 

@@ -44,7 +44,7 @@ body {
 }
 .page:last-child { break-after: auto; page-break-after: auto; }
 .page.quer { page: quer; width: 297mm; height: 209.6mm; }
-.koerper { position: relative; height: 100%; display: flow-root; }  /* eigener Layoutbereich: Abstände der Inhalte schlagen nicht nach außen durch */
+.koerper { position: relative; height: 100%; }
 .kopfzeile, .fusszeile {
   position: absolute; left: 17mm; right: 17mm; font: 400 7.4pt/1.2 var(--f-ui); color: var(--tinte-2);
 }

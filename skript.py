@@ -24,7 +24,7 @@ KIT = Path(__file__).resolve().parent
 sys.path.insert(0, str(KIT))
 from validate import validiere  # noqa: E402
 
-VERSION = "3.1.1"
+VERSION = "3.1.0"
 NM = KIT / "node_modules"
 MONATE = ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August",
           "September", "Oktober", "November", "Dezember"]

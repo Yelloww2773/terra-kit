@@ -24,7 +24,7 @@ sys.path.insert(0, str(KIT))
 import skript as S  # noqa: E402
 from validate import validiere  # noqa: E402
 
-VERSION = "3.1.1"
+VERSION = "3.1.0"
 GOOGLE = ("https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400"
           "&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600"
           "&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap")
