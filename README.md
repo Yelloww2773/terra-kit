@@ -128,3 +128,11 @@ A4-Bogen: Deckblatt mit Namensfeld, Fragen in Seitenmontage (nie geteilt), Lösu
 Je Baustein eine oder mehrere Karten: Definition (Fallbeispiel nur zur Veranschaulichung auf der Rückseite), Kernpunkte als Stichpunktliste, Merke, Feinheit, Klausurfalle, Österreichbezug, Aktualisierung, Normwortlaut, Latinum und Lexicon, Formel (MathJax) und Rechenweg, Zeitleiste (Datum → Ereignis), Tabelle (je Zeile), Abgrenzung (je Kriterium), Abbildungen als Bild, Provinz (Leitfrage → In 60 Sekunden), Selbsttest und Quellenkritik.
 
 Unterdecks je Provinz unter `Terra::<Werk>`; Schlagwörter `Provinz::`, `Kachel::`, `Relevanz::`, `Art::` (etwa nur Kernstoff lernen: Suche `tag:Relevanz::kern`). Die Kennung jeder Notiz ergibt sich aus Werk-Sigle und Baustein; ein erneuter Import nach einer Korrektur aktualisiert die Karten und erhält den Lernfortschritt. Hausschriften sind eingebettet; Dunkelmodus von Anki und AnkiDroid wird unterstützt. Kartenfuß mit „(c) Oliver Bedernik“, Werk und Fundstelle.
+
+## Änderungen
+
+**3.1.1** (Oktober 2026)
+- Behoben: Auf Seite 2 des Lernskripts (Impressum) überlagerten sich Quellenangaben und Fußzeile. Ursache: Der obere Abstand des Mottos schlug durch den Satzspiegel nach außen durch (Margin Collapsing) und verschob den gesamten Satzspiegel um 50 mm nach unten. Der Satzspiegel ist jetzt ein eigenständiger Layoutbereich (`display: flow-root`).
+- Neue Prüfung in der Seitenmontage: Lage des Satzspiegels auf jeder Seite; frei positionierte Elemente müssen im Satzspiegel und auf dem Blatt liegen. Beides hätte den Fehler sofort gemeldet.
+
+**3.1.0** (Oktober 2026): erste freigegebene Fassung.
