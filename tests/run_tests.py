@@ -139,7 +139,30 @@ def main():
         ok = not bf["fehler"] and bf["notizen"] > 50
         print(("✓ " if ok else "✗ ") + f"Anki {datei}: {bf['notizen']} Karten, {len(bilder)} Abbildungen" + ("" if ok else f" {bf['fehler']}"))
         fehlschlaege += 0 if ok else 1
-    gesamt = len(TESTS) + 5 + len(EXAMTESTS)
+    # Quellen (3.2): Verwendungsnachweis, Pflichtfelder, Zitierformen
+    import skript as SK
+    from validate import validiere as _val
+    ex_w = json.loads((KIT / "referenzwerk.json").read_text(encoding="utf-8"))
+    def _mut(fn):
+        w = copy.deepcopy(ex_w); fn(w); return _val(w)
+    QTESTS = [
+        ("Kachel zitiert unbekannte Quelle", lambda: _mut(lambda w: w["provinzen"][0]["kacheln"][0]["quellen"].append("Unbekannt 1999")).fehler, "im Quellenverzeichnis fehlt"),
+        ("Kurzzitat doppelt", lambda: _mut(lambda w: w["quellen"].append(dict(w["quellen"][0]))).fehler, "doppelt vergeben"),
+        ("Pflichtangabe fehlt", lambda: _mut(lambda w: next(q for q in w["quellen"] if q.get("gattung") == "literatur").pop("jahr")).fehler, "Pflichtangabe jahr fehlt"),
+        ("Quelle von keiner Kachel zitiert", lambda: _mut(lambda w: w["quellen"].append({"kurz": "Waise 2020", "gattung": "literatur", "autoren": ["Waise, W."], "titel": "T", "jahr": "2020"})).warnungen, "von keiner Kachel zitiert"),
+        ("APA: zwei Autoren mit Komma und &", lambda: [SK.zitat_text({"gattung": "literatur", "autoren": ["Fouquin, Michel", "Hugot, Jules"], "titel": "T", "jahr": "2016", "verlag": "V", "kurz": "x"}, "APA")], "Fouquin, M., & Hugot, J. (2016). T. V."),
+        ("APA: Zeitschriftenaufsatz", lambda: [SK.zitat_text({"gattung": "aufsatz", "autoren": ["Markowitz, Harry"], "titel": "Portfolio selection", "in": "The Journal of Finance", "band": "7", "heft": "1", "seiten": "77 bis 91", "jahr": "1952", "kurz": "x"}, "APA")], "Markowitz, H. (1952). Portfolio selection. The Journal of Finance, 7(1), 77 bis 91."),
+        ("AZR: Kommentar mit Auflage", lambda: [SK.zitat_voll({"gattung": "kommentar", "autoren": ["Kodek, Georg"], "hrsg": ["Rummel, Peter", "Lukas, Meinhard"], "in": "ABGB", "auflage": 4, "fundstelle": "§§ 6, 7", "jahr": "2015", "kurz": "x"}, "AZR")], "ABGB<sup>4</sup> §§\u00a06, 7 (2015)"),
+        ("Entscheidung mit Sammlung und ECLI", lambda: [SK.zitat_text({"gattung": "entscheidung", "gericht": "EuGH", "datum": "2010-12-22", "gz": "C-208/09", "name": "Sayn-Wittgenstein", "ecli": "ECLI:EU:C:2010:806", "kurz": "x"}, "AZR")], "EuGH 22.12.2010, C-208/09, Sayn-Wittgenstein, ECLI:EU:C:2010:806"),
+        ("Hochzahlen als echte Hochstellung", lambda: [SK.md("ABGB⁴")], '<sup class="hz">4</sup>'),
+    ]
+    for name, fn, erw in QTESTS:
+        try:
+            ergebnis = fn(); ok = any(erw in z for z in ergebnis)
+        except Exception as ex:
+            ok = False; ergebnis = [repr(ex)]
+        print(("✓ " if ok else "✗ ") + "Quellen: " + name + ("" if ok else f"  → {ergebnis[:2]}")); fehlschlaege += 0 if ok else 1
+    gesamt = len(TESTS) + 5 + len(EXAMTESTS) + len(QTESTS)
     print(f"\n{gesamt - fehlschlaege} von {gesamt} Tests bestanden")
     sys.exit(1 if fehlschlaege else 0)
 

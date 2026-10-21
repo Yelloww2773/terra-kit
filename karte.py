@@ -24,7 +24,7 @@ sys.path.insert(0, str(KIT))
 import skript as S  # noqa: E402
 from validate import validiere  # noqa: E402
 
-VERSION = "3.1.1"
+VERSION = "3.2.0"
 GOOGLE = ("https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400"
           "&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600"
           "&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap")
@@ -145,7 +145,7 @@ def info_paneel(werk):
     if m.get("lehrveranstaltung"):
         zeilen.append(("Lehrveranstaltung", S.md(m["lehrveranstaltung"])))
     zeilen += [("Primärquelle", S.md(mo["primaerquelle"])), ("Sekundärquelle", S.md(mo["sekundaerquelle"])),
-               ("Quellen", "; ".join(S.md(q["voll"]) for q in werk.get("quellen", [])) or "keine"),
+               ("Quellen", "; ".join(S.zitat_voll(q, S.zitierstil(werk)) for q in werk.get("quellen", [])) or "keine"),
                ("Zitiervorschlag", f'<i>Bedernik</i>, {esc(m["titel"])} ({m["stand"][:4]}) Kachel {erste}'),
                ("Inhaltsgleich", "Lernskript (PDF) und Exam aus derselben Datenquelle, gleiche Kachelcodes"),
                ("Tastatur", "+ und − zoomen, 0 ganze Karte, / Suche, Pfeiltasten bewegen, Esc schließt"),

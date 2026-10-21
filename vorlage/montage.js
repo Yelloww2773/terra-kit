@@ -177,6 +177,21 @@
   }
   QUELLE.remove();
 
+  /* Titelseite: Registerübersicht erst unterhalb des tatsächlichen Titelblocks setzen und
+     den verfügbaren Raum bis zur Fußzeile gleichmäßig aufteilen. So kann ein langer Titel,
+     Untertitel oder eine lange Lehrveranstaltungszeile die Register nie überlagern. */
+  BUCH.querySelectorAll('.page.deck').forEach(p => {
+    const mm = 96 / 25.4, pr = p.getBoundingClientRect();
+    const titel = p.querySelector('.tp-mitte'), fuss = p.querySelector('.tp-fuss');
+    const reiter = Array.from(p.querySelectorAll('.daumen'));
+    if (!titel || !reiter.length) return;
+    const oben = Math.max(150, (titel.getBoundingClientRect().bottom - pr.top) / mm + 12);
+    const unten = fuss ? (fuss.getBoundingClientRect().top - pr.top) / mm - 8 : 267;
+    const h = Math.min(30, (unten - oben) / reiter.length - 2.5);
+    reiter.forEach((d, i) => { d.style.top = (oben + i * (h + 2.5)).toFixed(1) + 'mm'; d.style.height = h.toFixed(1) + 'mm'; d.classList.toggle('eng', h < 14); });
+    if (h < 4.5) bericht.warnungen.push('Titelseite: wenig Platz für die Registerübersicht (' + h.toFixed(1) + ' mm je Reiter)');
+  });
+
   /* Nachbearbeitung: offene Kartenränder, Seitenzahlen, Verzeichnis */
   const karten = Array.from(BUCH.querySelectorAll('.kachel'));
   karten.forEach((k, i) => { const n = karten[i + 1]; if (n && n.dataset.code === k.dataset.code) k.classList.add('offen-unten'); });
@@ -279,6 +294,15 @@
       if (r.height && (r.bottom > kb.bottom + TOL || r.bottom > blatt.bottom - TOL)) frei++;
     });
     if (frei) bericht.fehler.push('Seite ' + (i + 1) + ': ' + frei + ' frei positionierte(s) Element(e) außerhalb des Satzspiegels');
+    /* Titelseite: Textblöcke dürfen einander nicht überlagern (Titel, Register, Fuß). */
+    if (p.classList.contains('deck')) {
+      const bloecke = [p.querySelector('.tp-band'), p.querySelector('.tp-mitte'), p.querySelector('.tp-fuss'),
+                       ...p.querySelectorAll('.daumen em')].filter(Boolean).map(e => e.getBoundingClientRect());
+      const schneidet = (a, b) => a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1;
+      let n = 0;
+      for (let x = 0; x < bloecke.length; x++) for (let y = x + 1; y < bloecke.length; y++) if (schneidet(bloecke[x], bloecke[y])) n++;
+      if (n) bericht.fehler.push('Titelseite: ' + n + ' Überlappung(en) von Textblöcken');
+    }
     const nurKopf = k.children.length === 1 && k.querySelector('.provkopf') && !k.querySelector('.kachel');
     const a = ['deck', 'titelei', 'spalten', 'quer'].find(x => p.classList.contains(x)) || 'normal';
     const erste = k.querySelector('.unit');

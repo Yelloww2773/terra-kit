@@ -16,7 +16,7 @@ Daten statt Nachbau: Gestaltung, Seitenmontage und Prüfungen liegen im Code, ni
 | `validate.py` | Prüfung in vier Stufen (Struktur, Typografie, Logik, Formeln) | fertig, 3.1.1 |
 | `referenzwerk.json` | „Terra Exemplaris“: enthält jeden Baustein, jede Schemavariante, jeden Sonderfall | fertig, 0.2 |
 | `referenz_historica.json` | „Terra Historica Constitutionalis“: zweites Prüfwerk mit acht Provinzen (Höchstzahl), 39 Kacheln, zweiseitigem Verzeichnis, Strukturdiagramm; zugleich erste Überführung einer Bestandskarte mit Quellenkritik | fertig, 1.0 |
-| `tests/run_tests.py` | 45 Tests: Prüfwerke, Referenzexam und beide Decks sauber, jeder eingeschleuste Fehler erkannt | fertig |
+| `tests/run_tests.py` | 54 Tests: Prüfwerke, Referenzexam, beide Decks, Quellen und Zitierformen; jeder eingeschleuste Fehler erkannt | fertig |
 | `skript.py` | Lernskript A4 mit Seitenmontage, Umbruch- und PDF-Prüfung | fertig, 3.1.0 |
 | `vorlage/skript.css` | Satzspiegel, Bausteinoptik, Druckregeln | fertig |
 | `vorlage/montage.js` | Seitenmontage, Tabellenteilung, Silbentrennung, Prüfung im Browser | fertig |
@@ -129,7 +129,43 @@ Je Baustein eine oder mehrere Karten: Definition (Fallbeispiel nur zur Veranscha
 
 Unterdecks je Provinz unter `Terra::<Werk>`; Schlagwörter `Provinz::`, `Kachel::`, `Relevanz::`, `Art::` (etwa nur Kernstoff lernen: Suche `tag:Relevanz::kern`). Die Kennung jeder Notiz ergibt sich aus Werk-Sigle und Baustein; ein erneuter Import nach einer Korrektur aktualisiert die Karten und erhält den Lernfortschritt. Hausschriften sind eingebettet; Dunkelmodus von Anki und AnkiDroid wird unterstützt. Kartenfuß mit „(c) Oliver Bedernik“, Werk und Fundstelle.
 
+## Quellen: wie sie erfasst werden
+
+Jede Quelle hat ein **Kurzzitat** (`kurz`), unter dem sie im Werk angeführt wird, und eine **Gattung**. Das Kit setzt daraus die Vollangabe im Zitierstil des Moduls: **AZR** (österreichische Rechtssprache) in den Domänen recht und gemischt, sonst **APA 7** (Autor-Jahr); abweichend über `modul.zitierstil`. Jede Kachel nennt in `quellen` die Kurzzitate, auf die sie sich stützt; daraus entsteht die Spalte „Verwendet in“.
+
+| Gattung | Pflichtangaben | weitere Felder |
+|---|---|---|
+| literatur | titel, jahr; autoren oder hrsg oder institution | untertitel, auflage, ort, verlag, zusatz |
+| beitrag | autoren, titel, in (Sammelwerk), jahr | hrsg, auflage, seiten |
+| kommentar | autoren, hrsg, in (Werk), fundstelle (§§), jahr | auflage |
+| aufsatz | autoren, titel, in (Zeitschrift), jahr | band, heft, seiten |
+| lv | titel, jahr; autoren oder institution | art (etwa Foliensatz) |
+| daten | titel, jahr, abruf; autoren oder institution | art, url |
+| online | titel, abruf; url oder institution | jahr |
+| norm | abk, titel, fundstelle | zusatz |
+| entscheidung | gericht, datum (JJJJ-MM-TT), gz | name, slg, ecli |
+| materialien | titel, fundstelle | zusatz |
+
+Namen als „Nachname, Vorname“; Körperschaften ohne Komma. Für AZR mit Initiale (etwa „F. Bydlinski“) „Bydlinski, F.“ angeben. Hochzahlen wie „ABGB⁴“ dürfen als Unicode-Zeichen geschrieben werden; das Kit setzt sie als echte Hochstellung. Das alte Format (`kurz` und `voll`) bleibt gültig, erscheint unter „Weitere Quellen“ und erzeugt einen Hinweis.
+
+Der Validator prüft: Kurzzitate eindeutig, Pflichtangaben je Gattung, jede zitierte Quelle verzeichnet, jede strukturierte Quelle von mindestens einer Kachel zitiert.
+
 ## Änderungen
+
+**3.2.0** (Oktober 2026)
+- Quellenverzeichnis neu: Legende, Gliederung nach Gattungen mit römischen Ziffern, drei Spalten (Kurzzitat, Vollangabe, verwendet in) mit Kachelchips in Provinzfarbe, Schluss mit Grundlagen, Quellenkritik und Stand.
+- Strukturierte Quellen mit Zitierform nach AZR oder APA 7; Verwendungsnachweis über `kachel.quellen`; Validatorregeln dazu. Altes Format bleibt gültig.
+- Hochzahlen (⁴, ⁵ …) werden als echte Hochstellung gesetzt; vorher fehlten sie in der Auszeichnungsschrift und lösten eine Ersatzschrift aus.
+- Die Infotafel der Karte zeigt die Quellen in derselben Zitierform.
+- Referenzwerk Terra Exemplaris auf strukturierte Quellen umgestellt; Terra Historica bleibt bewusst im alten Format (Prüfung der Abwärtskompatibilität).
+- Einrichtung meldet „Terra-Kit bereit“ nur, wenn alle Tests bestanden sind.
+
+**3.1.2** (Oktober 2026)
+- Impressum (Seite 2) entschlackt: nur noch Werkzeile mit Literaturkapitel, Haftungshinweis, **Zitiervorschlag** (Bezeichnung fett), Verweis auf das Quellenverzeichnis, Satzvermerk und Copyright.
+- Neu: Quellenverzeichnis als eigene Seite am Schluss, gegliedert in Primärquellen, Sekundärquellen (je als Liste), verwendete Quellen (Tabelle) und Entstehung; im Inhaltsverzeichnis verlinkt.
+- Titelseite: Kursnummern (etwa „1393“) werden aus der Lehrveranstaltungszeile entfernt.
+- Titelseite: Die Registerübersicht beginnt erst unterhalb des tatsächlichen Titelblocks und teilt den Raum bis zur Fußzeile auf; bei wenig Platz einzeilige Kompaktform. Neue Prüfung: Textblöcke der Titelseite dürfen einander nicht überlagern.
+- Kürzel im Quellenverzeichnis mit Versalziffern (vorher tiefgestellt wirkende Mediävalziffern).
 
 **3.1.1** (Oktober 2026)
 - Behoben: Auf Seite 2 des Lernskripts (Impressum) überlagerten sich Quellenangaben und Fußzeile. Ursache: Der obere Abstand des Mottos schlug durch den Satzspiegel nach außen durch (Margin Collapsing) und verschob den gesamten Satzspiegel um 50 mm nach unten. Der Satzspiegel ist jetzt ein eigenständiger Layoutbereich (`display: flow-root`).

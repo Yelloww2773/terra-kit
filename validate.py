@@ -394,12 +394,55 @@ def pruefe_abdeckung(werk, codes, b):
         b.f("Abdeckung", "kein Normwortlaut (zitat)")
 
 
+# 3a · Quellen ──────────────────────────────────────────────────────────────
+PFLICHT = {  # je Gattung: alle Felder der Liste; Tupel heißt „eines davon“
+    "literatur": ["titel", "jahr", ("autoren", "hrsg", "institution")],
+    "beitrag": ["autoren", "titel", "in", "jahr"],
+    "kommentar": ["autoren", "hrsg", "in", "fundstelle", "jahr"],
+    "aufsatz": ["autoren", "titel", "in", "jahr"],
+    "lv": ["titel", "jahr", ("autoren", "institution")],
+    "daten": ["titel", "jahr", "abruf", ("autoren", "institution")],
+    "online": ["titel", "abruf", ("url", "institution")],
+    "norm": ["abk", "titel", "fundstelle"],
+    "entscheidung": ["gericht", "datum", "gz"],
+    "materialien": ["titel", "fundstelle"],
+}
+
+
+def pruefe_quellen(werk, codes, b):
+    quellen = werk.get("quellen", [])
+    kurz = [q.get("kurz") for q in quellen]
+    for k in sorted({x for x in kurz if kurz.count(x) > 1}):
+        b.f("quellen", f"Kurzzitat „{k}“ doppelt vergeben")
+    for i, q in enumerate(quellen):
+        g = q.get("gattung")
+        if not g:
+            b.h(f"quellen[{i}]", f"„{q.get('kurz')}“ im alten Format (nur voll); bei der nächsten Überarbeitung strukturiert erfassen")
+            continue
+        for feld in PFLICHT.get(g, []):
+            felder = feld if isinstance(feld, tuple) else (feld,)
+            if not any(q.get(f) for f in felder):
+                b.f(f"quellen[{i}]", f"„{q.get('kurz')}“ ({g}): Pflichtangabe {' oder '.join(felder)} fehlt")
+    bekannt = set(kurz)
+    benutzt = set()
+    for c, k in codes.items():
+        for z in k.get("quellen", []):
+            if z not in bekannt:
+                b.f(c, f"zitiert „{z}“, das im Quellenverzeichnis fehlt")
+            benutzt.add(z)
+    if benutzt:  # Verwendungsnachweis geführt: jede strukturierte Quelle muss verwendet sein
+        for q in quellen:
+            if q.get("gattung") and q["kurz"] not in benutzt:
+                b.w("quellen", f"„{q['kurz']}“ wird von keiner Kachel zitiert")
+
+
 def validiere(werk):
     b = Bericht()
     pruefe_struktur(werk, b)
     pruefe_typografie(werk, b)
     codes = pruefe_codes_und_verweise(werk, b)
     pruefe_kacheln(werk, codes, b)
+    pruefe_quellen(werk, codes, b)
     pruefe_provinzen(werk, b)
     pruefe_formeln(werk, b)
     pruefe_abdeckung(werk, codes, b)

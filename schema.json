@@ -223,21 +223,146 @@
           "items": {
             "$ref": "#/$defs/text"
           }
+        },
+        "zitierstil": {
+          "enum": [
+            "AZR",
+            "APA"
+          ],
+          "description": "Zitierform des Quellenverzeichnisses. Standard: AZR in den Domänen recht und gemischt, sonst APA (Autor-Jahr)."
         }
       }
     },
     "quelle": {
       "type": "object",
+      "description": "Eine Quelle. Strukturiert (gattung und Felder; das Kit setzt die Zitierform nach dem Zitierstil des Moduls) oder im alten Format (nur kurz und voll). Ein vorhandenes voll ersetzt stets die erzeugte Vollangabe.",
       "required": [
-        "kurz",
-        "voll"
+        "kurz"
       ],
       "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "voll"
+          ]
+        },
+        {
+          "required": [
+            "gattung"
+          ]
+        }
+      ],
       "properties": {
         "kurz": {
-          "$ref": "#/$defs/text"
+          "$ref": "#/$defs/text",
+          "description": "Kurzzitat, so wie die Quelle im Werk angeführt wird; auf diesen Wert verweisen die Kacheln."
         },
         "voll": {
+          "$ref": "#/$defs/text"
+        },
+        "gattung": {
+          "enum": [
+            "literatur",
+            "beitrag",
+            "kommentar",
+            "aufsatz",
+            "lv",
+            "daten",
+            "online",
+            "norm",
+            "entscheidung",
+            "materialien"
+          ]
+        },
+        "autoren": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/text",
+            "description": "„Nachname, Vorname“; Körperschaften ohne Komma."
+          }
+        },
+        "hrsg": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "institution": {
+          "$ref": "#/$defs/text"
+        },
+        "titel": {
+          "$ref": "#/$defs/text"
+        },
+        "untertitel": {
+          "$ref": "#/$defs/text"
+        },
+        "auflage": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "ort": {
+          "$ref": "#/$defs/text"
+        },
+        "verlag": {
+          "$ref": "#/$defs/text"
+        },
+        "jahr": {
+          "type": "string",
+          "pattern": "^(1[0-9]{3}|20[0-9]{2})[a-z]?$"
+        },
+        "in": {
+          "$ref": "#/$defs/text",
+          "description": "Sammelwerk, Kommentar oder Zeitschrift"
+        },
+        "band": {
+          "$ref": "#/$defs/text"
+        },
+        "heft": {
+          "$ref": "#/$defs/text"
+        },
+        "seiten": {
+          "$ref": "#/$defs/text"
+        },
+        "fundstelle": {
+          "$ref": "#/$defs/text"
+        },
+        "abk": {
+          "$ref": "#/$defs/text"
+        },
+        "gericht": {
+          "$ref": "#/$defs/text"
+        },
+        "datum": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "gz": {
+          "$ref": "#/$defs/text"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "slg": {
+          "$ref": "#/$defs/text"
+        },
+        "ecli": {
+          "$ref": "#/$defs/text"
+        },
+        "art": {
+          "$ref": "#/$defs/text",
+          "description": "Art der Unterlage, etwa Foliensatz oder Datensatz"
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "abruf": {
+          "type": "string",
+          "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"
+        },
+        "zusatz": {
           "$ref": "#/$defs/text"
         }
       }
@@ -458,6 +583,15 @@
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/baustein"
+          }
+        },
+        "quellen": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Kurzzitate der Quellen, auf die sich die Kachel stützt (Verwendungsnachweis im Quellenverzeichnis).",
+          "items": {
+            "$ref": "#/$defs/text"
           }
         }
       },

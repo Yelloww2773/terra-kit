@@ -28,8 +28,125 @@
  },
  "quellen": [
   {
+   "kurz": "ABGB",
+   "gattung": "norm",
+   "abk": "ABGB",
+   "titel": "Allgemeines bürgerliches Gesetzbuch",
+   "fundstelle": "JGS 1811/946"
+  },
+  {
+   "kurz": "B-VG",
+   "gattung": "norm",
+   "abk": "B-VG",
+   "titel": "Bundes-Verfassungsgesetz",
+   "fundstelle": "BGBl 1930/1 (WV)"
+  },
+  {
+   "kurz": "EMRK",
+   "gattung": "norm",
+   "abk": "EMRK",
+   "titel": "Konvention zum Schutze der Menschenrechte und Grundfreiheiten",
+   "fundstelle": "BGBl 1958/210"
+  },
+  {
+   "kurz": "StGB",
+   "gattung": "norm",
+   "abk": "StGB",
+   "titel": "Strafgesetzbuch",
+   "fundstelle": "BGBl 1974/60"
+  },
+  {
+   "kurz": "UStG",
+   "gattung": "norm",
+   "abk": "UStG",
+   "titel": "Umsatzsteuergesetz 1994",
+   "fundstelle": "BGBl 1994/663"
+  },
+  {
+   "kurz": "F. Bydlinski, Methodenlehre²",
+   "gattung": "literatur",
+   "autoren": [
+    "Bydlinski, F."
+   ],
+   "titel": "Juristische Methodenlehre und Rechtsbegriff",
+   "auflage": 2,
+   "ort": "Wien/New York",
+   "verlag": "Springer",
+   "jahr": "1991"
+  },
+  {
+   "kurz": "Fisher, Interest",
+   "gattung": "literatur",
+   "autoren": [
+    "Fisher, Irving"
+   ],
+   "titel": "The Theory of Interest",
+   "ort": "New York",
+   "verlag": "Macmillan",
+   "jahr": "1930"
+  },
+  {
+   "kurz": "Kelsen, Rechtslehre²",
+   "gattung": "literatur",
+   "autoren": [
+    "Kelsen, Hans"
+   ],
+   "titel": "Reine Rechtslehre",
+   "auflage": 2,
+   "ort": "Wien",
+   "verlag": "Deuticke",
+   "jahr": "1960"
+  },
+  {
+   "kurz": "Kelsen, VVDStRL 5",
+   "gattung": "aufsatz",
+   "autoren": [
+    "Kelsen, Hans"
+   ],
+   "titel": "Wesen und Entwicklung der Staatsgerichtsbarkeit",
+   "in": "VVDStRL",
+   "band": "5",
+   "jahr": "1929",
+   "seiten": "30"
+  },
+  {
+   "kurz": "Kodek in Rummel/Lukas, ABGB⁴",
+   "gattung": "kommentar",
+   "autoren": [
+    "Kodek, Georg"
+   ],
+   "hrsg": [
+    "Rummel, Peter",
+    "Lukas, Meinhard"
+   ],
+   "in": "ABGB",
+   "auflage": 4,
+   "fundstelle": "§§ 6, 7",
+   "jahr": "2015"
+  },
+  {
+   "kurz": "Merkl, Prolegomena",
+   "gattung": "beitrag",
+   "autoren": [
+    "Merkl, Adolf"
+   ],
+   "titel": "Prolegomena einer Theorie des rechtlichen Stufenbaues",
+   "hrsg": [
+    "Verdross, Alfred"
+   ],
+   "in": "Gesellschaft, Staat und Recht. Untersuchungen zur Reinen Rechtslehre",
+   "ort": "Wien",
+   "verlag": "Springer",
+   "jahr": "1931",
+   "seiten": "252"
+  },
+  {
    "kurz": "RIS",
-   "voll": "Rechtsinformationssystem des Bundes, Bundesrecht konsolidiert"
+   "gattung": "online",
+   "institution": "Bundeskanzleramt",
+   "titel": "Rechtsinformationssystem des Bundes, Bundesrecht konsolidiert",
+   "url": "https://www.ris.bka.gv.at",
+   "abruf": "2026-10-15"
   },
   {
    "kurz": "GKPS",
@@ -69,6 +186,11 @@
      "anker": "§ 6 ABGB",
      "seite": "Referenz",
      "relevanz": "kern",
+     "quellen": [
+      "ABGB",
+      "F. Bydlinski, Methodenlehre²",
+      "Kodek in Rummel/Lukas, ABGB⁴"
+     ],
      "test": "Definition mit Normwortlaut, Kern, Merke, Feinheit, Latinum, Textmarker, interner Verweis",
      "bausteine": [
       {
@@ -110,6 +232,13 @@
      "anker": "§ 7 ABGB",
      "seite": "Referenz",
      "relevanz": "kern",
+     "quellen": [
+      "ABGB",
+      "StGB",
+      "EMRK",
+      "F. Bydlinski, Methodenlehre²",
+      "Kodek in Rummel/Lukas, ABGB⁴"
+     ],
      "test": "Flussdiagramm mit Verzweigung und Sperre, Klausurfalle",
      "bausteine": [
       {
@@ -246,6 +375,10 @@
      "anker": "§§ 6, 7 ABGB",
      "seite": "Referenz",
      "relevanz": "kern",
+     "quellen": [
+      "ABGB",
+      "F. Bydlinski, Methodenlehre²"
+     ],
      "test": "Abgrenzungstabelle, Beispiel, Feinheit",
      "bausteine": [
       {
@@ -303,6 +436,10 @@
      "anker": "Art 22a B-VG",
      "seite": "Referenz",
      "relevanz": "vertiefung",
+     "quellen": [
+      "ABGB",
+      "B-VG"
+     ],
      "test": "Zeitleiste, Aktualisierung",
      "bausteine": [
       {
@@ -354,6 +491,12 @@
      "anker": "Art 44 Abs 3 B-VG",
      "seite": "Referenz",
      "relevanz": "auslassbar",
+     "quellen": [
+      "B-VG",
+      "Kelsen, Rechtslehre²",
+      "Kelsen, VVDStRL 5",
+      "Merkl, Prolegomena"
+     ],
      "beleg_auslassbar": "Testfall: in der Referenz-Lehrveranstaltung als nicht prüfungsrelevant ausgewiesen",
      "test": "freies SVG mit Stilklassen, Relevanz auslassbar mit Beleg, terraübergreifender Verweis",
      "bausteine": [
@@ -407,6 +550,9 @@
      "anker": "Gl. (1)",
      "seite": "Referenz",
      "relevanz": "kern",
+     "quellen": [
+      "Fisher, Interest"
+     ],
      "test": "Formel, Rechenweg, Kurve mit zwei Reihen, vier gerahmte Bausteine (Obergrenze), Austriacum",
      "bausteine": [
       {
@@ -595,6 +741,9 @@
      "anker": "§ 10 Abs 1 UStG",
      "seite": "Referenz",
      "relevanz": "kern",
+     "quellen": [
+      "UStG"
+     ],
      "test": "T-Konto mit Summenprobe",
      "bausteine": [
       {
@@ -657,6 +806,9 @@
      "anker": "Gl. (1), (2)",
      "seite": "Referenz",
      "relevanz": "vertiefung",
+     "quellen": [
+      "Fisher, Interest"
+     ],
      "test": "zweite Formelnummer, Abgrenzung mit Zahlen, Lücke",
      "bausteine": [
       {
@@ -736,6 +888,10 @@
      "anker": "§§ 6, 7 ABGB",
      "seite": "Referenz",
      "relevanz": "kern",
+     "quellen": [
+      "ABGB",
+      "GKPS"
+     ],
      "test": "Kern als nummerierte Route, Verweis in Fließtext",
      "bausteine": [
       {
@@ -762,6 +918,9 @@
      "anker": "§§ 6, 7 ABGB",
      "seite": "Referenz",
      "relevanz": "kern",
+     "quellen": [
+      "F. Bydlinski, Methodenlehre²"
+     ],
      "test": "breite Tabelle mit sieben Spalten: Querformatseite",
      "bausteine": [
       {
@@ -843,6 +1002,9 @@
      "anker": "RIS",
      "seite": "Referenz",
      "relevanz": "vertiefung",
+     "quellen": [
+      "RIS"
+     ],
      "test": "überhohe Tabelle: Teilung nur zwischen Zeilen, Kopfzeile wiederholt, Vermerk Fortsetzung",
      "bausteine": [
       {

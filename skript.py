@@ -24,7 +24,7 @@ KIT = Path(__file__).resolve().parent
 sys.path.insert(0, str(KIT))
 from validate import validiere  # noqa: E402
 
-VERSION = "3.1.1"
+VERSION = "3.2.0"
 NM = KIT / "node_modules"
 MONATE = ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August",
           "September", "Oktober", "November", "Dezember"]
@@ -99,7 +99,21 @@ def trenne(s):
     return re.sub(r"(?<![&#\w])([A-Za-zÄÖÜäöüß]{9,})", lambda m: _HYPH.inserted(m.group(1), hyphen="\u00ad"), s)
 
 
+HOCH = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
+RE_HOCH = re.compile("[⁰¹²³⁴⁵⁶⁷⁸⁹]+")
+
+
+def hochzahlen(h):
+    """Hochgestellte Unicode-Ziffern (etwa Auflagen „ABGB⁴“) als echte Hochstellung: einheitliche Größe, in jeder Schrift vorhanden."""
+    return RE_HOCH.sub(lambda m: f'<sup class="hz">{m.group(0).translate(HOCH)}</sup>', h)
+
+
 def md(text, latein=False, ziele=None):
+    """Inline-Auszeichnung → HTML, mit echter Hochstellung von Hochzahlen."""
+    return hochzahlen(_md(text, latein=latein, ziele=ziele))
+
+
+def _md(text, latein=False, ziele=None):
     """Inline-Auszeichnung → HTML. ziele: Menge gültiger Kachelcodes für Links."""
     s = html.escape(text, quote=False)
     s = typo(s)
@@ -454,11 +468,19 @@ def jahr(werk):
     return werk["meta"]["stand"][:4]
 
 
+KURSNUMMER = re.compile(r"^\s*(?:(?:LV|LVA|Kurs|Nr\.?)\s*-?\s*)?\d{3,6}[a-z]?\b[\s,.:·]*", re.I)
+
+
+def ohne_kursnummer(text):
+    """„1393 Volkswirtschaftslehre …“ → „Volkswirtschaftslehre …“; Titelseite zeigt keine LV-Nummern."""
+    return KURSNUMMER.sub("", text).strip()
+
+
 def titelseite(werk):
     m = werk["meta"]
     reihe = m.get("reihe") or "Lernskripten zur Prüfungsvorbereitung"
     ort = m.get("ort", "Wien")
-    zusatz = f'<div class="tp-lv">{md(m["lehrveranstaltung"], latein=True)}</div>' if m.get("lehrveranstaltung") else ""
+    zusatz = f'<div class="tp-lv">{md(ohne_kursnummer(m["lehrveranstaltung"]), latein=True)}</div>' if m.get("lehrveranstaltung") else ""
     return einheit(
         f'<div class="tp-band"><div class="tp-reihe">{md(reihe, latein=True)}</div><div class="tp-autor">Oliver Bedernik</div></div>'
         f'<div class="tp-mitte"><h1 class="tp-titel">{esc(m["titel"])}</h1>'
@@ -478,14 +500,11 @@ def impressum(werk):
     m, mo = werk["meta"], werk["modul"]
     motto = werk["motto"]
     erste = werk["provinzen"][0]["kacheln"][0]["code"]
-    quellen = "; ".join(md(q["voll"]) for q in werk.get("quellen", []))
     zeilen = [
         f'<b>{esc(m["titel"])}</b>. {md(m["untertitel"])}. Version {esc(m["version"])}, {stand_text(werk)}.',
-        f'{md(m["kicker"])}.',
-        f'Primärquelle: {md(mo["primaerquelle"])}. Sekundärquelle: {md(mo["sekundaerquelle"])}.' + (f' Quellen: {quellen}.' if quellen else ""),
-        f'Inhaltsgleich mit der Wissenslandkarte {esc(m["titel"])}; Kachelcodes stimmen in Karte, Skript und Exam überein.',
-        f'Zitiervorschlag: <i>Bedernik</i>, {esc(m["titel"])} ({jahr(werk)}) Kachel {erste}.',
         'Alle Angaben ohne Gewähr. Das Skript dient dem Studium' + HAFTUNG.get(mo["domaene"], "") + '.',
+        f'<b>Zitiervorschlag:</b> <i>Bedernik</i>, {esc(m["titel"])} ({jahr(werk)}) Kachel {erste}.',
+        'Quellen und Entstehung: siehe Quellenverzeichnis, Seite <span data-ziel="t-quellen"></span>.',
         f'Satz: Terra-Kit {VERSION}; Schriften Cormorant Garamond, Spectral und Alegreya Sans.',
         f'<b>© Oliver Bedernik, {esc(m.get("ort", "Wien"))} {jahr(werk)}.</b> Alle Rechte vorbehalten.',
     ]
@@ -494,6 +513,224 @@ def impressum(werk):
         f'<div class="ep-de">{md(motto["de"])}</div><div class="ep-st">{md(motto["stelle"], latein=True)}</div></div>'
         f'<div class="impressum" id="t-impressum">' + "".join(f"<p>{z}</p>" for z in zeilen) + '</div>',
         seite="titelei", neue_seite="1", name="Impressum")
+
+
+# ── Quellen: Zitierformen ──────────────────────────────────────────────────
+ROEMISCH = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
+
+
+def zitierstil(werk):
+    mo = werk["modul"]
+    return mo.get("zitierstil") or ("AZR" if mo["domaene"] in ("recht", "gemischt") else "APA")
+
+
+def _t(x):
+    return typo(esc(x)) if x else ""
+
+
+def _au(x):
+    return f'<span class="au">{_t(x)}</span>'
+
+
+def _datum(iso):
+    j, m, t = iso.split("-")
+    return f"{int(t)}.{int(m)}.{j}"
+
+
+def _initialen(vornamen):
+    teile = []
+    for wort in vornamen.split():
+        if wort.endswith("."):
+            teile.append(wort)
+        else:
+            teile.append("-".join(x[0] + "." for x in wort.split("-") if x))
+    return " ".join(teile)
+
+
+def _apa_name(n, initialen_vorn=False):
+    if "," not in n:
+        return _au(n)  # Körperschaft
+    nach, vor = [x.strip() for x in n.split(",", 1)]
+    ini = _initialen(vor)
+    return f"{ini} {_au(nach)}" if initialen_vorn else f"{_au(nach)}, {ini}"
+
+
+def _apa_autoren(namen, initialen_vorn=False):
+    n = [_apa_name(x, initialen_vorn) for x in namen]
+    if len(n) > 20:
+        n = n[:19] + ["…", n[-1]]
+        return ", ".join(n)
+    if len(n) == 1:
+        return n[0]
+    if initialen_vorn:
+        return ", ".join(n[:-1]) + " &amp; " + n[-1] if len(n) > 2 else n[0] + " &amp; " + n[1]
+    return ", ".join(n[:-1]) + ", &amp; " + n[-1]
+
+
+def _azr_name(n):
+    if "," not in n:
+        return _au(n)
+    nach, vor = [x.strip() for x in n.split(",", 1)]
+    return _au(f"{vor} {nach}") if vor.endswith(".") and len(vor) <= 4 else _au(nach)
+
+
+def _azr_autoren(namen):
+    return "/".join(_azr_name(x) for x in namen)
+
+
+def _sup(n):
+    return f"<sup>{n}</sup>" if n else ""
+
+
+def zitat_voll(q, stil):
+    """Vollangabe einer Quelle als HTML nach AZR (österreichische Rechtssprache) oder APA 7 (Autor-Jahr)."""
+    if q.get("voll"):
+        return md(q["voll"], latein=True)
+    g = q["gattung"]
+    zus = f' {_t(q["zusatz"])}' if q.get("zusatz") else ""
+    # Rechtsquellen, Materialien und Entscheidungen in beiden Stilen in der Form der Rechtssprache
+    if g == "norm":
+        return f'{_t(q["titel"])} {_t(q["fundstelle"])}{zus}'
+    if g == "materialien":
+        return f'{_t(q["titel"])}, {_t(q["fundstelle"])}{zus}'
+    if g == "entscheidung":
+        t = f'{_t(q["gericht"])} {_datum(q["datum"])}, {_t(q["gz"])}'
+        if q.get("name"):
+            t += f', <i>{_t(q["name"])}</i>'
+        if q.get("slg"):
+            t += f' = {_t(q["slg"])}'
+        if q.get("ecli"):
+            t += f', {_t(q["ecli"])}'
+        return t + zus
+    wer = q.get("autoren") or q.get("hrsg") or ([q["institution"]] if q.get("institution") else [])
+    if stil == "AZR":
+        a = _azr_autoren(wer)
+        if g == "literatur":
+            return f'{a}, {_t(q["titel"])}{_sup(q.get("auflage"))} ({_t(q["jahr"])}){zus}'
+        if g == "beitrag":
+            h = f' in {_azr_autoren(q["hrsg"])} (Hrsg),' if q.get("hrsg") else " in"
+            return f'{a}, {_t(q["titel"])},{h} {_t(q["in"])}{_sup(q.get("auflage"))} ({_t(q["jahr"])}){" " + _t(q["seiten"]) if q.get("seiten") else ""}{zus}'
+        if g == "kommentar":
+            return f'{a} in {_azr_autoren(q["hrsg"])}, {_t(q["in"])}{_sup(q.get("auflage"))} {_t(q["fundstelle"])} ({_t(q["jahr"])}){zus}'
+        if g == "aufsatz":
+            ort = f'{_t(q["in"])} {_t(q["band"])} ({_t(q["jahr"])})' if q.get("band") else f'{_t(q["in"])} {_t(q["jahr"])},'
+            return f'{a}, {_t(q["titel"])}, {ort} {_t(q.get("seiten", ""))}'.rstrip(" ,") + zus
+        if g == "lv":
+            inst = f', {_t(q["institution"])}' if q.get("autoren") and q.get("institution") else ""
+            art = f' ({_t(q["art"])})' if q.get("art") else ""
+            return f'{a}, {_t(q["titel"])}{art} ({_t(q["jahr"])}){inst}{zus}'
+        # daten, online
+        jahr = f' ({_t(q["jahr"])})' if q.get("jahr") else ""
+        url = f', <span class="url">{esc(q["url"])}</span>' if q.get("url") else ""
+        return f'{a}, {_t(q["titel"])}{jahr}{url} (abgerufen am {_datum(q["abruf"])}){zus}'
+    # APA 7, deutschsprachige Fassung
+    a = _apa_autoren(wer)
+    if not q.get("autoren") and q.get("hrsg"):
+        a += " (Hrsg.)"
+    jahr = f' ({_t(q["jahr"])})' if q.get("jahr") else " (o. J.)"
+    titel = _t(q.get("titel", "")) + (f': {_t(q["untertitel"])}' if q.get("untertitel") else "")
+    aufl = f' ({q["auflage"]}. Aufl.)' if q.get("auflage") else ""
+    if g == "literatur":
+        return f'{a}{jahr}. <i>{titel}</i>{aufl}. {_t(q.get("verlag", ""))}.'.replace(" .", "") + zus
+    if g in ("beitrag", "kommentar"):
+        h = f'{_apa_autoren(q["hrsg"], True)} (Hrsg.), ' if q.get("hrsg") else ""
+        teil = _t(q["fundstelle"]) if g == "kommentar" else titel
+        s_ = f' (S. {_t(q["seiten"])})' if q.get("seiten") else ""
+        ver = f' {_t(q["verlag"])}.' if q.get("verlag") else ""
+        return f'{a}{jahr}. {teil}. In {h}<i>{_t(q["in"])}</i>{aufl}{s_}.{ver}{zus}'
+    if g == "aufsatz":
+        band = f', <i>{_t(q["band"])}</i>' if q.get("band") else ""
+        heft = f'({_t(q["heft"])})' if q.get("heft") else ""
+        seiten = f', {_t(q["seiten"])}' if q.get("seiten") else ""
+        return f'{a}{jahr}. {titel}. <i>{_t(q["in"])}</i>{band}{heft}{seiten}.{zus}'
+    if g == "lv":
+        art = _t(q.get("art") or "Lehrveranstaltungsunterlage")
+        inst = f' {_t(q["institution"])}.' if q.get("autoren") and q.get("institution") else ""
+        return f'{a}{jahr}. <i>{titel}</i> [{art}].{inst}{zus}'
+    art = f' [{_t(q.get("art") or "Datensatz")}]' if g == "daten" else ""
+    inst = f' {_t(q["institution"])}.' if q.get("autoren") and q.get("institution") else ""
+    url = f', <span class="url">{esc(q["url"])}</span>' if q.get("url") else ""
+    return f'{a}{jahr}. <i>{titel}</i>{art}.{inst} Abgerufen am {_datum(q["abruf"])}{url}.{zus}'
+
+
+def zitat_text(q, stil):
+    """Vollangabe als reiner Text (Infotafel der Karte, Prüfungen)."""
+    return re.sub(r"<[^>]+>", "", zitat_voll(q, stil)).replace("&amp;", "&")
+
+
+def verwendung(werk):
+    """Kurzzitat → [(Kachelcode, Provinzfarbe)]. Aus kachel.quellen; im Altbestand ersatzweise aus dem Quellenanker."""
+    kach = [(k, p["farbe"]) for p in werk["provinzen"] for k in p["kacheln"]]
+    gefuehrt = any(k.get("quellen") for k, _ in kach)
+    out = {}
+    for q in werk.get("quellen", []):
+        z = q["kurz"]
+        if gefuehrt:
+            out[z] = [(k["code"], f) for k, f in kach if z in k.get("quellen", [])]
+        else:
+            out[z] = [(k["code"], f) for k, f in kach if re.search(r"(?<!\w)" + re.escape(z) + r"(?!\w)", k.get("anker", ""))]
+    return out
+
+
+GLIEDERUNG = {
+    "AZR": [(("norm",), "Rechtsquellen"), (("materialien",), "Materialien"), (("entscheidung",), "Rechtsprechung"),
+            (("literatur", "kommentar", "beitrag", "aufsatz"), "Literatur"), (("lv",), "Lehrveranstaltungsunterlagen"),
+            (("daten",), "Daten und Statistiken"), (("online",), "Online-Quellen"), ((None,), "Weitere Quellen")],
+    "APA": [(("literatur", "beitrag", "kommentar", "aufsatz"), "Literatur"), (("lv",), "Lehrveranstaltungsunterlagen"),
+            (("daten",), "Daten und Statistiken"), (("online",), "Online-Quellen"), (("norm",), "Rechtsquellen"),
+            (("materialien",), "Materialien"), (("entscheidung",), "Entscheidungen"), ((None,), "Weitere Quellen")],
+}
+STIL_TEXT = {"AZR": "nach den Abkürzungs- und Zitierregeln der österreichischen Rechtssprache (AZR)",
+             "APA": "nach der Autor-Jahr-Methode in Anlehnung an APA 7"}
+
+
+def _sortierschluessel(t):
+    t = re.sub(r"<[^>]+>", "", t).casefold()
+    for a, b in (("ä", "a"), ("ö", "o"), ("ü", "u"), ("ß", "ss"), ("é", "e"), ("á", "a")):
+        t = t.replace(a, b)
+    return t
+
+
+def quellenverzeichnis(werk):
+    """Eigene Seite am Ende: Legende, Gliederung nach Gattungen mit Kurzzitat, Vollangabe und Verwendung, Schluss."""
+    m, mo = werk["meta"], werk["modul"]
+    stil = zitierstil(werk)
+    nutz = verwendung(werk)
+    out = [einheit(
+        '<div class="titelzeile"><div class="tz-ober">Anhang</div><h1 class="teil" id="t-quellen">Quellenverzeichnis</h1>'
+        f'<div class="teil-unter">{esc(m["titel"])}, Version {esc(m["version"])}, {stand_text(werk)}</div></div>'
+        '<div class="qv-legende"><div><b>Kurzzitat</b>So wird die Quelle in Karte, Skript und Exam angeführt.</div>'
+        f'<div><b>Vollangabe</b>Zitiert {STIL_TEXT[stil]}; Autorinnen und Autoren in Kapitälchen.</div>'
+        '<div><b>Verwendet in</b>Kacheln, die sich auf die Quelle stützen; Farbe der Provinz.</div></div>',
+        seite="titelei", neue_seite="1", name="Quellenverzeichnis")]
+    nr = 0
+    for gattungen, titel in GLIEDERUNG[stil]:
+        qs = [q for q in werk.get("quellen", []) if q.get("gattung") in gattungen]
+        if not qs:
+            continue
+        qs.sort(key=lambda q: _sortierschluessel(q.get("abk") or q["kurz"]))
+        zeilen = []
+        for q in qs:
+            chips = "".join(f'<a class="kc farbe-{f}" href="#k-{c}">{c}</a>' for c, f in nutz.get(q["kurz"], []))
+            zeilen.append(f'<tr><td class="kurz">{md(q["kurz"], latein=True)}</td><td class="voll">{zitat_voll(q, stil)}</td><td class="wo">{chips}</td></tr>')
+        out.append(einheit(
+            f'<h2 class="qv-h"><span class="nr">{ROEMISCH[nr]}</span>{titel}</h2>'
+            '<table class="qv teilbar"><thead><tr><th>Kurzzitat</th><th>Vollangabe</th><th>Verwendet in</th></tr></thead>'
+            f'<tbody>{"".join(zeilen)}</tbody></table>', seite="titelei", name=f"Quellen {titel}"))
+        nr += 1
+    abrufe = sorted(q["abruf"] for q in werk.get("quellen", []) if q.get("abruf"))
+    links = ((f'{md(m["kicker"])}. ' if m.get("kicker") else "")
+             + f'Primärquelle: {md(mo["primaerquelle"])}. Sekundärquelle: {md(mo["sekundaerquelle"])}. '
+             + f'Inhaltsgleich mit der Wissenslandkarte {esc(m["titel"])}; Kachelcodes stimmen in Karte, Skript und Exam überein.')
+    rechts = ""
+    if werk.get("quellenkritik"):
+        rechts += 'Abweichungen von den Quellen und ihre Korrektur: Repetitorium, Abschnitt Quellenkritik, Seite <span data-ziel="k-LQ"></span>. '
+    if abrufe:
+        rechts += f'Online-Quellen zuletzt abgerufen am {_datum(abrufe[-1])}. '
+    rechts += f'{stand_text(werk)}; Quellenanker je Kachel: {md(mo["anker"])}.'
+    out.append(einheit(f'<div class="qv-schluss"><div><b>Grundlagen und Entstehung</b>{links}</div>'
+                       f'<div><b>Quellenkritik und Stand</b>{rechts}</div></div>', seite="titelei", name="Quellen Schluss"))
+    return out
 
 
 def inhaltsverzeichnis(werk, generiert, mit_abk):
@@ -519,6 +756,8 @@ def inhaltsverzeichnis(werk, generiert, mit_abk):
                 f'<div class="pd">{md(p["name_de"], latein=True)}</div><span class="n"><span data-ziel="p-{p["code"]}"></span></span></div>')
         out.append(einheit(f'<div class="tocp farbe-{p["farbe"]}">{kopf}<table>{"".join(rows)}</table></div>',
                            seite="spalten", name=f'Verzeichnis {p["code"]}'))
+    out.append(einheit('<div class="tocp tocv farbe-grau"><table><tr><td class="t"><a href="#t-quellen">Quellenverzeichnis</a></td>'
+                       '<td class="n"><span data-ziel="t-quellen"></span></td></tr></table></div>', seite="spalten", name="Verzeichnis Anhang"))
     return out
 
 
@@ -657,6 +896,7 @@ def baue_einheiten(werk, kx):
             out += kachel_einheiten(k, p["code"], kx, p["farbe"])
         if p["code"] == "L":
             out += [u for _, _, u in gen]
+    out += quellenverzeichnis(werk)
     return out
 
 

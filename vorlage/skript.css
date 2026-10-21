@@ -322,7 +322,7 @@ table.zit th { color: #2E5A88; }
 .tocp td.c, .kindex .c, .toc td.c { font-variant-numeric: lining-nums; }
 
 /* Registerübersicht auf der Titelseite */
-.daumen em { position: absolute; right: 11mm; top: 50%; transform: translateY(-50%); white-space: nowrap; text-align: right;
+.daumen em { position: absolute; right: 11mm; top: 50%; transform: translateY(-50%); width: 92mm; white-space: normal; text-align: right;
   font: italic 500 11pt/1.15 var(--f-titel); color: var(--tinte-2); }
 .daumen em b { display: block; font: 600 6.8pt var(--f-ui); font-style: normal; letter-spacing: 0.12em; text-transform: uppercase; color: var(--p); }
 
@@ -344,3 +344,30 @@ body, .schema-nacht { --tp-band: #1F2A44; --tp-text: #FBF7EE; --tp-reihe: #CDBF9
 .schema-graphit .tocp .k { background: none; border-left: 0; border-bottom: 1.2pt solid var(--p); border-radius: 0; padding: 1.4mm 10mm 2mm 13mm; }
 .schema-graphit .tocp .k .pchip { position: absolute; left: 0; top: 1.8mm; width: 10mm; text-align: center; padding: 1.6mm 0; font-size: 7.6pt; border-radius: 0; }
 .schema-graphit .tocp .k a.pt { margin-top: 0; }
+
+/* Quellenverzeichnis (Anhang) */
+.qv-legende { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5mm; margin: 3.5mm 0 1mm; font: 400 7.6pt/1.4 var(--f-ui); color: var(--tinte-2); }
+.qv-legende b, .qv-schluss b { display: block; font: 700 6.8pt var(--f-ui); letter-spacing: .1em; text-transform: uppercase; color: var(--tinte); margin-bottom: .6mm; }
+h2.qv-h { display: flex; align-items: baseline; gap: 3mm; margin: 5.5mm 0 1mm; padding-bottom: 1.2mm; border-bottom: 0.6pt solid var(--tinte);
+  font: 600 14pt var(--f-titel); color: var(--tinte); break-after: avoid; }
+h2.qv-h .nr { font: 600 9pt var(--f-ui); letter-spacing: .12em; color: var(--ocker); min-width: 8mm; }
+table.qv { width: 100%; border-collapse: collapse; table-layout: fixed; }
+table.qv th { font: 700 6.4pt var(--f-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--tinte-2); text-align: left; padding: 1mm 0 .8mm; border: 0; background: none; }
+table.qv th:nth-child(1), table.qv td.kurz { width: 31mm; } table.qv th:nth-child(3), table.qv td.wo { width: 30mm; text-align: right; }
+table.qv th:nth-child(2) { padding-left: 3mm; }
+table.qv td { padding: 1.9mm 0; border-bottom: 0.3pt solid #E3DACA; vertical-align: top; }
+table.qv td.kurz { font: 600 8.4pt/1.35 var(--f-ui); color: var(--tinte); font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; padding-right: 2mm; }
+table.qv td.voll { font: 400 9pt/1.42 var(--f-text); color: var(--tinte); padding-left: 7mm; text-indent: -4mm; }
+table.qv td.voll sup { font-size: .68em; line-height: 0; }
+table.qv .au { text-transform: uppercase; font-size: .82em; letter-spacing: .04em; }
+table.qv .url { font: 400 7.6pt var(--f-ui); overflow-wrap: anywhere; hyphens: none; white-space: nowrap; color: var(--tinte-2); }
+table.qv td.wo { line-height: 1.35; padding-top: 1.7mm; }
+table.qv td.wo .kc { margin-bottom: .6mm; }
+.kc { display: inline-block; margin: 0 0 .8mm 1mm; padding: .2mm 1.3mm; border-radius: 2pt; background: var(--p); color: #fff; text-decoration: none;
+  font: 700 6.6pt var(--f-ui); font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; }
+.qv-schluss { margin-top: 6mm; display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; font: 400 8pt/1.45 var(--f-ui); color: var(--tinte-2); }
+/* Registerübersicht der Titelseite: kompakte einzeilige Form bei wenig Platz */
+.daumen.eng em { font-size: 9.5pt; line-height: 1.1; }
+.daumen.eng em b { display: inline; margin-right: 1.5mm; }
+
+sup.hz { font-size: .66em; line-height: 0; vertical-align: .55em; font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; }
