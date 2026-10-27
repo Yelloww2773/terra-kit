@@ -132,3 +132,8 @@ dialog .inhalt { padding: 16px 18px 18px; }
   .fnav .knopf.weiter .lbl { display: inline; }
 }
 @media (prefers-reduced-motion: reduce) { .balken i { transition: none; } }
+
+/* 3.4 · Brücke Exam → Anki */
+.anki-bruecke { margin: 1.2rem 0 0; padding: 0.8rem 1rem; border: 1px dashed var(--linie, #ccc); border-radius: 6px; }
+.anki-bruecke .lbl { font-weight: 700; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.3rem; }
+.anki-bruecke code { display: block; margin: 0.4rem 0; padding: 0.4rem 0.6rem; font-size: 0.82rem; word-break: break-all; background: rgba(127,127,127,0.1); border-radius: 4px; }

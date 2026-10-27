@@ -42,6 +42,7 @@ with sync_playwright() as p:
     pg.screenshot(path=f"{pref}_4_ergebnis.png")
     pg.click("#f-falsch"); pg.wait_for_timeout(100)
     erg["nur_falsche"] = pg.evaluate("document.querySelectorAll('#durchsicht .fkarte').length")
+    erg["anki_suche"] = pg.evaluate("(document.getElementById('anki-suche') || {}).textContent || ''")
     erg["markierungen_q2"] = pg.evaluate("[...document.querySelectorAll('#durchsicht .dopt')].map(d=>d.className.replace('dopt','').trim()).join(',')")
     pg.screenshot(path=f"{pref}_5_durchsicht.png", full_page=True)
     # Modus Durum

@@ -146,6 +146,21 @@
 
   /* ── Auswertung ────────────────────────────────────────────────── */
   const gleich = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+  /* Brücke Exam → Anki (3.4): Suchbegriff für die Kacheln aller falsch beantworteten Fragen */
+  function ankiSuche() {
+    const istRichtig = f => gleich(Z.antworten[f.id] || [], f.optionen.filter(o => o.richtig).map(o => o.id));
+    const codes = [];
+    D.fragen.forEach(f => { if (!istRichtig(f)) f.kacheln.forEach(c => { if (!codes.includes(c)) codes.push(c); }); });
+    if (!codes.length || !D.anki_tag) return '';
+    return 'tag:' + D.anki_tag + ' (' + codes.map(c => 'tag:Kachel::' + c).join(' or ') + ')';
+  }
+  function ankiBruecke() {
+    const s = ankiSuche();
+    if (!s) return '';
+    return '<div class="anki-bruecke"><div class="lbl">In Anki wiederholen</div>'
+      + '<p>Im Kartenbrowser suchen, danach „Karten neu planen“ oder ein gefiltertes Deck aus der Suche erstellen:</p>'
+      + '<code id="anki-suche">' + s + '</code> <button type="button" id="anki-kopie" onclick="navigator.clipboard && navigator.clipboard.writeText(document.getElementById(\'anki-suche\').textContent).then(() => { this.textContent = \'kopiert\'; })">Kopieren</button></div>';
+  }
   function auswerten(auto) {
     clearInterval(uhrTakt);
     const je = {};
@@ -196,7 +211,7 @@
         (f.sv ? '<div class="fallbeispiel"><div class="fb-kopf">Sachverhalt</div><div class="fb-teil">' + f.sv + '</div></div>' : '') +
         '<p class="ftext">' + f.frage + '</p>' + opts + merke + '<div>' + karte + '</div></article>';
     }).join('');
-    $('#durchsicht').innerHTML = liste || '<p class="gespeichert">Keine falsch beantworteten Fragen. Gratulation.</p>';
+    $('#durchsicht').innerHTML = (liste || '<p class="gespeichert">Keine falsch beantworteten Fragen. Gratulation.</p>') + ankiBruecke();
     $('#f-alle').setAttribute('aria-pressed', String(!nurFalsch)); $('#f-falsch').setAttribute('aria-pressed', String(!!nurFalsch));
     schirm('s-ergebnis');
   }

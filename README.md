@@ -38,6 +38,9 @@ pip install -r requirements.txt --break-system-packages
 npm install                        # Schriften und KaTeX, fest versioniert (package.json)
 python3 validate.py werk.json      # Exitcode 0 = keine Fehler
 python3 validate.py werk.json --streng   # Warnungen zählen als Fehler
+python3 pruefliste.py werk.json          # Prüfliste für den Advocatus diaboli (pruefliste.md)
+python3 diff.py alt.json neu.json --eintragen   # Diff-Bericht, trägt ins Änderungsprotokoll ein
+python3 versionspruefung.py              # neuere freigegebene Kit-Version verfügbar?
 python3 tests/run_tests.py         # vor jeder Freigabe einer Kit-Version
 python3 skript.py werk.json --aus ausgabe/   # Lernskript A4 (Format B)
 python3 karte.py werk.json --aus ausgabe/    # Wissenslandkarte (Format A), zur Veröffentlichung
@@ -151,6 +154,23 @@ Namen als „Nachname, Vorname“; Körperschaften ohne Komma. Für AZR mit Init
 Der Validator prüft: Kurzzitate eindeutig, Pflichtangaben je Gattung, jede zitierte Quelle verzeichnet, jede strukturierte Quelle von mindestens einer Kachel zitiert.
 
 ## Änderungen
+
+**3.4.0** (Oktober 2026)
+- Querverweise im Lernskript tragen die Seitenzahl („D3, S 17“), beide Teile anklickbar; Karte, Exam und Anki bleiben ohne Seitenzahl.
+- Lesezeichenleiste neu aus der Montage: Provinzen mit Code, jede Kachel als „D7 Titel“, generierte Abschnitte des Repetitoriums, Anhang. Zuvor leitete Chromium sie aus Überschriften ab (ohne Codes, mit Fehlern wie „IWeitere Quellen“). Fehlende Sprungziele meldet der Renderer als Fehler.
+- Sachregister am Ende: Begriffe aus Lexicon und Latinum mit allen Fundstellen, in juristischen Domänen dazu ein Normenregister nach Gesetz und numerisch geordnet; doppelte Seiten entfallen, alle Zahlen anklickbar.
+- Exam: Die Auswertung erzeugt einen Anki-Suchbegriff für die Kacheln aller falsch beantworteten Fragen, mit Kopierknopf.
+- Workflow: Release ohne Kommandozeile über Actions → Prüfung → „Run workflow“; Beschreibung kommt aus diesem Abschnitt der README; ein bereits bestehender Release wird ergänzt statt den Lauf abzubrechen.
+
+**3.3.0** (Oktober 2026)
+- Automatische Prüfung auf GitHub (`.github/workflows/pruefung.yml`): jeder Push startet die Testreihe; ein Tag `vX.Y.Z` wird nur bei grüner Testreihe und passender Datei `VERSION` zum Release, samt ZIP für die Rückfallebene.
+- Versionswarnung: `einrichten.sh` meldet eine neuere freigegebene Version (über die Release-Weiterleitung, nicht die ratenbegrenzte API).
+- Version zentral in der Datei `VERSION`; zuvor meldete der Validator 3.1.3 in Kit 3.2.0.
+- `pruefliste.py`: Normzitate, Rechtsprechung, Daten, Zahlen und Auflagen je Kachel als Tabelle.
+- `diff.py`: Diff-Bericht zwischen zwei Fassungen, auf Wunsch als Eintrag im Änderungsprotokoll.
+- Validator: Warnung, wenn der letzte Protokolleintrag nicht zur Werkversion passt; Exam-Warnung bei unausgewogenen Prüfdimensionen (mehr als das Doppelte der seltensten).
+- `einrichten.sh` bricht bei Installationsfehlern mit sichtbarer Meldung ab statt stumm.
+- Referenzexam: Frage q6 auf den Legitimationstyp geschärft (Ausgewogenheit).
 
 **3.2.0** (Oktober 2026)
 - Quellenverzeichnis neu: Legende, Gliederung nach Gattungen mit römischen Ziffern, drei Spalten (Kurzzitat, Vollangabe, verwendet in) mit Kachelchips in Provinzfarbe, Schluss mit Grundlagen, Quellenkritik und Stand.

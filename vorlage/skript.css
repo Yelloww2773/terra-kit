@@ -371,3 +371,14 @@ table.qv td.wo .kc { margin-bottom: .6mm; }
 .daumen.eng em b { display: inline; margin-right: 1.5mm; }
 
 sup.hz { font-size: .66em; line-height: 0; vertical-align: .55em; font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; }
+
+/* 3.4 · Seitenverweise und Sachregister */
+.vs { font: 400 0.82em var(--f-ui); color: var(--tinte-2); white-space: nowrap; }
+.vs a { color: inherit; text-decoration: none; font-variant-numeric: tabular-nums; }
+.register { margin: 0 0 3.2mm; }
+.register .rb { font: 700 12pt/1 var(--f-titel); color: var(--tinte); border-bottom: 0.5pt solid var(--tinte-2); padding-bottom: 0.8mm; margin-bottom: 1mm; }
+.register .rb.rn { font-size: 11pt; }
+.register table { width: 100%; border-collapse: collapse; }
+.register td { font: 400 8.6pt/1.3 var(--f-text); padding: 0.35mm 0; vertical-align: top; }
+.register td.rz { text-align: right; font: 400 8pt/1.3 var(--f-ui); color: var(--tinte-2); padding-left: 2mm; white-space: normal; width: 34%; }
+.register td.rz a { color: inherit; text-decoration: none; font-variant-numeric: tabular-nums; }

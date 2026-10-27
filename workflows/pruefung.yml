@@ -1,0 +1,67 @@
+# (c) Oliver Bedernik · Terra-Kit · Automatische Prüfung
+# Jeder Upload (Push) und jeder Pull Request startet die vollständige Testreihe.
+# Release auf zwei Wegen, beide nur nach grüner Testreihe:
+#   1. Actions → Prüfung → „Run workflow“ (ohne Kommandozeile): Tag v<VERSION> und Release entstehen hier.
+#   2. Tag v*.*.* pushen: muss mit der Datei VERSION übereinstimmen.
+# Beschreibung des Release = Abschnitt der Version aus der README. Die Versionswarnung
+# des Kits liest ausschließlich Releases; ein roter Stand bleibt für Werke unsichtbar.
+name: Prüfung
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*.*.*"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  testreihe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Abhängigkeiten
+        run: |
+          pip install -q -r requirements.txt
+          npm ci --no-audit --no-fund
+          python -m playwright install --with-deps chromium
+      - name: Testreihe
+        run: python tests/run_tests.py
+      - name: Referenzwerke setzen
+        run: |
+          python validate.py referenzwerk.json --streng
+          python validate.py referenz_historica.json --streng
+          python validate.py exam_historica.json referenz_historica.json --streng
+          python skript.py referenzwerk.json --aus /tmp/terra-pruefung
+          python skript.py referenz_historica.json --aus /tmp/terra-pruefung
+      - name: Tag gegen VERSION prüfen
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          test "${GITHUB_REF_NAME}" = "v$(cat VERSION)" || { echo "Tag ${GITHUB_REF_NAME} passt nicht zu VERSION $(cat VERSION)"; exit 1; }
+  release:
+    needs: testreihe
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version und Beschreibung
+        run: |
+          echo "TAG=v$(cat VERSION)" >> "$GITHUB_ENV"
+          awk -v v="**$(cat VERSION)**" 'index($0, v) == 1 {an = 1; next} an && /^\*\*[0-9]/ {exit} an' README.md > notizen.md
+          echo "" >> notizen.md; echo "Testreihe grün. (c) Oliver Bedernik" >> notizen.md
+      - name: Rückfallebene als ZIP bauen
+        run: |
+          mkdir -p dist/terra-kit && git archive HEAD | tar -x -C dist/terra-kit
+          cd dist && zip -qr "terra-kit-${TAG}.zip" terra-kit
+      - name: Release anlegen oder ergänzen
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" "dist/terra-kit-${TAG}.zip" --clobber
+            gh release edit "$TAG" --notes-file notizen.md
+          else
+            gh release create "$TAG" "dist/terra-kit-${TAG}.zip" --target "$GITHUB_SHA" --title "Terra-Kit ${TAG}" --notes-file notizen.md
+          fi

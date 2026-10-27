@@ -26,7 +26,7 @@ sys.path.insert(0, str(KIT))
 import skript as S  # noqa: E402
 from validate import validiere  # noqa: E402
 
-VERSION = "3.2.0"
+VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
 esc = S.esc
 FS = KIT / "node_modules" / "@fontsource"
 SCHRIFTEN = [  # (Datei in node_modules, Familie, Gewicht, Stil, Zeichenbereich)

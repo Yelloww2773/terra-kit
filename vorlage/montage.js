@@ -203,6 +203,17 @@
     const z = document.getElementById(span.dataset.ziel);
     if (z) span.textContent = seiteVon(z); else bericht.fehler.push('Verzeichnis: Ziel fehlt ' + span.dataset.ziel);
   });
+  /* Sachregister (3.4): je Stichwort doppelte Seiten entfernen, aufsteigend, weiter verlinkt.
+     Die Platzhalter „00“ haben die Breite vorab reserviert; die Liste wird nur kürzer. */
+  document.querySelectorAll('td.rz').forEach(td => {
+    const gesehen = new Map();
+    td.querySelectorAll('[data-ziel]').forEach(a => { const n = +a.textContent; if (!gesehen.has(n)) gesehen.set(n, a.dataset.ziel); });
+    td.innerHTML = Array.from(gesehen.keys()).sort((x, y) => x - y)
+      .map(n => '<a href="#' + gesehen.get(n) + '">' + n + '</a>').join(', ');
+  });
+  /* Sprungziele für die Lesezeichenleiste (skript.py setzt sie mit pypdf) */
+  bericht.anker = {};
+  document.querySelectorAll('[id^="k-"], [id^="p-"], [id^="t-"]').forEach(e => { bericht.anker[e.id] = seiteVon(e); });
 
   /* Silbentrennung fixieren. Am Umbruch rendert Chromium das weiche Trennzeichen
      sichtbar (Breite > 0). Nur dort bleibt ein echter Trennstrich; alle anderen

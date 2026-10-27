@@ -25,7 +25,7 @@ except ImportError:
     sys.exit("jsonschema fehlt: pip install jsonschema --break-system-packages")
 
 HIER = Path(__file__).resolve().parent
-VERSION = "3.1.3"
+VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
 
 REIHENFOLGE = ["definition", "kern", "formel", "rechenweg", "schema", "beispiel",
                "merke", "feinheit", "klausurfalle", "austriacum", "aktualisierung",
@@ -325,6 +325,10 @@ def pruefe_provinzen(werk, b):
             b.w("Selbsttest", f"{n} Fragen; Standard sind 5 bis 10")
         if not werk.get("aenderungen"):
             b.w("Änderungsprotokoll", "leer; mindestens Erstfassung eintragen")
+    prot = werk.get("aenderungen") or []
+    if prot and prot[-1].get("version") != werk.get("meta", {}).get("version"):
+        b.w("Änderungsprotokoll", f"letzter Eintrag gilt Version {prot[-1].get('version')}, Werk ist "
+                                  f"{werk.get('meta', {}).get('version')}; Eintrag ergänzen (python3 diff.py alt.json neu.json --eintragen)")
 
 
 # 4 · Formeln ───────────────────────────────────────────────────────────────
@@ -512,6 +516,12 @@ def validiere_exam(exam, werk):
         z = sum(1 for f in fragen if f["dimension"] == d)
         if z < 3:
             b.f("Abdeckung", f"Prüfdimension „{d}“ nur {z}-mal (mindestens dreimal)")
+    # Ausgewogenheit (3.3): keine Dimension mehr als doppelt so oft wie die seltenste
+    zahl = {d: sum(1 for f in fragen if f["dimension"] == d) for d in dims}
+    if zahl and min(zahl.values()) > 0 and max(zahl.values()) > 2 * min(zahl.values()):
+        hoch, tief = max(zahl, key=zahl.get), min(zahl, key=zahl.get)
+        b.w("Ausgewogenheit", f"Prüfdimension „{hoch}“ {zahl[hoch]}-mal, „{tief}“ nur {zahl[tief]}-mal "
+                              "(höchstens das Doppelte der seltensten Dimension)")
     for pfad, s in alle_strings(exam):
         for zeichen, name in STRICHE.items():
             if zeichen in s:

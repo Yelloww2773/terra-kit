@@ -21,7 +21,7 @@ import skript as S  # noqa: E402
 import karte as K  # noqa: E402
 from validate import validiere_exam  # noqa: E402
 
-VERSION = "3.2.0"
+VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
 esc = S.esc
 TYP = {"einfach": "Einfachauswahl", "mehrfach": "Mehrfachauswahl"}
 
@@ -39,7 +39,7 @@ def daten(exam, werk):
                        "merke": ({"text": S.md(f["merke"]["text"]), "lat": esc(f["merke"].get("lat", "")), "de": S.md(f["merke"].get("de", ""))}
                                  if f.get("merke") else None)})
     return {"titel": m["titel"], "schluessel": f'{m["titel"]}:{m["version"]}', "minuten": m["minuten"],
-            "karte_url": m.get("karte_url", ""), "provinzen": prov, "kacheln": kacheln, "fragen": fragen}
+            "karte_url": m.get("karte_url", ""), "anki_tag": "Terra::" + werk["meta"]["titel"].replace(" ", "_"), "provinzen": prov, "kacheln": kacheln, "fragen": fragen}
 
 
 def html_interaktiv(exam, werk, lokal=False):

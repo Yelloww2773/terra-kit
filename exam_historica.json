@@ -239,8 +239,8 @@
     "B4",
     "B5"
    ],
-   "dimension": "Abgrenzung",
-   "frage": "Welche Aussagen zum Kremsierer Entwurf und zur oktroyierten Märzverfassung treffen zu?",
+   "dimension": "Legitimationstyp",
+   "frage": "Welche Aussagen zur Legitimation und zum Schicksal des Kremsierer Entwurfs und der Märzverfassung 1849 treffen zu?",
    "optionen": [
     {
      "id": "a",
@@ -251,9 +251,9 @@
     },
     {
      "id": "b",
-     "text": "Die Märzverfassung 1849 erfasste erstmals auch Ungarn.",
+     "text": "Die Märzverfassung 1849 wurde vom Kaiser oktroyiert, nicht vom Reichstag beschlossen.",
      "richtig": true,
-     "begruendung": "Gesamtstaatsverfassung unter Aufhebung der ungarischen Sonderverfassung.",
+     "begruendung": "Oktroyierte Verfassung: einseitig durch kaiserliches Patent erlassen, nachdem der Reichstag in Kremsier aufgelöst worden war; monarchisches Prinzip statt Volkssouveränität.",
      "norm": "Patent vom 4.3.1849"
     },
     {

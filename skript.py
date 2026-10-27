@@ -24,7 +24,7 @@ KIT = Path(__file__).resolve().parent
 sys.path.insert(0, str(KIT))
 from validate import validiere  # noqa: E402
 
-VERSION = "3.2.0"
+VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
 NM = KIT / "node_modules"
 MONATE = ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August",
           "September", "Oktober", "November", "Dezember"]
@@ -78,6 +78,7 @@ except Exception:  # Silbentrennung ist Komfort, kein Muss
 
 # ── Text: Typografie, Trennung, Auszeichnung ──────────────────────────────
 NBSP, SCHMAL = "\u00a0", "\u202f"
+SEITENVERWEIS = False  # wird nur beim Setzen des Lernskripts eingeschaltet (Karte, Exam und Anki bleiben ohne Seitenzahl)
 
 
 def typo(s):
@@ -124,6 +125,9 @@ def _md(text, latein=False, ziele=None):
         fremd, ziel = m.group(1), m.group(2)
         if fremd:
             return f'<span class="vw-ext">{fremd}{NBSP}{ziel}</span>'
+        if SEITENVERWEIS:  # nur im Lernskript: Seitenzahl wird nach der Montage eingesetzt (Platzhalter hält die Breite)
+            return (f'<a class="vw" href="#k-{ziel}">{ziel}</a><span class="vs">,{NBSP}S{NBSP}'
+                    f'<a href="#k-{ziel}" data-ziel="k-{ziel}">00</a></span>')
         return f'<a class="vw" href="#k-{ziel}">{ziel}</a>'
     s = re.sub(r"\[\[(?:([A-Z]{2,5}):)?([A-GL][1-9][0-9]?)\]\]", verweis, s)
     s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
@@ -757,7 +761,9 @@ def inhaltsverzeichnis(werk, generiert, mit_abk):
         out.append(einheit(f'<div class="tocp farbe-{p["farbe"]}">{kopf}<table>{"".join(rows)}</table></div>',
                            seite="spalten", name=f'Verzeichnis {p["code"]}'))
     out.append(einheit('<div class="tocp tocv farbe-grau"><table><tr><td class="t"><a href="#t-quellen">Quellenverzeichnis</a></td>'
-                       '<td class="n"><span data-ziel="t-quellen"></span></td></tr></table></div>', seite="spalten", name="Verzeichnis Anhang"))
+                       '<td class="n"><span data-ziel="t-quellen"></span></td></tr>'
+                       + ('<tr><td class="t"><a href="#t-register">Sachregister</a></td><td class="n"><span data-ziel="t-register"></span></td></tr>'
+                          if sachregister(werk) else '') + '</table></div>', seite="spalten", name="Verzeichnis Anhang"))
     return out
 
 
@@ -886,6 +892,15 @@ def _strings(obj, pfad="$"):
 
 
 def baue_einheiten(werk, kx):
+    global SEITENVERWEIS
+    SEITENVERWEIS = True
+    try:
+        return _baue_einheiten(werk, kx)
+    finally:
+        SEITENVERWEIS = False
+
+
+def _baue_einheiten(werk, kx):
     gen = l_generiert(werk)
     abk = abkuerzungen(werk)
     out = [titelseite(werk), impressum(werk)] + inhaltsverzeichnis(werk, gen, bool(abk)) + [zum_gebrauch(werk)] + abk
@@ -897,6 +912,78 @@ def baue_einheiten(werk, kx):
         if p["code"] == "L":
             out += [u for _, _, u in gen]
     out += quellenverzeichnis(werk)
+    out += sachregister(werk)
+    return out
+
+
+# Sachregister (3.4) ─────────────────────────────────────────────────────────
+def _klartext(t):
+    return re.sub(r"\[\[[^\]]*\]\]|[*=]", "", t)
+
+
+def register_eintraege(werk):
+    """{Stichwort: [Kachelcodes]} aus Lexicon und Latinum, in juristischen Domänen dazu Normen.
+
+    Ein Stichwort verweist auf seine Definitionskachel und jede weitere Kachel, die es
+    wörtlich nennt. Seitenzahlen setzt erst die Montage; doppelte Seiten fallen dort weg.
+    """
+    from pruefliste import RE_NORM
+    texte = {}
+    for p in werk["provinzen"]:
+        for k in p["kacheln"]:
+            texte[k["code"]] = " ".join(_klartext(x) for _, x in _strings(k) if isinstance(x, str))
+    begriffe, normen = {}, {}
+    quelle = [(b["lat"], k["code"]) for p in werk["provinzen"] for k in p["kacheln"] for b in k["bausteine"] if b["typ"] == "latinum"]
+    quelle += [(e["begriff"], e["kachel"]) for e in werk.get("lexicon", [])]
+    for wort, heim in quelle:
+        wort = _klartext(wort).strip()
+        muster = re.compile(r"(?<!\w)" + re.escape(wort) + r"(?!\w)", re.I)
+        codes = [heim] + [c for c, t in texte.items() if c != heim and muster.search(t)]
+        begriffe[wort] = sorted(set(codes), key=lambda c: list(texte).index(c) if c in texte else 999)
+    if werk["modul"]["domaene"] in JURISTISCH:
+        for c, t in texte.items():
+            for m in RE_NORM.finditer(t):
+                n = re.sub(r"\s+", " ", m.group()).strip(" ,")
+                if re.search(r"[A-Z]{2,}|StGG|EMRK", n.split(" ", 1)[-1]) and len(n.split()) >= 3:
+                    normen.setdefault(n, [])
+                    if c not in normen[n]:
+                        normen[n].append(c)
+    return begriffe, normen
+
+
+def _normschluessel(n):
+    """Nach Gesetz, dann numerisch nach Artikel bzw. Paragraph: Art 2 vor Art 10 vor Art 149."""
+    teile = n.split()
+    gesetz = teile[-1] if len(teile) > 2 else ""
+    m = re.search(r"\d+", n)
+    return (gesetz, 0 if n.startswith("Art") else 1, int(m.group()) if m else 0, n)
+
+
+def _registerzeilen(eintraege):
+    z = []
+    for wort, codes in eintraege:
+        n = ", ".join(f'<a href="#k-{c}" data-ziel="k-{c}">00</a>' for c in codes)
+        z.append(f'<tr><td class="t">{md(wort, latein=True)}</td><td class="rz">{n}</td></tr>')
+    return z
+
+
+def sachregister(werk):
+    begriffe, normen = register_eintraege(werk)
+    if not begriffe and not normen:
+        return []
+    out = [einheit('<div class="titelzeile"><div class="tz-ober">Anhang</div><h1 class="teil" id="t-register">Sachregister</h1>'
+                   '<div class="teil-unter">Seitenzahlen führen zur Kachel; die erste Zahl ist die Definitionsstelle, sofern vorhanden.</div></div>',
+                   seite="spalten", neue_seite="1", name="Sachregister", spann="1")]
+    gruppen = {}
+    for wort in sorted(begriffe, key=_sortierschluessel):
+        gruppen.setdefault(_sortierschluessel(wort)[:1].upper() or "#", []).append((wort, begriffe[wort]))
+    for buchst, eintr in gruppen.items():
+        out.append(einheit(f'<div class="register"><div class="rb">{esc(buchst)}</div><table>{"".join(_registerzeilen(eintr))}</table></div>',
+                           seite="spalten", name=f"Register {buchst}"))
+    if normen:
+        out.append(einheit('<div class="register"><div class="rb rn">Normen</div><table>'
+                           + "".join(_registerzeilen(sorted(normen.items(), key=lambda x: _normschluessel(x[0])))) + '</table></div>',
+                           seite="spalten", name="Register Normen"))
     return out
 
 
@@ -946,12 +1033,12 @@ def montiere(html_pfad, pdf_pfad, werk):
         pg.wait_for_function("window.__fertig === true", timeout=180_000)
         bericht = pg.evaluate("window.__bericht")
         html_pfad.with_name(html_pfad.stem + "_montiert.html").write_text(pg.content(), encoding="utf-8")
-        pg.pdf(path=str(pdf_pfad), prefer_css_page_size=True, print_background=True, outline=True, tagged=True)
+        pg.pdf(path=str(pdf_pfad), prefer_css_page_size=True, print_background=True, outline=False, tagged=True)
         br.close()
     return bericht
 
 
-def metadaten(pdf_pfad, werk):
+def metadaten(pdf_pfad, werk, anker=None, bericht=None):
     from pypdf import PdfReader, PdfWriter
     r = PdfReader(str(pdf_pfad))
     w = PdfWriter(clone_from=r)
@@ -960,9 +1047,47 @@ def metadaten(pdf_pfad, werk):
                     "/Subject": f'Lernskript, {stand_text(werk)}, Version {m["version"]}',
                     "/Keywords": ", ".join(["Terra", m["titel"], werk["modul"]["domaene"]] + [p["name_de"] for p in werk["provinzen"]]),
                     "/Creator": f"Terra-Kit {VERSION}"})
+    lesezeichen(w, werk, anker or {}, fehlend := [])
     w.page_mode = "/UseOutlines"
     with open(pdf_pfad, "wb") as f:
         w.write(f)
+    if bericht is not None and fehlend:
+        bericht["fehler"].append("Lesezeichen ohne Ziel: " + ", ".join(fehlend[:8]))
+
+
+def lesezeichen_plan(werk, anker):
+    """[(Ebene, Titel, Seite)] der Lesezeichenleiste: Titelei, Provinzen mit Kachelcodes, Anhang.
+    Seiten stammen aus der Montage (anker: id → Seitenzahl, 1-basiert)."""
+    plan, fehlend = [], []
+
+    def ein(ebene, titel, ziel):
+        if ziel in anker:
+            plan.append((ebene, titel, anker[ziel]))
+        else:
+            fehlend.append(ziel)
+    for ziel, titel in (("t-inhalt", "Inhalt"), ("t-gebrauch", "Zum Gebrauch"), ("t-abk", "Abkürzungen")):
+        if ziel in anker:
+            plan.append((0, titel, anker[ziel]))
+    gen = {c: t for c, t, _ in l_generiert(werk)}
+    for p in werk["provinzen"]:
+        ein(0, f'{p["code"]} · {_klartext(p["name_lat"])}', f'p-{p["code"]}')
+        for k in p["kacheln"]:
+            ein(1, f'{k["code"]} {_klartext(k["titel"])}', f'k-{k["code"]}')
+        if p["code"] == "L":
+            for c, t in gen.items():
+                ein(1, f"L·{c[1]} {t}", f"k-{c}")
+    ein(0, "Quellenverzeichnis", "t-quellen")
+    if "t-register" in anker:
+        plan.append((0, "Sachregister", anker["t-register"]))
+    return plan, fehlend
+
+
+def lesezeichen(w, werk, anker, fehlend):
+    plan, f = lesezeichen_plan(werk, anker)
+    fehlend += f
+    eltern = {}
+    for ebene, titel, seite in plan:
+        eltern[ebene] = w.add_outline_item(titel, seite - 1, parent=eltern.get(ebene - 1))
 
 
 def pruefe_pdf(pdf_pfad, bericht, werk=None):
@@ -1058,7 +1183,7 @@ def main():
     kx = katex_alle(werk)
     html_pfad.write_text(dokument(werk, baue_einheiten(werk, kx)), encoding="utf-8")
     bericht = montiere(html_pfad, pdf_pfad, werk)
-    metadaten(pdf_pfad, werk)
+    metadaten(pdf_pfad, werk, bericht.get("anker"), bericht)
     n = pruefe_pdf(pdf_pfad, bericht, werk)
     kontaktabzug(pdf_pfad, aus / f"{name}_kontakt.png")
     bericht["dauer_s"] = round(time.time() - t0, 1)

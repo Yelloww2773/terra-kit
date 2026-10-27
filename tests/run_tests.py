@@ -16,6 +16,7 @@ KIT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(KIT))
 from validate import validiere  # noqa: E402
 
+STRICHE_TEST = ("\u2012", "\u2013", "\u2014", "\u2015")
 BASIS = json.loads((KIT / "referenzwerk.json").read_text(encoding="utf-8"))
 
 
@@ -69,6 +70,7 @@ TESTS = [
     ("Selbsttest auf fehlende Kachel", lambda w: w["selbsttest"][0].__setitem__("kachel", "C1"), "existiert nicht", "F"),
     ("Abdeckung SVG fehlt", lambda w: kachel(w, "A5")["bausteine"].pop(1), "Schemavariante „svg“ fehlt", "F"),
     ("VfGH als Institution ohne Warnung", lambda w: baustein(w, "A3", "feinheit").__setitem__("text", "Der VfGH ist das Hüter der Verfassung."), "__keine__", "N"),
+    ("Protokoll hinkt nach", lambda w: w["meta"].__setitem__("version", "9.9"), "letzter Eintrag gilt Version", "W"),
     ("Urheber verändert", lambda w: w["meta"].__setitem__("urheber", "anonym"), "(c) Oliver Bedernik", "F"),
 ]
 
@@ -162,7 +164,88 @@ def main():
         except Exception as ex:
             ok = False; ergebnis = [repr(ex)]
         print(("✓ " if ok else "✗ ") + "Quellen: " + name + ("" if ok else f"  → {ergebnis[:2]}")); fehlschlaege += 0 if ok else 1
-    gesamt = len(TESTS) + 5 + len(EXAMTESTS) + len(QTESTS)
+    # Werkzeuge 3.3: Version, Versionswarnung, Ausgewogenheit, Prüfliste, Diff, Workflow
+    import re as _re, versionspruefung as VP, pruefliste as PL, diff as DF
+    hic_x = json.loads((KIT / "referenz_historica.json").read_text(encoding="utf-8"))
+    ver = (KIT / "VERSION").read_text(encoding="utf-8").strip()
+    def _version_einheitlich():
+        import validate, exam as EX, karte as KA
+        return {validate.VERSION, EX.VERSION, KA.VERSION, SK.VERSION, anki.VERSION} == {ver} and _re.fullmatch(r"\d+\.\d+\.\d+", ver)
+    def _ausgewogen():
+        e = copy.deepcopy(ex)
+        for d in ("Kontinuität und Rezeption", "Fundstelle und Status"):
+            next(f for f in e["fragen"] if f["dimension"] == d)["dimension"] = "Abgrenzung"
+        return any("Ausgewogenheit" in z for z in validiere_exam(e, hic_w).warnungen)
+    def _pruefliste():
+        z = PL.eintraege(json.loads((KIT / "referenzwerk.json").read_text(encoding="utf-8")))
+        h = PL.eintraege(hic_x)
+        kat = {x["kategorie"] for x in z}
+        return ({"Norm", "Zahl", "Datum", "Auflage"} <= kat and any(x["wert"] == "5 %" for x in z)
+                and any(x["wert"] == "1814/15" and x["kategorie"] == "Datum" for x in h)
+                and not any(x["kategorie"] == "Rechtsprechung" and x["wert"] == "1814/15" for x in h))
+    def _diff():
+        n = copy.deepcopy(BASIS); n["provinzen"][0]["kacheln"][0]["titel"] += " X"
+        n["provinzen"][0]["kacheln"][1]["bausteine"][0]["text"] = "y"; weg = n["provinzen"][1]["kacheln"].pop()["code"]
+        b = DF.vergleiche(BASIS, n); t = DF.als_text(b)
+        return (b["entfernt"] == [weg] and b["umbenannt"][0][0] == "A1" and b["geaendert"][0][0] == "A2"
+                and DF.als_text(DF.vergleiche(BASIS, BASIS)) == "" and not any(c in t for c in STRICHE_TEST))
+    def _workflow():
+        y = (KIT / ".github/workflows/pruefung.yml").read_text(encoding="utf-8")
+        return "needs: testreihe" in y and "v$(cat VERSION)" in y and "run_tests.py" in y
+    NEU = [
+        ("Version einheitlich aus Datei VERSION", _version_einheitlich),
+        ("Versionswarnung: Vergleich", lambda: [VP.bewerte("3.3.0", t)[0] for t in ("v3.4.0", "v3.3.0", "v3.2.0", "v3.3.a")] == ["veraltet", "aktuell", "neuer", "unklar"]
+                                                and VP.bewerte("3.10.0", "v3.9.0")[0] == "neuer"),
+        ("Exam: Ausgewogenheit gewarnt", _ausgewogen),
+        ("Prüfliste: Kategorien und Jahresspannen", _pruefliste),
+        ("Diff: neu, entfernt, umbenannt, geändert", _diff),
+        ("Workflow: Release nur nach grüner Testreihe", _workflow),
+    ]
+    # Bedienung am Bildschirm (3.4)
+    import exam as EXM
+    def _seitenverweis():
+        ohne = SK.md("Siehe [[A1]].")
+        SK.SEITENVERWEIS = True
+        try:
+            mit = SK.md("Siehe [[A1]].")
+        finally:
+            SK.SEITENVERWEIS = False
+        return "data-ziel" not in ohne and 'data-ziel="k-A1"' in mit and "S\u00a0" in mit
+    def _register():
+        beg, nor = SK.register_eintraege(hic_x)
+        reihe = [n for n in sorted(nor, key=SK._normschluessel) if n.endswith("B-VG") and n.count(" ") == 2]
+        zahlen = [int(_re.match(r"\d+", n.split()[1]).group()) for n in reihe]
+        return beg and all(c for c in beg.values()) and "Art 149 Abs 1 B-VG" in nor and zahlen == sorted(zahlen)
+    def _lesezeichen():
+        alle = {f"k-{k['code']}": 1 for p in BASIS["provinzen"] for k in p["kacheln"]}
+        alle.update({f"p-{p['code']}": 1 for p in BASIS["provinzen"]}); alle.update({"t-quellen": 1, "t-inhalt": 1})
+        alle.update({f"k-{c}": 1 for c, _, _ in SK.l_generiert(BASIS)})
+        plan, fehlend = SK.lesezeichen_plan(BASIS, alle)
+        titel = [x[1] for x in plan]
+        _, fehlt = SK.lesezeichen_plan(BASIS, {k: v for k, v in alle.items() if k != "k-A2"})
+        return not fehlend and any(x.startswith("A1 ") for x in titel) and fehlt == ["k-A2"]
+    def _anki_bruecke():
+        wk = copy.deepcopy(hic_w); SK.farben_zuweisen(wk)
+        d = EXM.daten(copy.deepcopy(ex), wk)
+        js = (KIT / "vorlage/exam.js").read_text(encoding="utf-8")
+        return d["anki_tag"] == "Terra::" + hic_w["meta"]["titel"].replace(" ", "_") and "tag:Kachel::" in js
+    def _release_knopf():
+        y = (KIT / ".github/workflows/pruefung.yml").read_text(encoding="utf-8")
+        return "workflow_dispatch" in y and "--notes-file notizen.md" in y and "--clobber" in y
+    NEU += [
+        ("Seitenverweis nur im Lernskript", _seitenverweis),
+        ("Sachregister: Begriffe und Normen, numerisch sortiert", _register),
+        ("Lesezeichen: jede Kachel mit Code, fehlendes Ziel gemeldet", _lesezeichen),
+        ("Brücke Exam zu Anki: Schlagwort wie im Deck", _anki_bruecke),
+        ("Workflow: Release-Knopf, README als Beschreibung", _release_knopf),
+    ]
+    for name, fn in NEU:
+        try:
+            ok = bool(fn())
+        except Exception as ex_:
+            ok = False; print("     Ausnahme:", repr(ex_)[:160])
+        print(("✓ " if ok else "✗ ") + name); fehlschlaege += 0 if ok else 1
+    gesamt = len(TESTS) + 5 + len(EXAMTESTS) + len(QTESTS) + len(NEU)
     print(f"\n{gesamt - fehlschlaege} von {gesamt} Tests bestanden")
     sys.exit(1 if fehlschlaege else 0)
 
