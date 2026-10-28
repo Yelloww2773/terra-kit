@@ -5,6 +5,7 @@
 #   2. Tag v*.*.* pushen: muss mit der Datei VERSION übereinstimmen.
 # Beschreibung des Release = Abschnitt der Version aus der README. Die Versionswarnung
 # des Kits liest ausschließlich Releases; ein roter Stand bleibt für Werke unsichtbar.
+# Bausteine in den Node-24-Fassungen (3.5): checkout@v6, setup-python@v6, setup-node@v6.
 name: Prüfung
 on:
   push:
@@ -18,11 +19,11 @@ jobs:
   testreihe:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with: { python-version: "3.12" }
-      - uses: actions/setup-node@v4
-        with: { node-version: "20" }
+      - uses: actions/setup-node@v6
+        with: { node-version: "24" }
       - name: Abhängigkeiten
         run: |
           sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
@@ -36,6 +37,7 @@ jobs:
           python validate.py referenzwerk.json --streng
           python validate.py referenz_historica.json --streng
           python validate.py exam_historica.json referenz_historica.json --streng
+          python exam.py exam_historica.json referenz_historica.json --aus /tmp/terra-pruefung --pdf --lokal
           python skript.py referenzwerk.json --aus /tmp/terra-pruefung
           python skript.py referenz_historica.json --aus /tmp/terra-pruefung
       - name: Tag gegen VERSION prüfen
@@ -47,7 +49,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Version und Beschreibung
         run: |
           echo "TAG=v$(cat VERSION)" >> "$GITHUB_ENV"
