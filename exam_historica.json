@@ -4,7 +4,7 @@
   "titel": "Examen Historicum Constitutionale",
   "werk": "Terra Historica Constitutionalis",
   "werk_version": "1.0",
-  "version": "1.0",
+  "version": "1.1",
   "stand": "2026-10",
   "urheber": "(c) Oliver Bedernik",
   "minuten": 60,
@@ -452,6 +452,47 @@
    ],
    "dimension": "Abgrenzung",
    "sachverhalt": "Nach 1867 haben Österreich und Ungarn einen gemeinsamen Monarchen und gemeinsame Angelegenheiten (Äußeres, Heerwesen und deren Finanzierung), die über Delegationen beider Parlamente behandelt werden. Eine gemeinsame Gesetzgebung im eigentlichen Sinn gibt es nicht.",
+   "grafik": {
+    "variante": "baum",
+    "titel": "Aufbau nach dem Ausgleich 1867",
+    "knoten": [
+     {
+      "id": "m",
+      "text": "gemeinsamer Monarch: Kaiser von Österreich und König von Ungarn"
+     },
+     {
+      "id": "c",
+      "text": "Österreich (Cisleithanien): Reichsrat, eigene Regierung",
+      "eltern": "m"
+     },
+     {
+      "id": "g",
+      "text": "gemeinsame Angelegenheiten, beraten in den Delegationen",
+      "eltern": "m",
+      "art": "betont"
+     },
+     {
+      "id": "t",
+      "text": "Ungarn (Transleithanien): Reichstag, eigene Regierung",
+      "eltern": "m"
+     },
+     {
+      "id": "g1",
+      "text": "Äußeres",
+      "eltern": "g"
+     },
+     {
+      "id": "g2",
+      "text": "Heerwesen",
+      "eltern": "g"
+     },
+     {
+      "id": "g3",
+      "text": "Finanzierung der gemeinsamen Ausgaben",
+      "eltern": "g"
+     }
+    ]
+   },
    "frage": "Wie ist diese Staatenverbindung einzuordnen?",
    "optionen": [
     {

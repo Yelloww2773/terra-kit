@@ -40,6 +40,8 @@
         "kacheln": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^[A-GL][1-9][0-9]?$" } },
         "dimension": { "$ref": "#/$defs/text" },
         "sachverhalt": { "$ref": "#/$defs/text" },
+        "grafik": { "type": "object", "required": ["variante", "titel"],
+          "description": "Abbildung zum Sachverhalt (3.5): ein Schema wie im Werk (etwa baum, fluss, kurve, bild); geprüft gegen schema.json" },
         "frage": { "$ref": "#/$defs/text" },
         "optionen": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/option" } },
         "merke": { "type": "object", "required": ["text"], "additionalProperties": false,

@@ -72,7 +72,35 @@ TESTS = [
     ("VfGH als Institution ohne Warnung", lambda w: baustein(w, "A3", "feinheit").__setitem__("text", "Der VfGH ist das Hüter der Verfassung."), "__keine__", "N"),
     ("Protokoll hinkt nach", lambda w: w["meta"].__setitem__("version", "9.9"), "letzter Eintrag gilt Version", "W"),
     ("Urheber verändert", lambda w: w["meta"].__setitem__("urheber", "anonym"), "(c) Oliver Bedernik", "F"),
+    # 3.5: Organigramm, Rasterbild, Kurvenmarkierung, Rechenprobe, Grafikdichte
+    ("Baum: Elternknoten fehlt", lambda w: baustein(w, "A6", "schema", "baum")["knoten"][3].__setitem__("eltern", "x"), "Elternknoten „x“ fehlt", "F"),
+    ("Baum: zwei Wurzeln", lambda w: baustein(w, "A6", "schema", "baum")["knoten"][1].pop("eltern"), "2 Wurzeln", "F"),
+    ("Baum: Kreis", lambda w: baustein(w, "A6", "schema", "baum")["knoten"][0].__setitem__("eltern", "a1"), "Wurzeln", "F"),
+    ("Baum: zu breit nach unten", lambda w: (baustein(w, "A6", "schema", "baum").__setitem__("richtung", "unten"),
+        baustein(w, "A6", "schema", "baum")["knoten"].append({"id": "l3", "text": "teleologische Reduktion", "eltern": "l"})), "trägt höchstens 6", "F"),
+    ("Baum: zu tief nach rechts", lambda w: baustein(w, "B4", "schema", "baum")["knoten"].append({"id": "x", "text": "x", "eltern": "s"}), "trägt höchstens 4", "F"),
+    ("Bild ohne Lizenz", lambda w: baustein(w, "L4", "schema", "bild").pop("lizenz"), "'lizenz' is a required property", "F"),
+    ("Bild mit unbekannter Lizenz", lambda w: baustein(w, "L4", "schema", "bild").__setitem__("lizenz", "aus dem Internet"), "nicht erkannt", "W"),
+    ("CC BY ohne Urheber", lambda w: baustein(w, "L4", "schema", "bild").__setitem__("lizenz", "CC BY 4.0"), "Namensnennung", "F"),
+    ("Bild mit falschem MIME-Typ", lambda w: baustein(w, "L4", "schema", "bild").__setitem__("daten", baustein(w, "L4", "schema", "bild")["daten"].replace("image/jpeg", "image/png", 1)), "angegeben als image/png", "F"),
+    ("Bild zu gering aufgelöst", lambda w: baustein(w, "L4", "schema", "bild").__setitem__("daten", _kleinbild(300)), "Auflösung", "F"),
+    ("Bild datei und daten zugleich", lambda w: baustein(w, "L4", "schema", "bild").__setitem__("datei", "a.png"), "genau eines der Felder", "F"),
+    ("Markierung außerhalb der Achse", lambda w: baustein(w, "B1", "schema", "kurve")["markierungen"][0].__setitem__("x", 20), "außerhalb der x-Achse", "F"),
+    ("Rechenprobe: falsches Ergebnis", lambda w: baustein(w, "B1", "rechenweg")["probe"]["rechnung"][2].__setitem__("ergebnis", "8638.39"), "Rechenprobe Zeile 3", "F"),
+    ("Rechenprobe: unbekannte Größe", lambda w: baustein(w, "B1", "rechenweg")["probe"]["rechnung"][2].__setitem__("ausdruck", "C / g"), "unbekannte Größe „g“", "F"),
+    ("Rechenprobe: Ergebnistext ohne Wert", lambda w: baustein(w, "B1", "rechenweg").__setitem__("ergebnis", "rund 8.600 €"), "nennt den nachgerechneten Wert", "W"),
+    ("Rechenprobe: Python statt Rechnung", lambda w: baustein(w, "B1", "rechenweg")["probe"]["rechnung"][0].__setitem__("ausdruck", "__import__('os')"), "nicht erlaubt", "F"),
+    ("Grafikdichte", lambda w: kachel(w, "A6")["bausteine"].insert(2, copy.deepcopy(baustein(w, "A5", "schema", "svg"))), "Grafikdichte", "W"),
+    ("Abdeckung Rechenprobe fehlt", lambda w: [baustein(w, c, "rechenweg").pop("probe") for c in ("B1", "B4")], "kein Rechenweg mit Rechenprobe", "F"),
 ]
+
+
+def _kleinbild(breite):
+    import base64, io
+    from PIL import Image
+    puffer = io.BytesIO()
+    Image.new("RGB", (breite, breite // 2), (200, 190, 170)).save(puffer, "JPEG")
+    return "data:image/jpeg;base64," + base64.b64encode(puffer.getvalue()).decode()
 
 
 def main():
@@ -126,6 +154,9 @@ def main():
         ("Provinz unterabgedeckt", lambda e: [f.__setitem__("provinz", "D") for f in e["fragen"] if f["provinz"] == "F"], "Provinz F nur 0-mal"),
         ("Dimension unbekannt", lambda e: e["fragen"][0].__setitem__("dimension", "Bauchgefühl"), "nicht im Domänenmodul"),
         ("Gedankenstrich im Exam", lambda e: e["fragen"][0].__setitem__("frage", "Welche \u2014 Aussagen?"), "Gedankenstrich"),
+        ("Grafik ohne Sachverhalt", lambda e: e["fragen"][10].pop("sachverhalt"), "Grafik ohne Sachverhalt"),
+        ("Grafik fehlerhaft", lambda e: e["fragen"][10]["grafik"]["knoten"][1].__setitem__("eltern", "zz"), "Elternknoten „zz“ fehlt"),
+        ("Grafik mit unbekannter Variante", lambda e: e["fragen"][10]["grafik"].__setitem__("variante", "karte"), "is not one of"),
     ]
     for name, mut, erw in EXAMTESTS:
         e = copy.deepcopy(ex); mut(e); bb = validiere_exam(e, hic_w)
@@ -238,6 +269,87 @@ def main():
         ("Lesezeichen: jede Kachel mit Code, fehlendes Ziel gemeldet", _lesezeichen),
         ("Brücke Exam zu Anki: Schlagwort wie im Deck", _anki_bruecke),
         ("Workflow: Release-Knopf, README als Beschreibung", _release_knopf),
+    ]
+    # Grafik und Rechenprobe (3.5)
+    import rechenprobe as RP, bild as BI, tempfile as TF, base64 as B64, io as IO
+    from PIL import Image as IMG
+    def _probe_sicher():
+        abgewiesen = 0
+        for a in ("__import__('os')", "open('x')", "(1).real", "[1][0]", "lambda: 1", "2 if 1 else 3"):
+            try:
+                RP.werte_aus(a, {})
+            except RP.ProbeFehler:
+                abgewiesen += 1
+        return abgewiesen == 6 and RP.werte_aus("0.1 + 0.2", {}) == RP.dez("0.3") and RP.werte_aus("2 \u2212 3", {}) == -1
+    def _kritik_automatisch():
+        w = copy.deepcopy(BASIS); SK.farben_zuweisen(w); SK.vorbereiten(w); SK.vorbereiten(w)
+        auto = [q for q in w["quellenkritik"] if "Rechenprobe" in q["richtig"]]
+        return len(auto) == 1 and "8.638,37" in auto[0]["befund"] and auto[0]["kachel"] == "B1"
+    def _umbruch():
+        z = SK.umbrechen_svg("Verfassungsgerichtshofgesetz objektiv-teleologische Ungarn (Transleithanien):", 13)
+        return all(len(x) <= 13 for x in z) and "objektiv-" in z and not any(x.startswith("en") for x in z)
+    def _baum_im_bild():
+        import re as R2
+        ok = True
+        for code in ("A6", "B4"):
+            svg = SK.svg_baum(baustein(BASIS, code, "schema", "baum"))
+            W, H = map(float, R2.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', svg).groups())
+            for x, y, b, h in R2.findall(r'<rect x="([\d.-]+)" y="([\d.-]+)" width="([\d.]+)" height="([\d.]+)"', svg):
+                ok &= float(x) >= 0 and float(y) >= 0 and float(x) + float(b) <= W + 0.5 and float(y) + float(h) <= H + 0.5
+            ok &= "(c) Oliver Bedernik" in svg
+        return ok
+    def _abbildungsverzeichnis():
+        w = copy.deepcopy(BASIS); SK.farben_zuweisen(w)
+        liste = SK.abbildungen(w)
+        anker = {"t-abbildungen": 20, **{f"a-{n}": 5 for n, *_ in liste}}
+        plan, fehlend = SK.lesezeichen_plan(w, anker)
+        h = "".join(SK.abbildungsverzeichnis(w))
+        return ([b["variante"] for _, b, _, _ in liste] == ["fluss", "svg", "baum", "kurve", "baum", "bild"]
+                and "Abb 6 Waage" in " ".join(x[1] for x in plan) and 'data-ziel="a-6"' in h and "Lizenz: eigenes Werk" in h)
+    def _bild_einbetten():
+        with TF.TemporaryDirectory() as d:
+            d = Path(d)
+            im = IMG.new("RGB", (3200, 1600), (120, 90, 60)); exif = IMG.Exif(); exif[0x010F] = "Kamera"
+            im.save(d / "foto.jpg", "JPEG", exif=exif.tobytes())
+            w = {"provinzen": [{"kacheln": [{"bausteine": [{"typ": "schema", "variante": "bild", "titel": "T", "datei": "foto.jpg"}]}]}]}
+            (d / "w.json").write_text(json.dumps(w), encoding="utf-8")
+            import subprocess as SP
+            SP.run([sys.executable, str(KIT / "bild.py"), str(d / "w.json"), "--einbetten"], check=True, capture_output=True)
+            b = json.loads((d / "w.json").read_text(encoding="utf-8"))["provinzen"][0]["kacheln"][0]["bausteine"][0]
+            neu = IMG.open(IO.BytesIO(B64.b64decode(b["daten"].split(",")[1])))
+            return "datei" not in b and neu.width == 2400 and not neu.getexif()
+    def _bilddatei_relativ():
+        from validate import validiere as V
+        w = copy.deepcopy(BASIS); bb = baustein(w, "L4", "schema", "bild"); bb.pop("daten"); bb["datei"] = "fehlt.png"
+        nicht = any("nicht gefunden" in z for z in V(w, KIT).fehler)
+        with TF.TemporaryDirectory() as d:
+            IMG.new("RGB", (1600, 800)).save(Path(d) / "da.png"); bb["datei"] = "da.png"
+            r = V(w, Path(d)); warn = any("nicht selbsttragend" in z for z in r.warnungen) and not r.fehler
+        return nicht and warn
+    def _wasserzeichen_bildrecht():
+        b = copy.deepcopy(baustein(BASIS, "L4", "schema", "bild"))
+        roh = B64.b64decode(b["daten"].split(",")[1])
+        with TF.TemporaryDirectory() as d:
+            eigen = anki.rasterbild(b, Path(d) / "e.jpg").read_bytes()
+            b["lizenz"], b["urheber"] = "CC BY 4.0", "Muster, M."
+            fremd = anki.rasterbild(b, Path(d) / "f.jpg").read_bytes()
+        return eigen != roh and fremd == roh
+    def _werkzeuge_35():
+        y = (KIT / ".github/workflows/pruefung.yml").read_text(encoding="utf-8")
+        e = (KIT / "einrichten.sh").read_text(encoding="utf-8")
+        c = (KIT / "vorlage/skript.css").read_text(encoding="utf-8")
+        return (all(a in y for a in ("actions/checkout@v6", "actions/setup-python@v6", "actions/setup-node@v6", 'node-version: "24"'))
+                and "@v4" not in y and "@v5" not in y and "pdftotext" in e and "apt-get update" in e and "U+221E" in c)
+    NEU += [
+        ("Rechenprobe: dezimal exakt, kein Python", _probe_sicher),
+        ("Rechenprobe: Quellenkritik automatisch, einmalig", _kritik_automatisch),
+        ("Umbruch in Grafiken: kein Wort ragt hinaus", _umbruch),
+        ("Organigramm: alle Kästen im Bild, Wasserzeichen", _baum_im_bild),
+        ("Abbildungsverzeichnis und Lesezeichen", _abbildungsverzeichnis),
+        ("bild.py: einbetten, verkleinern, EXIF entfernen", _bild_einbetten),
+        ("Bilddatei relativ zur werk.json", _bilddatei_relativ),
+        ("Anki: Wasserzeichen nur in eigenen Bildern", _wasserzeichen_bildrecht),
+        ("Workflow Node 24, Einrichtung, Symbolschrift", _werkzeuge_35),
     ]
     for name, fn in NEU:
         try:

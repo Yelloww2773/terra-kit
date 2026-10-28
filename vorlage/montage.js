@@ -149,11 +149,12 @@
     const fig = u.querySelector('.skalierbar');
     const ziel = behaelter(u);
     ziel.appendChild(u);
-    const svg = fig.querySelector('svg');
+    const el = fig.querySelector('svg, img');  /* 3.5: auch Rasterbilder (Grundbreite aus data-breite) */
+    const basis = +(fig.dataset.breite || 100);
     const h0 = fig.getBoundingClientRect().height;
     const zuviel = inhaltUnten() - koerper.getBoundingClientRect().bottom + 2;
     const skala = Math.max(0.3, (h0 - zuviel) / h0);
-    svg.style.width = (skala * 100).toFixed(1) + '%';
+    el.style.width = (skala * basis).toFixed(1) + '%';
     if (u.dataset.kachel) begonnen.add(u.dataset.kachel);
     bericht.skalierungen.push({ kachel: u.dataset.kachel, skala: +skala.toFixed(3), seite: BUCH.children.length });
     if (skala < MIN_SKALA) bericht.warnungen.push('Abbildung in ' + u.dataset.kachel + ' auf ' + Math.round(skala * 100) + ' % verkleinert (unter Mindestmaß)');
@@ -213,7 +214,9 @@
   });
   /* Sprungziele für die Lesezeichenleiste (skript.py setzt sie mit pypdf) */
   bericht.anker = {};
-  document.querySelectorAll('[id^="k-"], [id^="p-"], [id^="t-"]').forEach(e => { bericht.anker[e.id] = seiteVon(e); });
+  document.querySelectorAll('[id^="k-"], [id^="p-"], [id^="t-"], [id^="a-"]').forEach(e => { bericht.anker[e.id] = seiteVon(e); });
+  /* Seiten mit Abbildungen (3.5): Marke im Kontaktabzug für die Sichtprüfung */
+  bericht.abbildungsseiten = Array.from(new Set(Array.from(BUCH.querySelectorAll('.fig')).map(seiteVon))).sort((a, b) => a - b);
 
   /* Silbentrennung fixieren. Am Umbruch rendert Chromium das weiche Trennzeichen
      sichtbar (Breite > 0). Nur dort bleibt ein echter Trennstrich; alle anderen

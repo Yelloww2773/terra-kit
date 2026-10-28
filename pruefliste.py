@@ -2,7 +2,9 @@
 """(c) Oliver Bedernik · Terra-Kit · Prüfliste für den Advocatus diaboli
 
 Zieht alle angreifbaren Angaben eines Werks in eine Tabelle: Normzitate,
-Rechtsprechung, Zahlen, Daten und Auflagen, jeweils mit Kachel und Kontext.
+Rechtsprechung, Zahlen, Daten und Auflagen, jeweils mit Kachel und Kontext;
+seit 3.5 dazu jeder Rechenweg mit dem Stand seiner Rechenprobe und jedes
+Rasterbild mit Quelle und Lizenz (Rechte und Nachweis prüfen).
 Die Tabelle ist die Arbeitsgrundlage des Gegenprüfungsdurchgangs (Ablauf 5).
 
     python3 pruefliste.py werk.json [--aus pruefliste.md]
@@ -63,11 +65,29 @@ def eintraege(werk):
                 neu("Zahl", ort, m.group(), s, m)
         for m in RE_HOCHZAHL.finditer(s):
             neu("Auflage", ort, m.group(), s, m)
+    import rechenprobe as R  # 3.5: Rechnungen und Bildrechte
+    for p in werk.get("provinzen", []):
+        for k in p.get("kacheln", []):
+            for b in k.get("bausteine", []):
+                if b.get("typ") == "rechenweg":
+                    if not b.get("probe"):
+                        stand = "ungeprüft: keine Rechenprobe, jeden Schritt von Hand nachrechnen"
+                    else:
+                        try:
+                            zz, (ist, st) = R.pruefe(b["probe"])
+                            stand = ("Rechenprobe bestanden" if all(z[4] for z in zz) else "Rechenprobe ABWEICHUNG") + f", Endwert {R.at(ist, st)}"
+                            stand += "; Ausgangswerte gegen die Aufgabe prüfen: " + ", ".join(f"{n} = {v}" for n, v in b["probe"].get("werte", {}).items())
+                        except R.ProbeFehler as e:
+                            stand = f"Rechenprobe nicht berechenbar: {e}"
+                    zeilen.append({"kategorie": "Rechnung", "ort": k["code"], "wert": b.get("ergebnis", ""), "kontext": stand})
+                if b.get("variante") == "bild":
+                    zeilen.append({"kategorie": "Bildrecht", "ort": k["code"], "wert": b.get("lizenz", ""),
+                                   "kontext": f"{b.get('titel', '')}: {b.get('quelle', '')}" + (f", {b['urheber']}" if b.get("urheber") else "")})
     for q in werk.get("quellen", []):
         if q.get("auflage"):
             wert = f"{q['kurz']}: {q['auflage']}. Auflage {q.get('jahr', '')}".strip()
             zeilen.append({"kategorie": "Auflage", "ort": "Quellen", "wert": wert, "kontext": q.get("titel", "")})
-    reihe = ["Norm", "Rechtsprechung", "Datum", "Zahl", "Auflage"]
+    reihe = ["Norm", "Rechtsprechung", "Datum", "Zahl", "Rechnung", "Bildrecht", "Auflage"]
     zeilen.sort(key=lambda z: reihe.index(z["kategorie"]))
     return zeilen
 

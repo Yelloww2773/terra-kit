@@ -22,7 +22,8 @@ from pathlib import Path
 
 KIT = Path(__file__).resolve().parent
 sys.path.insert(0, str(KIT))
-from validate import validiere  # noqa: E402
+from validate import validiere, ABBILDUNG, baum_struktur, bild_bytes  # noqa: E402
+import rechenprobe  # noqa: E402
 
 VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
 NM = KIT / "node_modules"
@@ -79,6 +80,8 @@ except Exception:  # Silbentrennung ist Komfort, kein Muss
 # ── Text: Typografie, Trennung, Auszeichnung ──────────────────────────────
 NBSP, SCHMAL = "\u00a0", "\u202f"
 SEITENVERWEIS = False  # wird nur beim Setzen des Lernskripts eingeschaltet (Karte, Exam und Anki bleiben ohne Seitenzahl)
+ABB_NR = {}  # id(Baustein) → (Abbildungsnummer, Baustein); füllt abbildungen(), liest schema_html()
+ABB_ART = {"kurve": "Diagramm", "fluss": "Ablaufschema", "svg": "Grafik", "baum": "Organigramm", "bild": "Bild"}
 
 
 def typo(s):
@@ -174,6 +177,11 @@ console.log(JSON.stringify(aus));"""
 
 
 # ── Diagramme ─────────────────────────────────────────────────────────────
+def svg_wz(W, H):
+    """Wasserzeichen in jeder vom Kit erzeugten Grafik, unten rechts, dezent (bleibt auch beim Kopieren der Grafik erhalten)."""
+    return f'<text class="t-wz" x="{W - 3}" y="{H - 3}" text-anchor="end">(c) Oliver Bedernik</text>'
+
+
 def schoene_schritte(lo, hi, n=5):
     span = (hi - lo) or 1
     roh = span / n
@@ -188,7 +196,7 @@ def svg_kurve(b):
     W, H, L, R, T, U = 600, 300, 66, 18, 22, 46
     pw, ph = W - L - R, H - T - U
     xs = [pt[0] for r in b["reihen"] for pt in r["punkte"]]
-    ys = [pt[1] for r in b["reihen"] for pt in r["punkte"]]
+    ys = [pt[1] for r in b["reihen"] for pt in r["punkte"]] + [mk["y"] for mk in b.get("markierungen", [])]
     x0, x1 = min(xs), max(xs)
     ymin, ymax = min(0, min(ys)), max(0, max(ys))
     sy = schoene_schritte(ymin, ymax)
@@ -215,6 +223,12 @@ def svg_kurve(b):
         o.append(f'<polyline class="t-reihe{i%4}" points="{pts}"/>')
         for a, c in r["punkte"]:
             o.append(f'<circle class="t-punkt{i%4}" cx="{X(a):.1f}" cy="{Y(c):.1f}" r="2.1"/>')
+    for mk in b.get("markierungen", []):  # 3.5: Gleichgewicht, Rechenbeispiel …
+        mx, my = X(mk["x"]), Y(mk["y"])
+        o.append(f'<path class="t-mark" d="M{L},{my:.1f} H{mx:.1f} V{T+ph}"/>')
+        o.append(f'<circle class="t-markpunkt" cx="{mx:.1f}" cy="{my:.1f}" r="4.2"/>')
+        rechts = mx < L + pw * 0.62
+        o.append(f'<text class="t-marktext" x="{mx + (8 if rechts else -8):.1f}" y="{my - 7:.1f}" text-anchor="{"start" if rechts else "end"}">{esc(mk["text"])}</text>')
     lx, ly = L + pw - 150, T + 8
     o.append(f'<rect x="{lx-8}" y="{ly-10}" width="158" height="{14*len(b["reihen"])+8}" fill="var(--kachel)" stroke="var(--linie)" stroke-width="0.6"/>')
     for i, r in enumerate(b["reihen"]):
@@ -224,6 +238,7 @@ def svg_kurve(b):
     ex = lambda a: esc(a["label"]) + (f' ({esc(a["einheit"])})' if a.get("einheit") else "")
     o.append(f'<text class="t-text" x="{L+pw/2:.0f}" y="{H-8}" text-anchor="middle">{ex(b["x"])}</text>')
     o.append(f'<text class="t-text" transform="translate(15 {T+ph/2:.0f}) rotate(-90)" text-anchor="middle">{ex(b["y"])}</text>')
+    o.append(svg_wz(W, H))
     o.append("</svg>")
     return "".join(o).replace('fill="var(--kachel)" stroke="var(--linie)"', 'class="t-flaeche"')
 
@@ -241,6 +256,48 @@ def umbrechen(text, n=26):
     return zeilen
 
 
+try:
+    _SVG_HYPH = pyphen.Pyphen(lang="de_AT")  # eigene Instanz: die Karte schaltet _HYPH ab, Grafiken brauchen Trennung trotzdem
+except Exception:
+    _SVG_HYPH = None
+
+
+def umbrechen_svg(text, n=26):
+    """Zeilenumbruch für Kästen in Grafiken: an Leerzeichen, sonst am Bindestrich, sonst nach Silben
+    (österreichisches Wörterbuch); kein Wort ragt aus dem Kasten. Eine Zeile hält höchstens n Zeichen."""
+    stuecke = []  # (Text, Anschluss an das vorige Stück: " " Leerzeichen, "" Bindestrich, "~" eingefügter Trennstrich)
+    for w in typo(text).split(" "):
+        teile = w.split("-")
+        for j, teil in enumerate(teile):
+            s = teil + ("-" if j < len(teile) - 1 else "")
+            anschluss = " " if j == 0 else ""
+            if len(s) <= n or not _SVG_HYPH:
+                stuecke.append((s, anschluss))
+                continue
+            rest, erst = s, True
+            while len(rest) > n:
+                stellen = [i for i in _SVG_HYPH.positions(rest) if i <= n - 1]
+                gut = [i for i in stellen if sum(c.isalpha() for c in rest[i:]) >= 4]  # kein Rest wie „-en“
+                i = max(gut or stellen) if stellen else n - 1
+                stuecke.append((rest[:i] + "-", anschluss if erst else "~"))
+                rest, erst = rest[i:], False
+            stuecke.append((rest, anschluss if erst else "~"))
+    zeilen, z = [], ""
+    for s, anschluss in stuecke:
+        if not z:
+            z = s
+            continue
+        kand = z + " " + s if anschluss == " " else (z + s if anschluss == "" else z[:-1] + s)
+        if len(kand) <= n:
+            z = kand
+        else:
+            zeilen.append(z)
+            z = s
+    if z:
+        zeilen.append(z)
+    return zeilen
+
+
 def svg_fluss(b):
     W, CW, BW = 600, 150, 136
     kn = {k["id"]: dict(k, zeilen=umbrechen(k["text"])) for k in b["knoten"]}
@@ -248,7 +305,7 @@ def svg_fluss(b):
     bh = 14 * zeilen_max + 12
     RH = bh + 34
     rows = max(k["zeile"] for k in kn.values())
-    H = rows * RH - 34 + 12
+    H = rows * RH - 34 + 12 + 10  # 3.5: Zeile für das Wasserzeichen
     cx = lambda k: (k["spalte"] - 0.5) * CW
     top = lambda k: 6 + (k["zeile"] - 1) * RH
     o = [f'<svg viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg" role="img">',
@@ -274,8 +331,115 @@ def svg_fluss(b):
         for i, z in enumerate(k["zeilen"]):
             o.append(f'<text class="t-text" x="{cx(k):.0f}" y="{y0+14*i:.1f}" text-anchor="middle">{esc(z).replace(NBSP, "&#160;")}</text>')
         o.append("</g>")
+    o.append(svg_wz(W, H))
     o.append("</svg>")
     return "".join(o)
+
+
+def svg_baum(b):
+    """Organigramm (3.5): Layout vollständig berechnet. Blätter in Lesereihenfolge, Eltern mittig über
+    bzw. vor ihren Kindern; rechtwinklige Verbinder ohne Pfeil. Richtung „unten“ (Wurzel oben) oder
+    „rechts“ (Wurzel links, für breite Bäume)."""
+    kinder, wurzeln, ebene, blaetter, richtung = baum_struktur(b)
+    kn = {k["id"]: k for k in b["knoten"]}
+    pos, reihe = {}, []
+
+    def dfs(i):
+        if not kinder[i]:
+            pos[i] = len(reihe)
+            reihe.append(i)
+        else:
+            for c in kinder[i]:
+                dfs(c)
+            pos[i] = (pos[kinder[i][0]] + pos[kinder[i][-1]]) / 2
+    dfs(wurzeln[0])
+    n, tiefe, W = len(reihe), max(ebene.values()), 600
+    o = []
+    if richtung == "unten":
+        slot = W / n
+        BW = min(156, slot - 14)
+        zeilen = {i: umbrechen_svg(k["text"], max(9, int(BW / 6.3))) for i, k in kn.items()}
+        BH = 14 * max(len(z) for z in zeilen.values()) + 12
+        GAP = 44 if any(k.get("label") for k in kn.values()) else 32
+        cx = lambda i: (pos[i] + 0.5) * slot
+        top = lambda i: 6 + (ebene[i] - 1) * (BH + GAP)
+        H = 6 + tiefe * BH + (tiefe - 1) * GAP + 6 + 10
+        for i, k in kn.items():
+            if k.get("eltern") in kn:
+                e = k["eltern"]
+                my = top(e) + BH + (GAP / 2 if GAP == 32 else 14)
+                o.append(f'<path class="b-kante" d="M{cx(e):.1f},{top(e) + BH} V{my:.1f} H{cx(i):.1f} V{top(i)}"/>')
+                if k.get("label"):
+                    o.append(f'<text class="t-label b-label" x="{cx(i) + 4:.1f}" y="{top(i) - 6:.1f}">{esc(k["label"])}</text>')
+        box = lambda i: (cx(i) - BW / 2, top(i), BW, BH)
+    else:
+        CW = W / tiefe
+        GAPX = 30
+        BW = CW - GAPX
+        zeilen = {}
+        for i, k in kn.items():
+            z = umbrechen_svg(k["text"], max(9, int(BW / 6.3)))
+            zeilen[i] = ([("label", k["label"])] if k.get("label") else []) + [("text", s) for s in z]
+        BH = 14 * max(len(z) for z in zeilen.values()) + 10
+        RH = BH + 10
+        cy = lambda i: 6 + (pos[i] + 0.5) * RH
+        left = lambda i: (ebene[i] - 1) * CW
+        H = 6 + n * RH + 6 + 10
+        for i, k in kn.items():
+            if k.get("eltern") in kn:
+                e = k["eltern"]
+                mx = left(e) + BW + GAPX / 2
+                o.append(f'<path class="b-kante" d="M{left(e) + BW:.1f},{cy(e):.1f} H{mx:.1f} V{cy(i):.1f} H{left(i):.1f}"/>')
+        box = lambda i: (left(i), cy(i) - BH / 2, BW, BH)
+    for i, k in kn.items():
+        x, y, w, h = box(i)
+        art = k.get("art", "normal")
+        o.append(f'<g class="b-{art}"><rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="3"/>')
+        z = zeilen[i]
+        z = z if richtung == "rechts" else [("text", s) for s in z]
+        y0 = y + h / 2 - (len(z) - 1) * 7 + 4
+        for j, (sorte, s) in enumerate(z):
+            klasse = "t-label" if sorte == "label" else "t-text"
+            o.append(f'<text class="{klasse}" x="{x + w / 2:.1f}" y="{y0 + 14 * j:.1f}" text-anchor="middle">{esc(s).replace(NBSP, "&#160;")}</text>')
+        o.append("</g>")
+    return (f'<svg viewBox="0 0 {W} {H:.0f}" xmlns="http://www.w3.org/2000/svg" role="img">' + "".join(o)
+            + svg_wz(W, H) + "</svg>")
+
+
+def baum_klartext(b):
+    """Gliederung des Baums als verschachtelte Liste (Alternativtext, Anki-Rückseite)."""
+    kinder, wurzeln, _, _, _ = baum_struktur(b)
+    kn = {k["id"]: k for k in b["knoten"]}
+
+    def li(i):
+        k = kn[i]
+        lbl = f'<small>{esc(k["label"])}:</small> ' if k.get("label") else ""
+        sub = "<ul>" + "".join(li(c) for c in kinder[i]) + "</ul>" if kinder[i] else ""
+        return f"<li>{lbl}{md(k['text'])}{sub}</li>"
+    return "<ul>" + li(wurzeln[0]) + "</ul>"
+
+
+def bild_masse(b):
+    from PIL import Image
+    import io
+    roh, _, _ = bild_bytes(b)
+    if roh is None:
+        return None
+    return Image.open(io.BytesIO(roh)).size
+
+
+def bildnachweis(b):
+    teile = ([f'Urheber: {md(b["urheber"])}'] if b.get("urheber") else []) + [f'Quelle: {md(b["quelle"])}', f'Lizenz: {md(b["lizenz"])}']
+    return " · ".join(teile)
+
+
+def bild_html(b):
+    br = b.get("breite", 100)
+    masse = bild_masse(b) if b.get("daten") else None
+    wh = f' width="{masse[0]}" height="{masse[1]}"' if masse else ""
+    src = b.get("daten") or b.get("datei", "")
+    return (f'<div class="fig skalierbar bild" data-breite="{br}"><img src="{src}"{wh} alt="{esc(b["beschreibung"])}" '
+            f'style="width:{br}%"></div><div class="bildnachweis">{bildnachweis(b)}</div>')
 
 
 # ── Bausteine ─────────────────────────────────────────────────────────────
@@ -295,7 +459,10 @@ def tabelle(kopf, zeilen, klasse="t", lat_spalten=(), teilbar=True):
 
 def schema_html(b):
     v = b["variante"]
-    titel = f'<div class="schema-titel">{md(b["titel"], latein=True)}</div>'
+    eintrag = ABB_NR.get(id(b))
+    nr = eintrag[0] if eintrag and eintrag[1] is b else None  # Identität prüfen: id() allein kann wiederverwendet werden
+    abb = f'<span class="abb" id="a-{nr}">Abb{NBSP}{nr}</span>' if nr else ""
+    titel = f'<div class="schema-titel">{abb}{md(b["titel"], latein=True)}</div>'
     if v == "tabelle":
         lat = tuple(i for i, h in enumerate(b["kopf"]) if h.lower() in ("terminus", "latinum", "begriff"))
         return titel + tabelle(b["kopf"], b["zeilen"], lat_spalten=lat)
@@ -335,6 +502,11 @@ def schema_html(b):
         stil = f' style="max-width:100%;height:{b["hoehe_mm"]}mm"' if b.get("hoehe_mm") else ""
         svg = b["svg"].replace("<svg", f'<svg{stil}', 1) if stil else b["svg"]
         return titel + f'<div class="fig skalierbar">{svg}<span class="alt">{esc(b["beschreibung"])}</span></div>'
+    if v == "baum":
+        alt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", baum_klartext(b))).strip()
+        return titel + f'<div class="fig skalierbar">{svg_baum(b)}<span class="alt">{esc(alt)}</span></div>'
+    if v == "bild":
+        return titel + bild_html(b)
     raise ValueError(v)
 
 
@@ -359,7 +531,8 @@ def baustein_html(b, kx):
         auf = f'<div class="aufgabe">{md(b["aufgabe"])}</div>' if b.get("aufgabe") else ""
         li = "".join(f'<li>{md(s["text"])}' + (f'<span class="tex">{kx["I:\\displaystyle " + s["tex"]]}</span>' if s.get("tex") else "") + "</li>"
                      for s in b["schritte"])
-        return f'<div class="label">Rechenweg</div><div class="rechenweg">{auf}<ol>{li}</ol><div class="ergebnis">Ergebnis: {md(b["ergebnis"])}</div></div>'
+        probe = '<span class="probe" title="vom Terra-Kit dezimal nachgerechnet">✓ nachgerechnet</span>' if probe_bestanden(b) else ""
+        return f'<div class="label">Rechenweg</div><div class="rechenweg">{auf}<ol>{li}</ol><div class="ergebnis">Ergebnis: {md(b["ergebnis"])}{probe}</div></div>'
     if t == "schema":
         return schema_html(b)
     if t == "beispiel":
@@ -380,6 +553,84 @@ def baustein_html(b, kx):
     if t == "luecke":
         return f'<div class="box luecke"><div class="lbl">{LABEL[t]} <span class="grund">sinngemäß ergänzt · {md(b["grund"])}</span></div>{md(b["text"])}</div>'
     raise ValueError(t)
+
+
+def probe_bestanden(b):
+    """True, wenn der Rechenweg eine Probe trägt und jede Zeile stimmt (nur dann erscheint der Prüfvermerk)."""
+    if not b.get("probe"):
+        return False
+    try:
+        zeilen, _ = rechenprobe.pruefe(b["probe"])
+    except rechenprobe.ProbeFehler:
+        return False
+    return all(z[4] for z in zeilen)
+
+
+# ── Vorbereitung (3.5): Bilder laden, Quellenkritik der Rechenprobe, Abbildungsnummern ──
+def bilder_laden(obj, ordner=None):
+    """Ersetzt in einer Werk- oder Exam-Struktur jedes verknüpfte Bild (datei) durch die eingebetteten
+    Daten (daten), nur im Speicher. Karte und Exam bleiben so selbstständige Dateien."""
+    import base64
+    if isinstance(obj, dict):
+        if obj.get("variante") == "bild" and obj.get("datei") and ordner is not None:
+            roh, mime, _ = bild_bytes(obj, ordner)
+            if roh is not None:
+                obj["daten"] = f"data:{mime};base64," + base64.b64encode(roh).decode("ascii")
+                del obj["datei"]
+        for v in obj.values():
+            bilder_laden(v, ordner)
+    elif isinstance(obj, list):
+        for v in obj:
+            bilder_laden(v, ordner)
+    return obj
+
+
+def vorbereiten(werk, ordner=None):
+    """Nach der Validierung, vor dem Satz: Bilder einbetten, automatische Quellenkritik ergänzen
+    (abweichende Quelle einer Rechenprobe), Abbildungen nummerieren. Mehrfacher Aufruf schadet nicht."""
+    bilder_laden(werk, ordner)
+    kritik = werk.setdefault("quellenkritik", [])
+    for e in rechenprobe.kritik(werk):
+        if e not in kritik:
+            kritik.append(e)
+    if not kritik:
+        werk.pop("quellenkritik")
+    abbildungen(werk)
+    return werk
+
+
+def abbildungen(werk):
+    """[(Nr, Baustein, Kachelcode, Provinzfarbe)] aller Abbildungen in Werkreihenfolge; füllt ABB_NR."""
+    liste = []
+    for p in werk["provinzen"]:
+        for k in p["kacheln"]:
+            for b in k["bausteine"]:
+                if b.get("typ") == "schema" and b.get("variante") in ABBILDUNG:
+                    liste.append((len(liste) + 1, b, k["code"], p.get("farbe", "tinte")))
+    ABB_NR.clear()
+    ABB_NR.update({id(b): (n, b) for n, b, _, _ in liste})
+    return liste
+
+
+ABB_MIN_VERZEICHNIS = 3  # darunter kein eigenes Abbildungsverzeichnis
+
+
+def abbildungsverzeichnis(werk):
+    liste = abbildungen(werk)
+    if len(liste) < ABB_MIN_VERZEICHNIS:
+        return []
+    zeilen = []
+    for n, b, code, farbe in liste:
+        nachweis = bildnachweis(b).replace(" · ", "<br>") if b["variante"] == "bild" else ("eigene Darstellung" if b["variante"] == "svg"
+                                                                    else "eigene Darstellung, gesetzt vom Terra-Kit")
+        zeilen.append(f'<tr><td class="nr"><a href="#a-{n}">Abb{NBSP}{n}</a></td>'
+                      f'<td class="t">{md(b["titel"], latein=True)}<span class="art">{ABB_ART[b["variante"]]}</span></td>'
+                      f'<td class="nw">{nachweis}</td><td class="wo"><a class="kc farbe-{farbe}" href="#k-{code}">{code}</a></td>'
+                      f'<td class="n"><a href="#a-{n}"><span data-ziel="a-{n}"></span></a></td></tr>')
+    return [einheit('<div class="titelzeile"><div class="tz-ober">Anhang</div><h1 class="teil" id="t-abbildungen">Abbildungsverzeichnis</h1>'
+                    f'<div class="teil-unter">{len(liste)} Abbildungen; Nummer und Seitenzahl führen zur Abbildung, der Code zur Kachel.</div></div>'
+                    '<table class="av teilbar"><thead><tr><th>Nr</th><th>Titel</th><th>Nachweis</th><th>Kachel</th><th>Seite</th></tr></thead>'
+                    f'<tbody>{"".join(zeilen)}</tbody></table>', seite="titelei", neue_seite="1", name="Abbildungsverzeichnis")]
 
 
 # ── Einheiten ─────────────────────────────────────────────────────────────
@@ -760,7 +1011,9 @@ def inhaltsverzeichnis(werk, generiert, mit_abk):
                 f'<div class="pd">{md(p["name_de"], latein=True)}</div><span class="n"><span data-ziel="p-{p["code"]}"></span></span></div>')
         out.append(einheit(f'<div class="tocp farbe-{p["farbe"]}">{kopf}<table>{"".join(rows)}</table></div>',
                            seite="spalten", name=f'Verzeichnis {p["code"]}'))
-    out.append(einheit('<div class="tocp tocv farbe-grau"><table><tr><td class="t"><a href="#t-quellen">Quellenverzeichnis</a></td>'
+    abb_zeile = ('<tr><td class="t"><a href="#t-abbildungen">Abbildungsverzeichnis</a></td><td class="n"><span data-ziel="t-abbildungen"></span></td></tr>'
+                 if len(abbildungen(werk)) >= ABB_MIN_VERZEICHNIS else "")
+    out.append(einheit('<div class="tocp tocv farbe-grau"><table>' + abb_zeile + '<tr><td class="t"><a href="#t-quellen">Quellenverzeichnis</a></td>'
                        '<td class="n"><span data-ziel="t-quellen"></span></td></tr>'
                        + ('<tr><td class="t"><a href="#t-register">Sachregister</a></td><td class="n"><span data-ziel="t-register"></span></td></tr>'
                           if sachregister(werk) else '') + '</table></div>', seite="spalten", name="Verzeichnis Anhang"))
@@ -813,7 +1066,12 @@ def zum_gebrauch(werk):
                       + ('Subsumtion in Schritten, mit Normzitat.' if werk["modul"]["domaene"] in JURISTISCH else 'Lösung in Schritten, mit Quellenanker.')
                       + '</div></div>')
     if typen & {"formel", "rechenweg"}:
-        proben.append('<p class="hinweis">Formeln tragen die Gleichungsnummer der Quelle; Rechenwege zeigen jeden Zwischenschritt.</p>')
+        nach = any(probe_bestanden(b) for k in kach for b in k["bausteine"] if b["typ"] == "rechenweg")
+        proben.append('<p class="hinweis">Formeln tragen die Gleichungsnummer der Quelle; Rechenwege zeigen jeden Zwischenschritt.'
+                      + (' Ein Ergebnis mit <span class="probe">✓ nachgerechnet</span> hat das Kit dezimal exakt nachgerechnet; '
+                         'weicht die Quelle ab, steht das in der Quellenkritik.' if nach else '') + '</p>')
+    if len(abbildungen(werk)) >= ABB_MIN_VERZEICHNIS:
+        proben.append('<p class="hinweis">Abbildungen sind fortlaufend nummeriert (Abb 3) und im <b>Abbildungsverzeichnis</b> des Anhangs mit Nachweis gesammelt.</p>')
     proben.append('<p class="hinweis">Fachtermini stehen kursiv und sind im <b>Lexicon</b> des Repetitoriums mit Kachelverweis gesammelt.</p>')
     rechts = '<h3>Bausteine</h3>' + "".join(proben)
     return einheit(f'<div class="titelzeile"><div class="tz-ober">Titelei</div><h1 class="teil" id="t-gebrauch">Zum Gebrauch</h1></div>'
@@ -846,7 +1104,7 @@ ABK = {
 
 
 def abkuerzungen(werk):
-    texte = " ".join(t for pfad, t in _strings(werk) if not pfad.endswith((".svg", ".tex")))
+    texte = " ".join(t for pfad, t in _strings(werk) if not pfad.endswith((".svg", ".tex", ".daten", ".ausdruck", ".datei")))
     gefunden = []
     for k in ABK:
         muster = r"(?<![\w-])" + re.escape(k) + (r"(?=\s?\d)" if k == "Z" else r"(?![\w-])")
@@ -911,6 +1169,7 @@ def _baue_einheiten(werk, kx):
             out += kachel_einheiten(k, p["code"], kx, p["farbe"])
         if p["code"] == "L":
             out += [u for _, _, u in gen]
+    out += abbildungsverzeichnis(werk)
     out += quellenverzeichnis(werk)
     out += sachregister(werk)
     return out
@@ -931,7 +1190,7 @@ def register_eintraege(werk):
     texte = {}
     for p in werk["provinzen"]:
         for k in p["kacheln"]:
-            texte[k["code"]] = " ".join(_klartext(x) for _, x in _strings(k) if isinstance(x, str))
+            texte[k["code"]] = " ".join(_klartext(x) for pf, x in _strings(k) if isinstance(x, str) and not pf.endswith((".daten", ".ausdruck", ".datei")))
     begriffe, normen = {}, {}
     quelle = [(b["lat"], k["code"]) for p in werk["provinzen"] for k in p["kacheln"] for b in k["bausteine"] if b["typ"] == "latinum"]
     quelle += [(e["begriff"], e["kachel"]) for e in werk.get("lexicon", [])]
@@ -1076,6 +1335,10 @@ def lesezeichen_plan(werk, anker):
         if p["code"] == "L":
             for c, t in gen.items():
                 ein(1, f"L·{c[1]} {t}", f"k-{c}")
+    if "t-abbildungen" in anker:
+        ein(0, "Abbildungsverzeichnis", "t-abbildungen")
+        for n, b, _, _ in abbildungen(werk):
+            ein(1, f"Abb {n} {_klartext(b['titel'])}", f"a-{n}")
     ein(0, "Quellenverzeichnis", "t-quellen")
     if "t-register" in anker:
         plan.append((0, "Sachregister", anker["t-register"]))
@@ -1119,6 +1382,12 @@ def pruefe_pdf(pdf_pfad, bericht, werk=None):
     striche = len(re.findall("[\u2012\u2013\u2014\u2015]", txt))
     if striche:
         bericht["fehler"].append(f"{striche} Gedankenstrich(e) im PDF-Text")
+    if werk and "provinzen" in werk:  # 3.5: jedes Rasterbild muss im PDF stecken
+        soll = {b["daten"] for _, b, _, _ in abbildungen(werk) if b["variante"] == "bild" and b.get("daten")}
+        liste = subprocess.run(["pdfimages", "-list", str(pdf_pfad)], capture_output=True, text=True).stdout.splitlines()[2:]
+        ist = sum(1 for z in liste if len(z.split()) > 2 and z.split()[2] == "image")
+        if ist < len(soll):
+            bericht["fehler"].append(f"{len(soll)} Rasterbilder im Werk, aber nur {ist} im PDF")
     fonts = subprocess.run(["pdffonts", str(pdf_pfad)], capture_output=True, text=True).stdout.splitlines()[2:]
     nicht = [f.split()[0] for f in fonts if len(f.split()) >= 6 and f.split()[-5] != "yes"]
     if nicht:
@@ -1136,7 +1405,8 @@ def pruefe_pdf(pdf_pfad, bericht, werk=None):
     return n
 
 
-def kontaktabzug(pdf_pfad, ziel):
+def kontaktabzug(pdf_pfad, ziel, markiert=()):
+    """Alle Seiten verkleinert auf einem Blatt; Seiten mit Abbildungen tragen eine ockerfarbene Marke „Abb“ (Sichtprüfung)."""
     from PIL import Image, ImageDraw
     tmp = ziel.with_suffix("")
     subprocess.run(["pdftoppm", "-r", "28", "-png", str(pdf_pfad), str(tmp)], check=True)
@@ -1152,6 +1422,9 @@ def kontaktabzug(pdf_pfad, ziel):
         x, y = 14 + (k % sp) * zellw, 14 + (k // sp) * zellh
         blatt.paste(im, (x, y + (zellh - 24 - im.height) // 2))
         d.text((x, y + zellh - 20), f"S. {k+1}", fill=(255, 255, 255))
+        if k + 1 in markiert:
+            d.rectangle([x + 34, y + zellh - 21, x + 58, y + zellh - 9], fill=(168, 116, 42))
+            d.text((x + 37, y + zellh - 20), "Abb", fill=(255, 255, 255))
     blatt.save(ziel)
     for b in bilder:
         b.unlink()
@@ -1170,7 +1443,8 @@ def main():
     a = ap.parse_args()
     t0 = time.time()
     werk = json.loads(Path(a.werk).read_text(encoding="utf-8"))
-    v = validiere(werk)
+    ordner = Path(a.werk).resolve().parent
+    v = validiere(werk, ordner)
     print(f"Validierung: {len(v.fehler)} Fehler, {len(v.warnungen)} Warnungen")
     if v.fehler and not a.trotzdem:
         print("\n".join(v.fehler))
@@ -1180,12 +1454,13 @@ def main():
     name = dateiname(werk)
     html_pfad, pdf_pfad = aus / f"{name}.html", aus / f"{name}.pdf"
     farben_zuweisen(werk)
+    vorbereiten(werk, ordner)
     kx = katex_alle(werk)
     html_pfad.write_text(dokument(werk, baue_einheiten(werk, kx)), encoding="utf-8")
     bericht = montiere(html_pfad, pdf_pfad, werk)
     metadaten(pdf_pfad, werk, bericht.get("anker"), bericht)
     n = pruefe_pdf(pdf_pfad, bericht, werk)
-    kontaktabzug(pdf_pfad, aus / f"{name}_kontakt.png")
+    kontaktabzug(pdf_pfad, aus / f"{name}_kontakt.png", set(bericht.get("abbildungsseiten", [])))
     bericht["dauer_s"] = round(time.time() - t0, 1)
     bericht["validierung"] = {"fehler": v.fehler, "warnungen": v.warnungen, "hinweise": v.hinweise}
     (aus / f"{name}_bericht.json").write_text(json.dumps(bericht, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -1198,6 +1473,13 @@ def main():
         print(f'Tabellenteilung {t["kachel"]}: {t["zeilen"]} Zeilen auf {t["teile"]} Teile, Seiten {t["seiten"]}')
     for s in bericht["skalierungen"]:
         print(f'Skalierung {s["kachel"]}: {round(s["skala"]*100)} % auf Seite {s["seite"]}')
+    abb = abbildungen(werk)
+    if abb:
+        print(f"Abbildungen: {len(abb)}, auf Seite(n) {sorted(set(bericht.get('abbildungsseiten', [])))}"
+              + ("; Abbildungsverzeichnis" if len(abb) >= ABB_MIN_VERZEICHNIS else ""))
+    proben = [k["code"] for p in werk["provinzen"] for k in p["kacheln"] for b in k["bausteine"] if probe_bestanden(b)]
+    if proben:
+        print(f"Rechenprobe bestanden: {', '.join(proben)}")
     for z in bericht["fehler"]:
         print("FEHLER  ", z)
     for z in bericht["warnungen"]:

@@ -2,12 +2,12 @@
    Grundsatz: Seitenmontage statt Fließumbruch. Jede .page ist ein fester Container;
    die Montage (montage.js) verteilt atomare Einheiten und prüft jeden Überlauf. */
 
-/* Symbolschrift: nur für Pfeile, geometrische Formen und Zeichen (▸ ◆ ★ ○ ⚠ →),
+/* Symbolschrift: nur für Pfeile, geometrische Formen und Zeichen (▸ ◆ ★ ○ ⚠ → ✓, ab 3.5 auch ∞ ≈ ≠ ≤ ≥),
    die in den Hausschriften fehlen. Ein Font statt zufälliger Ersatzschriften. */
 @font-face { font-family: "Terra Symbole"; font-weight: 400; src: url("file:///usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
-  unicode-range: U+2190-21FF, U+25A0-25FF, U+2600-26FF, U+2700-27BF; }
+  unicode-range: U+2190-21FF, U+221E, U+2248, U+2260, U+2264-2265, U+25A0-25FF, U+2600-26FF, U+2700-27BF; }
 @font-face { font-family: "Terra Symbole"; font-weight: 700; src: url("file:///usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf");
-  unicode-range: U+2190-21FF, U+25A0-25FF, U+2600-26FF, U+2700-27BF; }
+  unicode-range: U+2190-21FF, U+221E, U+2248, U+2260, U+2264-2265, U+25A0-25FF, U+2600-26FF, U+2700-27BF; }
 
 :root {
   --papier: #FCFAF5; --pergament: #F1E9DA; --kachel: #FFFDF8; --flaeche: #F4EEE2;
@@ -172,6 +172,35 @@ table.zeit td { border-bottom: 0; padding-top: 0.8mm; padding-bottom: 0.8mm; }
 .n-sperre rect   { fill: var(--falle-bg); stroke: var(--falle-bar); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
 .kante { fill: none; stroke: var(--tinte-2); stroke-width: 1.1; }
 .pfeil { fill: var(--tinte-2); }
+
+/* 3.5: Wasserzeichen in Grafiken, Markierungen der Kurve, Organigramm, Rasterbild, Abbildungsnummer */
+.t-wz { fill: var(--tinte-3); font: 400 7.5px var(--f-ui); letter-spacing: .03em; opacity: .7; }
+.t-mark { fill: none; stroke: var(--p); stroke-width: 0.9; stroke-dasharray: 3 3; }
+.t-markpunkt { fill: var(--kachel); stroke: var(--p); stroke-width: 2; }
+.t-marktext { fill: var(--p); font: 700 10px var(--f-ui); paint-order: stroke; stroke: var(--kachel); stroke-width: 3px; stroke-linejoin: round; }
+.b-kante { fill: none; stroke: var(--tinte-2); stroke-width: 1.1; }
+.b-normal rect { fill: var(--kachel); stroke: var(--tinte-2); stroke-width: 1; }
+.b-betont rect { fill: var(--p-hell); stroke: var(--p); stroke-width: 1.6; }
+.b-betont .t-text { font-weight: 700; }
+.b-neben rect  { fill: var(--flaeche); stroke: var(--tinte-3); stroke-width: 1; stroke-dasharray: 4 2.5; }
+.b-neben .t-text { fill: var(--tinte-2); font-style: italic; }
+.b-label { paint-order: stroke; stroke: var(--kachel); stroke-width: 3px; stroke-linejoin: round; }
+.fig.bild img { display: block; margin: 0 auto; height: auto; max-width: 100%; border-radius: 1.5pt; }
+.bildnachweis { margin-top: 0.9mm; text-align: center; font: 400 7pt/1.3 var(--f-ui); color: var(--tinte-2); }
+.schema-titel .abb { font: 700 7pt var(--f-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--p); margin-right: 2mm; vertical-align: 0.12em; }
+.probe { margin-left: 2.4mm; font: 600 7.2pt var(--f-ui); letter-spacing: .04em; color: var(--akt-bar); white-space: nowrap; }
+table.av { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 2mm; }
+table.av th { font: 700 6.4pt var(--f-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--tinte-2); text-align: left; padding: 1mm 0 .8mm; border-bottom: 0.6pt solid var(--tinte); }
+table.av td { padding: 1.6mm 0; border-bottom: 0.3pt solid #E3DACA; vertical-align: top; font-size: 8.8pt; }
+table.av th:nth-child(1), table.av td.nr { width: 15mm; }
+table.av td.nr a { font: 700 7.6pt var(--f-ui); color: var(--tinte); text-decoration: none; white-space: nowrap; }
+table.av td.t { padding-right: 3mm; font-family: var(--f-text); }
+table.av td.t .art { display: block; font: 400 7pt var(--f-ui); color: var(--tinte-2); letter-spacing: .04em; }
+table.av th:nth-child(3), table.av td.nw { width: 62mm; }
+table.av td.nw { font: 400 7.6pt/1.35 var(--f-ui); color: var(--tinte-2); padding-right: 2mm; }
+table.av th:nth-child(4), table.av td.wo { width: 14mm; }
+table.av th:nth-child(5), table.av td.n { width: 11mm; text-align: right; }
+table.av td.n a { color: var(--tinte); text-decoration: none; font: 600 8.6pt var(--f-ui); }
 
 /* Repetitorium: generierte Abschnitte */
 .selbsttest ol { margin: 0; padding-left: 5.5mm; }
@@ -382,3 +411,4 @@ sup.hz { font-size: .66em; line-height: 0; vertical-align: .55em; font-variant-n
 .register td { font: 400 8.6pt/1.3 var(--f-text); padding: 0.35mm 0; vertical-align: top; }
 .register td.rz { text-align: right; font: 400 8pt/1.3 var(--f-ui); color: var(--tinte-2); padding-left: 2mm; white-space: normal; width: 34%; }
 .register td.rz a { color: inherit; text-decoration: none; font-variant-numeric: tabular-nums; }
+.ex-grafik { margin-top: 2.4mm; }

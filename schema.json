@@ -885,6 +885,9 @@
         },
         "ergebnis": {
           "$ref": "#/$defs/text"
+        },
+        "probe": {
+          "$ref": "#/$defs/probe"
         }
       }
     },
@@ -1005,7 +1008,9 @@
             "tkonto",
             "zeitleiste",
             "fluss",
-            "svg"
+            "svg",
+            "baum",
+            "bild"
           ]
         }
       },
@@ -1092,6 +1097,30 @@
           },
           "then": {
             "$ref": "#/$defs/s_svg"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "variante": {
+                "const": "baum"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/s_baum"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "variante": {
+                "const": "bild"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/s_bild"
           }
         }
       ]
@@ -1220,6 +1249,31 @@
                     "type": "number"
                   }
                 }
+              }
+            }
+          }
+        },
+        "markierungen": {
+          "type": "array",
+          "maxItems": 4,
+          "description": "Hervorgehobene Punkte (etwa Gleichgewicht, Rechenbeispiel) mit gestrichelten Hilfslinien zu beiden Achsen.",
+          "items": {
+            "type": "object",
+            "required": [
+              "x",
+              "y",
+              "text"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              },
+              "text": {
+                "$ref": "#/$defs/text"
               }
             }
           }
@@ -1440,6 +1494,208 @@
         },
         "betrag": {
           "type": "number"
+        }
+      }
+    },
+    "s_baum": {
+      "description": "Organigramm oder Hierarchie (Instanzenzug, Zuständigkeiten, Gliederung eines Begriffs). Das Kit berechnet das Layout; Kanten führen stets vom Elternknoten zum Kind.",
+      "required": [
+        "knoten"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "typ": true,
+        "variante": true,
+        "titel": {
+          "$ref": "#/$defs/text"
+        },
+        "richtung": {
+          "enum": [
+            "unten",
+            "rechts"
+          ],
+          "description": "unten: Wurzel oben (Standard bis sechs Blätter); rechts: Wurzel links (Standard ab sieben Blättern)"
+        },
+        "knoten": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 24,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "text"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9]*$"
+              },
+              "text": {
+                "$ref": "#/$defs/text"
+              },
+              "eltern": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9]*$",
+                "description": "id des übergeordneten Knotens; fehlt nur bei der Wurzel"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Beschriftung der Kante vom Elternknoten, etwa „Berufung“"
+              },
+              "art": {
+                "enum": [
+                  "normal",
+                  "betont",
+                  "neben"
+                ],
+                "description": "betont: Provinzfarbe; neben: gestrichelt (etwa außerhalb der Hierarchie)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "s_bild": {
+      "description": "Rasterbild (PNG, JPEG, WebP) mit Pflichtangaben zu Quelle und Lizenz. datei: Pfad relativ zur werk.json; daten: eingebettet als data-URI (python3 bild.py werk.json --einbetten).",
+      "required": [
+        "beschreibung",
+        "quelle",
+        "lizenz"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "datei"
+          ]
+        },
+        {
+          "required": [
+            "daten"
+          ]
+        }
+      ],
+      "properties": {
+        "typ": true,
+        "variante": true,
+        "titel": {
+          "$ref": "#/$defs/text"
+        },
+        "datei": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*\\.\\.)[^\\\\]+\\.(png|jpe?g|webp|PNG|JPE?G|WEBP)$"
+        },
+        "daten": {
+          "type": "string",
+          "pattern": "^data:image/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$"
+        },
+        "beschreibung": {
+          "$ref": "#/$defs/text",
+          "description": "Alternativtext; Pflicht"
+        },
+        "quelle": {
+          "$ref": "#/$defs/text",
+          "description": "Herkunft, etwa Kurzzitat und Seite oder „Eigene Aufnahme“"
+        },
+        "lizenz": {
+          "$ref": "#/$defs/text",
+          "description": "etwa „eigenes Werk“, „CC BY 4.0“, „gemeinfrei“, „Zitat (§ 42f UrhG)“, „freies Werk (§ 7 UrhG)“"
+        },
+        "urheber": {
+          "type": "string",
+          "minLength": 1,
+          "description": "bei fremden Werken: Urheberin oder Urheber für die Namensnennung"
+        },
+        "breite": {
+          "type": "integer",
+          "minimum": 30,
+          "maximum": 100,
+          "description": "Breite in Prozent des Satzspiegels, Standard 100"
+        }
+      }
+    },
+    "probe": {
+      "type": "object",
+      "required": [
+        "rechnung"
+      ],
+      "additionalProperties": false,
+      "description": "Rechenprobe (3.5): das Kit rechnet jede Zeile dezimal exakt nach; Abweichung ist ein Fehler. Steht neben dem Rechenweg, ändert seine Darstellung nicht.",
+      "properties": {
+        "werte": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "description": "Ausgangsgrößen; Dezimalpunkt, etwa {\"i\": \"0.05\"}"
+        },
+        "rechnung": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "ausdruck",
+              "ergebnis"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+                "description": "Zwischenergebnis steht folgenden Zeilen unter diesem Namen zur Verfügung (ungerundet)"
+              },
+              "ausdruck": {
+                "$ref": "#/$defs/text"
+              },
+              "ergebnis": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "stellen": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10
+              }
+            }
+          }
+        },
+        "stellen": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Nachkommastellen für den Vergleich, Standard 2"
+        },
+        "quelle": {
+          "type": "object",
+          "required": [
+            "kurz",
+            "wert"
+          ],
+          "additionalProperties": false,
+          "description": "Endergebnis laut Quelle; weicht es ab, erzeugt das Kit einen Eintrag der Quellenkritik",
+          "properties": {
+            "kurz": {
+              "$ref": "#/$defs/text"
+            },
+            "wert": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
         }
       }
     }

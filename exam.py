@@ -26,6 +26,14 @@ esc = S.esc
 TYP = {"einfach": "Einfachauswahl", "mehrfach": "Mehrfachauswahl"}
 
 
+def sachverhalt_html(f):
+    """Sachverhalt mit Grafik (3.5); None ohne Sachverhalt."""
+    if not f.get("sachverhalt"):
+        return None
+    g = f'<div class="ex-grafik">{S.schema_html(f["grafik"])}</div>' if f.get("grafik") else ""
+    return S.md(f["sachverhalt"]) + g
+
+
 def daten(exam, werk):
     m = exam["meta"]
     prov = {p["code"]: {"nr": p["nr"], "name": esc(p["name_lat"]), "farbe": p["farbe"]} for p in werk["provinzen"]}
@@ -33,7 +41,7 @@ def daten(exam, werk):
     fragen = []
     for f in exam["fragen"]:
         fragen.append({"id": f["id"], "typ": f["typ"], "provinz": f["provinz"], "kacheln": f["kacheln"],
-                       "sv": S.md(f["sachverhalt"]) if f.get("sachverhalt") else None, "frage": S.md(f["frage"]),
+                       "sv": sachverhalt_html(f), "frage": S.md(f["frage"]),
                        "optionen": [{"id": o["id"], "text": S.md(o["text"]), "richtig": o["richtig"], "beg": S.md(o["begruendung"]),
                                      "norm": S.typo(esc(o.get("norm", "")))} for o in f["optionen"]],
                        "merke": ({"text": S.md(f["merke"]["text"]), "lat": esc(f["merke"].get("lat", "")), "de": S.md(f["merke"].get("de", ""))}
@@ -154,7 +162,7 @@ def einheiten_pdf(exam, werk):
         rund = f["typ"] == "einfach"
         opts = "".join(f'<div class="ef-opt"><span class="kast{" rund" if rund else ""}"></span><span class="bu">{o["id"]}</span>{S.md(o["text"])}</div>'
                        for o in f["optionen"])
-        sv = f'<div class="fallbeispiel"><div class="fb-kopf">Sachverhalt</div><div class="fb-teil">{S.md(f["sachverhalt"])}</div></div>' if f.get("sachverhalt") else ""
+        sv = f'<div class="fallbeispiel"><div class="fb-kopf">Sachverhalt</div><div class="fb-teil">{sachverhalt_html(f)}</div></div>' if f.get("sachverhalt") else ""
         inhalt = (f'<div class="ef farbe-{p["farbe"]}"><div class="ef-kopf"><span class="ef-nr">Frage {i}</span><span class="ef-typ">{TYP[f["typ"]]}</span>'
                   f'<span class="ef-prov">Provinz {p["nr"]} ({p["code"]})</span></div>{sv}<p class="ef-frage">{S.md(f["frage"])}</p>{opts}</div>')
         out.append(S.einheit(inhalt, name=f'Frage {i}', **({"neue_seite": "1"} if i == 1 else {})))
@@ -209,10 +217,12 @@ def main():
     a = ap.parse_args()
     exam = json.loads(Path(a.exam).read_text(encoding="utf-8"))
     werk = json.loads(Path(a.werk).read_text(encoding="utf-8"))
-    v = validiere_exam(exam, werk)
+    ordner = Path(a.exam).resolve().parent
+    v = validiere_exam(exam, werk, ordner)
     print(f"Validierung: {len(v.fehler)} Fehler, {len(v.warnungen)} Warnungen")
     if v.fehler:
         print("\n".join(v.fehler)); sys.exit("Abbruch: exam.json fehlerhaft")
+    S.bilder_laden(exam, ordner)  # 3.5: verknüpfte Bilder einer Grafik einbetten (Prüfung bleibt eine Datei)
     aus = Path(a.aus).resolve(); aus.mkdir(parents=True, exist_ok=True)
     name = "Examen_" + "_".join(exam["meta"]["titel"].split()[1:]) + f'_v{exam["meta"]["version"]}_{exam["meta"]["stand"]}'
     datei = aus / (name + ("_lokal.html" if a.lokal else ".html"))

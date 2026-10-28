@@ -4,12 +4,13 @@
 Prüft eine werk.json in vier Stufen:
   1. Struktur gegen schema.json
   2. Typografie und Zitierweise
-  3. Codes, Verweise, Bausteinlogik, Rechnungen, Diagramme
+  3. Codes, Verweise, Bausteinlogik, Rechnungen (Rechenprobe), Diagramme, Bilder
   4. Formelsyntax (KaTeX über Node, falls verfügbar)
 
 Aufruf:   python3 validate.py werk.json [--streng]
           --streng: Warnungen zählen als Fehler
-Import:   from validate import validiere; bericht = validiere(werk)
+Import:   from validate import validiere; bericht = validiere(werk, ordner)
+          ordner: Verzeichnis der werk.json (für verknüpfte Bilddateien)
 Exitcode: 0 = keine Fehler, 1 = Fehler.
 """
 import json
@@ -31,12 +32,13 @@ REIHENFOLGE = ["definition", "kern", "formel", "rechenweg", "schema", "beispiel"
                "merke", "feinheit", "klausurfalle", "austriacum", "aktualisierung",
                "latinum", "luecke"]
 GERAHMT = {"merke", "feinheit", "klausurfalle", "austriacum", "aktualisierung", "latinum", "luecke"}
-VARIANTEN = ["tabelle", "abgrenzung", "kurve", "tkonto", "zeitleiste", "fluss", "svg"]
+VARIANTEN = ["tabelle", "abgrenzung", "kurve", "tkonto", "zeitleiste", "fluss", "svg", "baum", "bild"]
+ABBILDUNG = {"kurve", "fluss", "svg", "baum", "bild"}  # zählen im Abbildungsverzeichnis
 MAX_GERAHMT, MAX_MARKER, MAX_TITEL = 4, 5, 60
 UEBERHOEHE_ZEILEN = 30
 
 STRICHE = {"\u2012": "Figure Dash", "\u2013": "Halbgeviertstrich", "\u2014": "Geviertstrich", "\u2015": "Horizontal Bar"}
-ROH = (".tex", ".svg")  # Felder ohne Typografie- und Markup-Prüfung
+ROH = (".tex", ".svg", ".ausdruck", ".daten")  # Felder ohne Typografie- und Markup-Prüfung
 
 RE_VERWEIS_ROH = re.compile(r"\[\[([^\]]*)\]\]")
 RE_VERWEIS = re.compile(r"^(?:([A-Z]{2,5}):)?([A-GL][1-9][0-9]?)$")
@@ -97,6 +99,9 @@ def pruefe_struktur(werk, b):
         if err.validator in ("allOf", "if"):  # Folgefehler der Typweiche, Detail kommt separat
             continue
         ort = "$" + "".join(f"[{p}]" if isinstance(p, int) else f".{p}" for p in err.absolute_path)
+        if err.validator == "oneOf" and isinstance(err.instance, dict) and err.instance.get("variante") == "bild":
+            b.f(ort, "Bild: genau eines der Felder „datei“ (verknüpft) oder „daten“ (eingebettet) angeben")
+            continue
         b.f(ort, err.message[:240])
 
 
@@ -188,7 +193,7 @@ def pruefe_codes_und_verweise(werk, b):
 
 
 # 3 · Kacheln und Bausteine ─────────────────────────────────────────────────
-def pruefe_kacheln(werk, codes, b):
+def pruefe_kacheln(werk, codes, b, ordner=None):
     domaene = werk.get("modul", {}).get("domaene")
     typ = werk.get("meta", {}).get("typ")
     for c, k in codes.items():
@@ -218,7 +223,12 @@ def pruefe_kacheln(werk, codes, b):
             b.w(c, f"{marker} Textmarker ==…== ohne Wirkung (Textmarker seit Oktober 2026 entfernt); Syntax streichen")
         for x in bausteine:
             if x.get("typ") == "schema":
-                pruefe_schema(c, x, b)
+                pruefe_schema(c, x, b, ordner)
+            if x.get("typ") == "rechenweg":
+                pruefe_rechenweg(c, x, b, typ)
+        abb = [x for x in bausteine if x.get("typ") == "schema" and x.get("variante") in ABBILDUNG]
+        if len(abb) > 1:
+            b.w(c, f"{len(abb)} Abbildungen in einer Kachel (Grafikdichte); Kachel teilen oder eine Abbildung streichen")
 
     relevanzen = [k.get("relevanz") for k in codes.values()]
     if typ == "werk" and relevanzen and relevanzen.count("kern") / len(relevanzen) > 0.75:
@@ -234,7 +244,7 @@ def pruefe_kacheln(werk, codes, b):
                 lat[key] = c
 
 
-def pruefe_schema(c, x, b):
+def pruefe_schema(c, x, b, ordner=None):
     v = x.get("variante")
     ort = f"{c} Schema „{x.get('titel')}“"
     if v == "tabelle":
@@ -253,6 +263,10 @@ def pruefe_schema(c, x, b):
             xs = [p[0] for p in r.get("punkte", [])]
             if xs != sorted(xs) or len(xs) != len(set(xs)):
                 b.f(ort, f"Reihe „{r.get('name')}“: x-Werte nicht streng aufsteigend")
+        alle_x = [p[0] for r in x.get("reihen", []) for p in r.get("punkte", [])]
+        for mk in x.get("markierungen", []):
+            if alle_x and not min(alle_x) <= mk["x"] <= max(alle_x):
+                b.f(ort, f"Markierung „{mk['text']}“ liegt mit x = {mk['x']} außerhalb der x-Achse ({min(alle_x)} bis {max(alle_x)})")
     elif v == "tkonto":
         soll = sum(e["betrag"] for k in x.get("konten", []) for e in k.get("soll", []))
         haben = sum(e["betrag"] for k in x.get("konten", []) for e in k.get("haben", []))
@@ -260,6 +274,10 @@ def pruefe_schema(c, x, b):
             b.f(ort, f"Soll {soll:,.2f} ≠ Haben {haben:,.2f}")
     elif v == "fluss":
         pruefe_fluss(ort, x, b)
+    elif v == "baum":
+        pruefe_baum(ort, x, b)
+    elif v == "bild":
+        pruefe_bild(ort, x, b, ordner)
     elif v == "svg":
         svg = x.get("svg", "")
         if "viewBox" not in svg:
@@ -308,6 +326,166 @@ def pruefe_fluss(ort, x, b):
         tot = set(knoten) - gesehen
         if tot:
             b.f(ort, f"vom Start nicht erreichbar: {sorted(tot)}")
+
+
+# 3 · Bäume (3.5) ───────────────────────────────────────────────────────────
+BAUM_UNTEN_BLAETTER, BAUM_UNTEN_EBENEN = 6, 5
+BAUM_RECHTS_BLAETTER, BAUM_RECHTS_EBENEN = 14, 4
+
+
+def baum_struktur(x):
+    """→ (Kinder je Knoten, Wurzeln, Ebene je Knoten, Blätter, Richtung) · Ebene None bei Zyklus."""
+    knoten = {k["id"]: k for k in x.get("knoten", [])}
+    kinder = {i: [] for i in knoten}
+    for k in x.get("knoten", []):
+        if k.get("eltern") in kinder:
+            kinder[k["eltern"]].append(k["id"])
+    wurzeln = [k["id"] for k in x.get("knoten", []) if not k.get("eltern")]
+    ebene = {}
+    for i in knoten:
+        n, j, weg = 1, i, set()
+        while knoten[j].get("eltern") in knoten and j not in weg:
+            weg.add(j)
+            j = knoten[j]["eltern"]
+            n += 1
+        ebene[i] = None if j in weg else n
+    blaetter = [i for i in knoten if not kinder[i]]
+    richtung = x.get("richtung") or ("unten" if len(blaetter) <= BAUM_UNTEN_BLAETTER else "rechts")
+    return kinder, wurzeln, ebene, blaetter, richtung
+
+
+def pruefe_baum(ort, x, b):
+    ids = [k["id"] for k in x.get("knoten", [])]
+    if len(ids) != len(set(ids)):
+        b.f(ort, "doppelte Knoten-ID")
+        return
+    for k in x.get("knoten", []):
+        if k.get("eltern") and k["eltern"] not in ids:
+            b.f(ort, f"Knoten „{k['id']}“: Elternknoten „{k['eltern']}“ fehlt")
+            return
+        if k.get("eltern") == k["id"]:
+            b.f(ort, f"Knoten „{k['id']}“ ist sein eigener Elternknoten")
+            return
+        if len(k.get("text", "")) > 70:
+            b.w(ort, f"Knoten „{k['id']}“: Text über 70 Zeichen; im Kasten kaum lesbar")
+    kinder, wurzeln, ebene, blaetter, richtung = baum_struktur(x)
+    if len(wurzeln) != 1:
+        b.f(ort, f"{len(wurzeln)} Wurzeln (Knoten ohne eltern); genau eine verlangt")
+    if any(e is None for e in ebene.values()):
+        b.f(ort, "Kreis in der Hierarchie (Knoten ist sein eigener Vorfahr)")
+        return
+    for k in x.get("knoten", []):
+        if not k.get("eltern") and k.get("label"):
+            b.w(ort, f"Wurzel „{k['id']}“ trägt ein Kantenlabel, hat aber keine eingehende Kante")
+    tiefe = max(ebene.values())
+    if richtung == "unten":
+        if len(blaetter) > BAUM_UNTEN_BLAETTER:
+            b.f(ort, f"{len(blaetter)} Blätter; Richtung „unten“ trägt höchstens {BAUM_UNTEN_BLAETTER} (richtung „rechts“ setzen)")
+        if tiefe > BAUM_UNTEN_EBENEN:
+            b.f(ort, f"{tiefe} Ebenen; Richtung „unten“ trägt höchstens {BAUM_UNTEN_EBENEN}")
+    else:
+        if len(blaetter) > BAUM_RECHTS_BLAETTER:
+            b.f(ort, f"{len(blaetter)} Blätter; höchstens {BAUM_RECHTS_BLAETTER}, Baum teilen")
+        if tiefe > BAUM_RECHTS_EBENEN:
+            b.f(ort, f"{tiefe} Ebenen; Richtung „rechts“ trägt höchstens {BAUM_RECHTS_EBENEN} (richtung „unten“ setzen oder teilen)")
+
+
+# 3 · Bilder (3.5) ─────────────────────────────────────────────────────────
+SATZSPIEGEL_MM = 165          # nutzbare Breite einer Kachel im Lernskript
+DPI_MIN, DPI_GUT = 96, 150    # darunter Fehler bzw. Warnung (Bildschirmnutzung mit Zoom)
+BILD_MAX, BILD_GROSS = 4_000_000, 1_500_000
+RE_LIZENZ = re.compile(r"^(eigenes werk|gemeinfrei|cc0 1\.0|cc by(-nc)?(-sa|-nd)? [234]\.0( [a-z]{2})?"
+                       r"|zitat \(§ 42f urhg\)|freies werk \(§ 7 urhg\))$")
+
+
+def bild_bytes(x, ordner=None):
+    """→ (Bytes, MIME, Herkunft) eines Bildbausteins; Bytes None, wenn nicht auffindbar."""
+    import base64
+    if x.get("daten"):
+        kopf, b64 = x["daten"].split(",", 1)
+        return base64.b64decode(b64), kopf[5:].split(";")[0], "eingebettet"
+    if ordner is None:
+        return None, None, x.get("datei")
+    pfad = Path(ordner) / x["datei"]
+    if not pfad.is_file():
+        return None, None, x["datei"]
+    endung = pfad.suffix.lower().lstrip(".")
+    return pfad.read_bytes(), "image/" + ("jpeg" if endung in ("jpg", "jpeg") else endung), x["datei"]
+
+
+def lizenz_norm(l):
+    return re.sub(r"\s+", " ", l.replace("\u00a0", " ")).strip().lower()
+
+
+def pruefe_bild(ort, x, b, ordner=None):
+    import io
+    try:
+        roh, mime, herkunft = bild_bytes(x, ordner)
+    except Exception:
+        b.f(ort, "Bilddaten (base64) nicht lesbar")
+        return
+    if roh is None:
+        if ordner is None:
+            b.h(ort, f"Bilddatei „{herkunft}“ nicht geprüft (Ordner der werk.json unbekannt)")
+        else:
+            b.f(ort, f"Bilddatei „{herkunft}“ nicht gefunden (Pfad relativ zur werk.json)")
+        return
+    if x.get("datei"):
+        b.w(ort, f"Bild als Datei verknüpft ({herkunft}); werk.json ist nicht selbsttragend: python3 bild.py werk.json --einbetten")
+    try:
+        from PIL import Image
+        im = Image.open(io.BytesIO(roh))
+        im.load()
+    except Exception:
+        b.f(ort, "Bild nicht lesbar (beschädigt oder kein Rasterbild)")
+        return
+    if im.format not in ("PNG", "JPEG", "WEBP"):
+        b.f(ort, f"Bildformat {im.format}; erlaubt sind PNG, JPEG und WebP")
+    elif mime != "image/" + im.format.lower():
+        b.f(ort, f"Bild ist {im.format}, angegeben als {mime}")
+    if len(roh) > BILD_MAX:
+        b.f(ort, f"Bild {len(roh) / 1e6:.1f} MB; höchstens {BILD_MAX / 1e6:.0f} MB (verkleinern: python3 bild.py werk.json --einbetten)")
+    elif len(roh) > BILD_GROSS:
+        b.w(ort, f"Bild {len(roh) / 1e6:.1f} MB; Karte und Deck werden schwer (python3 bild.py werk.json --einbetten verkleinert)")
+    dpi = im.width / (x.get("breite", 100) / 100 * SATZSPIEGEL_MM / 25.4)
+    if dpi < DPI_MIN:
+        b.f(ort, f"Auflösung {dpi:.0f} dpi bei {x.get('breite', 100)} % Breite ({im.width} px); mindestens {DPI_MIN} dpi")
+    elif dpi < DPI_GUT:
+        b.w(ort, f"Auflösung {dpi:.0f} dpi ({im.width} px); unscharf beim Zoomen, empfohlen ab {DPI_GUT} dpi oder geringere Breite")
+    lz = lizenz_norm(x.get("lizenz", ""))
+    if not RE_LIZENZ.match(lz):
+        b.w(ort, f"Lizenz „{x.get('lizenz')}“ nicht erkannt; Nachnutzung prüfen (eigenes Werk, gemeinfrei, CC, Zitat § 42f UrhG, freies Werk § 7 UrhG)")
+    if lz.startswith("cc by") and not x.get("urheber"):
+        b.f(ort, "CC-BY-Lizenz verlangt Namensnennung: Feld „urheber“ fehlt")
+
+
+# 3 · Rechenprobe (3.5) ────────────────────────────────────────────────────
+def pruefe_rechenweg(c, x, b, typ=None):
+    import rechenprobe as R
+    pr = x.get("probe")
+    if not pr:
+        if typ == "werk":
+            b.w(c, "Rechenweg ohne Rechenprobe (probe); Ergebnis vom Kit ungeprüft")
+        return
+    try:
+        zeilen, (ist, st) = R.pruefe(pr)
+    except R.ProbeFehler as e:
+        b.f(c, f"Rechenprobe nicht berechenbar: {e}")
+        return
+    for nr, ausdruck, wert, soll, ok, stl in zeilen:
+        if not ok:
+            b.f(c, f"Rechenprobe Zeile {nr}: „{ausdruck}“ ergibt {R.at(wert, stl)}, angegeben {R.at(soll, stl)}")
+    text = x.get("ergebnis", "").replace("\u00a0", " ").replace("\u202f", " ")
+    if not any(v in text for v in R.at_varianten(ist, st)):
+        b.w(c, f"Ergebnistext „{x.get('ergebnis')}“ nennt den nachgerechneten Wert {R.at(ist, st)} nicht")
+    if pr.get("quelle"):
+        try:
+            q = R.runde(R.dez(pr["quelle"]["wert"]), st)
+        except R.ProbeFehler as e:
+            b.f(c, f"Rechenprobe, Wert der Quelle: {e}")
+            return
+        if q != ist:
+            b.h(c, f"Quelle „{pr['quelle']['kurz']}“ nennt {R.at(q, st)}, richtig {R.at(ist, st)}: Eintrag der Quellenkritik wird automatisch erzeugt")
 
 
 def pruefe_provinzen(werk, b):
@@ -396,6 +574,23 @@ def pruefe_abdeckung(werk, codes, b):
         b.f("Abdeckung", "kein terraübergreifender Verweis")
     if not any(k.get("bausteine", [{}])[0].get("zitat") for k in codes.values()):
         b.f("Abdeckung", "kein Normwortlaut (zitat)")
+    # 3.5: Grafik und Rechenprobe
+    baeume = [x for x in alle if x.get("variante") == "baum"]
+    richtungen = {baum_struktur(x)[4] for x in baeume}
+    for r in ("unten", "rechts"):
+        if r not in richtungen:
+            b.f("Abdeckung", f"kein Baum in Richtung „{r}“")
+    if not any(k.get("art") == "neben" for x in baeume for k in x.get("knoten", [])):
+        b.f("Abdeckung", "kein Baumknoten der Art „neben“")
+    if not any(k.get("label") for x in baeume for k in x.get("knoten", [])):
+        b.f("Abdeckung", "kein Baum mit Kantenlabel")
+    if not any(x.get("markierungen") for x in alle if x.get("variante") == "kurve"):
+        b.f("Abdeckung", "keine Kurve mit Markierung")
+    proben = [x["probe"] for x in alle if x.get("typ") == "rechenweg" and x.get("probe")]
+    if not proben:
+        b.f("Abdeckung", "kein Rechenweg mit Rechenprobe")
+    if not any(p.get("quelle") for p in proben):
+        b.f("Abdeckung", "keine Rechenprobe mit abweichender Quelle (automatische Quellenkritik)")
 
 
 # 3a · Quellen ──────────────────────────────────────────────────────────────
@@ -440,12 +635,12 @@ def pruefe_quellen(werk, codes, b):
                 b.w("quellen", f"„{q['kurz']}“ wird von keiner Kachel zitiert")
 
 
-def validiere(werk):
+def validiere(werk, ordner=None):
     b = Bericht()
     pruefe_struktur(werk, b)
     pruefe_typografie(werk, b)
     codes = pruefe_codes_und_verweise(werk, b)
-    pruefe_kacheln(werk, codes, b)
+    pruefe_kacheln(werk, codes, b, ordner)
     pruefe_quellen(werk, codes, b)
     pruefe_provinzen(werk, b)
     pruefe_formeln(werk, b)
@@ -455,8 +650,9 @@ def validiere(werk):
 
 
 # ── Exam ──────────────────────────────────────────────────────────────────
-def validiere_exam(exam, werk):
-    """Prüft ein Exam gegen schema_exam.json, die Regeln des Exam-Standards und das zugehörige Werk."""
+def validiere_exam(exam, werk, ordner=None):
+    """Prüft ein Exam gegen schema_exam.json, die Regeln des Exam-Standards und das zugehörige Werk.
+    ordner: Verzeichnis der exam.json (verknüpfte Bilddateien einer Grafik)."""
     b = Bericht()
     schema = json.loads((HIER / "schema_exam.json").read_text(encoding="utf-8"))
     for err in sorted(jsonschema.Draft202012Validator(schema).iter_errors(exam), key=lambda e: list(e.absolute_path)):
@@ -502,6 +698,17 @@ def validiere_exam(exam, werk):
             for o in f["optionen"]:
                 if not o.get("norm"):
                     b.h(ort + o["id"], "Begründung ohne Normzitat")
+        if f.get("grafik"):  # 3.5: Grafik zum Sachverhalt, gleiche Regeln wie im Werk
+            g = f["grafik"]
+            if not f.get("sachverhalt"):
+                b.f(ort, "Grafik ohne Sachverhalt; die Grafik veranschaulicht stets einen Sachverhalt")
+            ws = json.loads((HIER / "schema.json").read_text(encoding="utf-8"))
+            gv = jsonschema.Draft202012Validator({"$ref": "#/$defs/b_schema", "$defs": ws["$defs"]})
+            fehler = [e for e in gv.iter_errors(g) if e.validator not in ("allOf", "if")]
+            for e in fehler:
+                b.f(ort + " Grafik", e.message[:200])
+            if not fehler:
+                pruefe_schema(ort, g, b, ordner)
     fall = sum(1 for f in fragen if f.get("sachverhalt"))
     if fall * 3 < n * 2:
         b.f("Fallquote", f"{fall} von {n} Fragen mit Sachverhalt; verlangt sind mindestens zwei Drittel")
@@ -541,7 +748,7 @@ def main():
     if len(args) == 2:  # Exam: validate.py exam.json werk.json
         exam = json.loads(Path(args[0]).read_text(encoding="utf-8"))
         werk = json.loads(Path(args[1]).read_text(encoding="utf-8"))
-        b = validiere_exam(exam, werk)
+        b = validiere_exam(exam, werk, Path(args[0]).resolve().parent)
         print(f"Terra-Validator {VERSION} · {exam.get('meta', {}).get('titel')} zu {werk['meta']['titel']}")
         if hasattr(b, "kennzahlen"):
             k = b.kennzahlen
@@ -558,7 +765,7 @@ def main():
     if len(args) != 1:
         sys.exit("Aufruf: python3 validate.py werk.json [--streng]  oder  validate.py exam.json werk.json")
     werk = json.loads(Path(args[0]).read_text(encoding="utf-8"))
-    b = validiere(werk)
+    b = validiere(werk, Path(args[0]).resolve().parent)
     typen = sorted({x.get("typ") for k in b.codes.values() for x in k.get("bausteine", [])})
     print(f"Terra-Validator {VERSION} · {werk.get('meta', {}).get('titel')} · "
           f"{len(werk.get('provinzen', []))} Provinzen, {len(b.codes)} Kacheln")

@@ -5,7 +5,13 @@ Erzeugt aus einer werk.json ein importierbares Anki-Deck (.apkg, auch für AnkiD
 
 Kartenlogik: je Baustein eine oder mehrere Karten (siehe README). Fallbeispiele nur zur
 Veranschaulichung auf der Rückseite der Definitionskarte. Abbildungen (Kurve, Fluss, SVG,
-T-Konto) als Bilder. Unterdecks je Provinz, Schlagwörter je Kachel und Relevanz.
+T-Konto, Organigramm) als Bilder, Rasterbilder in Originalqualität mit Bildnachweis.
+Unterdecks je Provinz, Schlagwörter je Kachel und Relevanz.
+
+Wasserzeichen (3.5): Vom Kit gesetzte Grafiken tragen es im Bild; eigene Rasterbilder
+(Lizenz „eigenes Werk“) erhalten es eingebrannt. Fremde Bilder bleiben unverändert: Ein
+Vermerk „(c) Oliver Bedernik“ auf fremdem Werk wiese die Urheberschaft falsch zu; der
+Kartenfuß trägt das Wasserzeichen ohnehin.
 Feste Kennungen: Ein erneuter Import aktualisiert Karten, statt sie zu verdoppeln.
 
 Aufruf:  python3 anki.py werk.json [--aus ORDNER]
@@ -80,6 +86,9 @@ hr#answer { border: 0; border-top: 1px dashed var(--linie); margin: 16px 0; }
 .bsp summary { cursor: pointer; padding: 6px 10px; font: 700 13px "Terra UI", sans-serif; background: var(--tinte); color: var(--papier); }
 .bsp div { padding: 8px 12px; } .bsp .sv { font-style: italic; }
 .bild img { max-width: 100%; height: auto; margin-top: 8px; border-radius: 4px; background: #FFFDF8; }
+.nachweis { display: block; margin-top: 4px; font: 400 12px "Terra UI", sans-serif; color: var(--tinte2); }
+.probe { margin-left: 8px; font: 700 12px "Terra UI", sans-serif; color: #2F7A7A; white-space: nowrap; }
+.antwort ul ul { margin: 2px 0; }
 .vw { color: var(--p); font: 600 15px "Terra UI", sans-serif; white-space: nowrap; }
 mark { background: none; color: inherit; }
 .fuss { margin-top: 18px; padding-top: 6px; border-top: 1px solid var(--linie); font: 400 11.5px "Terra UI", sans-serif; color: var(--tinte2); opacity: .8; }
@@ -126,19 +135,22 @@ def tex(t, block=True):
 
 # ── Abbildungen ──────────────────────────────────────────────────────────
 def render_bilder(auftraege, ordner):
-    """auftraege: [(dateiname, schema_html, farbe)] → PNG-Dateien in ordner."""
+    """auftraege: [(dateiname, schema_html, farbe, wasserzeichen)] → PNG-Dateien in ordner.
+    wasserzeichen: Zeile „(c) Oliver Bedernik“ unter dem Bild (für Grafiken ohne eigenes, etwa T-Konto, freies SVG)."""
     if not auftraege:
         return []
     from playwright.sync_api import sync_playwright
     kopf = (S.schrift_links() + f'<link rel="stylesheet" href="{(KIT / "vorlage" / "skript.css").as_uri()}"><style>{S.palette_css()}'
-            "body{background:#FFFDF8;margin:0} .bildrahmen{width:640px;padding:14px 16px;background:#FFFDF8}</style>")
+            "body{background:#FFFDF8;margin:0} .bildrahmen{width:640px;padding:14px 16px;background:#FFFDF8}"
+            ".bild-wz{margin-top:6px;text-align:right;font:400 10px 'Alegreya Sans',sans-serif;color:#7A8292}</style>")
     pfade = []
     with sync_playwright() as pw:
         br = pw.chromium.launch(args=["--allow-file-access-from-files"])
         pg = br.new_page(device_scale_factor=2)
         seite = ordner / "_bild_vorlage.html"
-        for name, inhalt, farbe in auftraege:
-            seite.write_text(f'<html lang="de-AT"><head><meta charset="utf-8">{kopf}</head><body><div class="bildrahmen farbe-{farbe}">{inhalt}</div></body></html>',
+        for name, inhalt, farbe, wz in auftraege:
+            wz_html = '<div class="bild-wz">(c) Oliver Bedernik</div>' if wz else ""
+            seite.write_text(f'<html lang="de-AT"><head><meta charset="utf-8">{kopf}</head><body><div class="bildrahmen farbe-{farbe}">{inhalt}{wz_html}</div></body></html>',
                              encoding="utf-8")
             pg.goto(seite.as_uri()); pg.wait_for_function("document.fonts.ready.then(() => true)"); pg.wait_for_timeout(120)
             ziel = ordner / name
@@ -149,10 +161,43 @@ def render_bilder(auftraege, ordner):
     return pfade
 
 
+def rasterbild(b, ziel):
+    """Rasterbild als Mediendatei; eigene Werke erhalten das Wasserzeichen eingebrannt, fremde bleiben unverändert."""
+    import io
+    from PIL import Image, ImageDraw, ImageFont
+    from validate import bild_bytes, lizenz_norm
+    roh, mime, _ = bild_bytes(b)
+    if lizenz_norm(b["lizenz"]) != "eigenes werk":
+        ziel.write_bytes(roh)
+        return ziel
+    im = Image.open(io.BytesIO(roh))
+    fmt = im.format
+    im = im.convert("RGBA")
+    lage = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(lage)
+    groesse = max(12, im.width // 70)
+    try:
+        schrift = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", groesse)
+    except OSError:
+        schrift = ImageFont.load_default()
+    text = "(c) Oliver Bedernik"
+    x0, y0, x1, y1 = d.textbbox((0, 0), text, font=schrift)
+    pos = (im.width - (x1 - x0) - groesse, im.height - (y1 - y0) - groesse)
+    d.text(pos, text, font=schrift, fill=(31, 42, 68, 120), stroke_width=max(1, groesse // 8), stroke_fill=(255, 253, 248, 120))
+    im = Image.alpha_composite(im, lage)
+    if fmt == "JPEG":
+        im.convert("RGB").save(ziel, "JPEG", quality=90)
+    else:
+        im.save(ziel, fmt or "PNG")
+    return ziel
+
+
 # ── Karten ───────────────────────────────────────────────────────────────
-def karten(werk, ordner):
+def karten(werk, ordner, quelle=None):
+    """ordner: Ablage der Mediendateien; quelle: Ordner der werk.json (verknüpfte Bilder)."""
     S._HYPH = None
     S.farben_zuweisen(werk)
+    S.vorbereiten(werk, quelle)
     import karte as KA  # Dunkelvarianten der Provinzfarben
     kx = S.katex_alle(werk, output="mathml")  # nur zur Kontrolle; Anki setzt Formeln mit MathJax
     dunkel = {}
@@ -161,7 +206,7 @@ def karten(werk, ordner):
         dunkel[n] = KA.oklch_hex(0.76, C * (1.0 if C < 0.04 else 1.1), h)
     w = werk["meta"]
     kurz = w.get("kurz") or w["titel"].split()[-1][:3].upper()
-    notizen, bilder = [], []
+    notizen, bilder, raster = [], [], []
     zaehler = Counter()
 
     def neu(p, k, art, vorne, hinten, schluessel, klasse="", bild="", beispiel="", fundstelle=None, code=None, titel=None, rel=None):
@@ -210,7 +255,8 @@ def karten(werk, ordner):
                     neu(p, k, "Formel", f'Wie lautet die Formel {esc(b.get("nummer", ""))}?'.replace(" ?", "?"), tex(b["tex"]) + (f"<ul>{var}</ul>" if var else ""), sk)
                 elif t == "rechenweg":
                     schritte = "".join(f"<li>{m(s['text'])}" + (f"<br>{tex(s['tex'], False)}" if s.get("tex") else "") + "</li>" for s in b["schritte"])
-                    neu(p, k, "Rechenweg", m(b.get("aufgabe") or k["titel"]), f"<ol>{schritte}</ol><b>Ergebnis:</b> {m(b['ergebnis'])}", sk)
+                    probe = '<span class="probe">✓ nachgerechnet</span>' if S.probe_bestanden(b) else ""
+                    neu(p, k, "Rechenweg", m(b.get("aufgabe") or k["titel"]), f"<ol>{schritte}</ol><b>Ergebnis:</b> {m(b['ergebnis'])}{probe}", sk)
                 elif t == "schema":
                     v, titel = b["variante"], b["titel"]
                     if v == "zeitleiste":
@@ -224,10 +270,17 @@ def karten(werk, ordner):
                         for j, z in enumerate(b["zeilen"]):
                             rest = "".join(f'<li><b>{esc(h)}:</b> {m(c)}</li>' for h, c in zip(b["kopf"][1:], z[1:]))
                             neu(p, k, "Tabelle", f'{m(z[0], latein=True)}<br><small>{esc(titel)}: {esc(", ".join(b["kopf"][1:]))}?</small>', f"<ul>{rest}</ul>", f"{sk}:{j}")
-                    else:  # kurve, fluss, svg, tkonto als Bild
+                    elif v == "bild":  # 3.5: Rasterbild in Originalqualität, Bildnachweis auf der Rückseite
+                        endung = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}[b["daten"][5:].split(";")[0]]
+                        name = f"terra_{kurz}_{k['code']}_{i}.{endung}"
+                        raster.append(rasterbild(b, ordner / name))
+                        neu(p, k, "Abbildung", f'{esc(titel)}', m(b["beschreibung"]) + f'<span class="nachweis">{S.bildnachweis(b)}</span>', sk,
+                            bild=f'<img src="{name}">')
+                    else:  # kurve, fluss, svg, tkonto, baum als Bild
                         name = f"terra_{kurz}_{k['code']}_{i}.png"
-                        bilder.append((name, S.schema_html(b), p["farbe"]))
-                        hinten = f'<b>Buchungssatz:</b> {m(b["buchungssatz"])}' if v == "tkonto" and b.get("buchungssatz") else (m(b["beschreibung"]) if v == "svg" else "")
+                        bilder.append((name, S.schema_html(b), p["farbe"], v in ("svg", "tkonto")))
+                        hinten = (f'<b>Buchungssatz:</b> {m(b["buchungssatz"])}' if v == "tkonto" and b.get("buchungssatz")
+                                  else m(b["beschreibung"]) if v == "svg" else S.baum_klartext(b) if v == "baum" else "")
                         neu(p, k, "Abbildung", f'{esc(titel)}', hinten, sk, bild=f'<img src="{name}">')
         # Lexicon-Einträge der Provinz L und Werk-Lexikon
     lp = next((p for p in werk["provinzen"] if p["code"] == "L"), werk["provinzen"][-1])
@@ -241,15 +294,15 @@ def karten(werk, ordner):
     for j, q in enumerate(werk.get("quellenkritik", [])):
         p, k = kmap.get(q["kachel"], (lp, None))
         neu(p, k, "Quellenkritik", f'Was ist falsch an: {m(q["befund"])}', m(q["richtig"]) + f'<span class="quelle">{m(q["quelle"])}</span>', f"kritik:{j}")
-    return notizen, render_bilder(bilder, ordner), zaehler
+    return notizen, render_bilder(bilder, ordner) + raster, zaehler
 
 
-def baue(werk, aus):
+def baue(werk, aus, quelle=None):
     w = werk["meta"]
     aus.mkdir(parents=True, exist_ok=True)
     medien = aus / "medien"
     medien.mkdir(exist_ok=True)
-    notizen, bildpfade, zaehler = karten(werk, medien)
+    notizen, bildpfade, zaehler = karten(werk, medien, quelle)
     mod = modell()
     decks = {}
     stamm = f'Terra::{w["titel"]}'
@@ -305,11 +358,12 @@ def main():
     ap.add_argument("--aus", default=".")
     a = ap.parse_args()
     werk = json.loads(Path(a.werk).read_text(encoding="utf-8"))
-    v = validiere(werk)
+    ordner = Path(a.werk).resolve().parent
+    v = validiere(werk, ordner)
     if v.fehler:
         print("\n".join(v.fehler))
         sys.exit("Abbruch: werk.json fehlerhaft")
-    datei, notizen, zaehler, bilder = baue(werk, Path(a.aus).resolve())
+    datei, notizen, zaehler, bilder = baue(werk, Path(a.aus).resolve(), ordner)
     b = pruefe(datei, notizen)
     print(f"Deck: {datei.name} · {datei.stat().st_size // 1024} KB · {b['notizen']} Notizen, {b['karten']} Karten, {len(bilder)} Abbildungen, {b['medien']} Mediendateien")
     print("Karten je Art: " + ", ".join(f"{k} {n}" for k, n in zaehler.most_common()))

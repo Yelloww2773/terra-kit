@@ -74,7 +74,8 @@ def palette_dunkel_css():
 
 # ── Bausteine ────────────────────────────────────────────────────────────
 def kachel_html(k, farbe, kx):
-    breit = any(b.get("typ") == "schema" and b.get("variante") == "tabelle" and b.get("breit") for b in k["bausteine"])
+    breit = any(b.get("typ") == "schema" and ((b.get("variante") == "tabelle" and b.get("breit")) or b.get("variante") == "baum")
+                for b in k["bausteine"])  # 3.5: Organigramme sind breit, sonst wird die Schrift im Kasten zu klein
     inhalt = S.kachelkopf(k) + "".join(
         f'<div class="unit"><div class="bs bs-{b["typ"]}">{S.baustein_html(b, kx)}</div></div>' for b in k["bausteine"])
     return (f'<article class="kachel karte-kachel farbe-{farbe}{" breit" if breit else ""}" data-code="{k["code"]}" '
@@ -191,9 +192,10 @@ def schriften(lokal):
     return S.schrift_links().split('\n<link rel="stylesheet" href="file:///' + str(S.NM / "katex").lstrip("/"))[0]
 
 
-def baue(werk, lokal=False):
+def baue(werk, lokal=False, ordner=None):
     S._HYPH = None  # Browser trennt selbst (hyphens: auto, lang de-AT)
     S.farben_zuweisen(werk)
+    S.vorbereiten(werk, ordner)  # 3.5: Bilder einbetten (Karte bleibt eine Datei), Quellenkritik, Abbildungsnummern
     kx = S.katex_alle(werk, output="mathml")
     m = werk["meta"]
     gen = S.l_generiert(werk)
@@ -283,14 +285,15 @@ def main():
     ap.add_argument("--lokal", action="store_true", help="Schriften aus node_modules (Tests ohne Netz)")
     a = ap.parse_args()
     werk = json.loads(Path(a.werk).read_text(encoding="utf-8"))
-    v = validiere(werk)
+    ordner = Path(a.werk).resolve().parent
+    v = validiere(werk, ordner)
     if v.fehler:
         print("\n".join(v.fehler))
         sys.exit("Abbruch: werk.json fehlerhaft")
     aus = Path(a.aus).resolve()
     aus.mkdir(parents=True, exist_ok=True)
     datei = aus / (S.dateiname(werk) + ("_karte_lokal.html" if a.lokal else "_karte.html"))
-    inhalt = baue(werk, a.lokal)
+    inhalt = baue(werk, a.lokal, ordner)
     datei.write_text(inhalt, encoding="utf-8")
     striche = len(re.findall("[\u2012\u2013\u2014\u2015]", klartext(inhalt)))
     print(f"Karte: {datei.name} · {len(inhalt) // 1024} KB · Gedankenstriche im Text: {striche}")

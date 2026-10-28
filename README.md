@@ -13,10 +13,12 @@ Daten statt Nachbau: Gestaltung, Seitenmontage und Prüfungen liegen im Code, ni
 | Datei | Zweck | Status |
 |---|---|---|
 | `schema.json` | Datenmodell eines Terra-Werks | fertig |
-| `validate.py` | Prüfung in vier Stufen (Struktur, Typografie, Logik, Formeln) | fertig, 3.1.1 |
-| `referenzwerk.json` | „Terra Exemplaris“: enthält jeden Baustein, jede Schemavariante, jeden Sonderfall | fertig, 0.2 |
+| `validate.py` | Prüfung in vier Stufen (Struktur, Typografie, Logik samt Rechenprobe und Bildprüfung, Formeln) | fertig, 3.5.0 |
+| `rechenprobe.py` | rechnet Rechenwege dezimal exakt nach (ohne `eval`), erzeugt Quellenkritik bei abweichender Quelle | neu, 3.5.0 |
+| `bild.py` | bettet verknüpfte Rasterbilder in werk.json oder exam.json ein, verkleinert, entfernt EXIF | neu, 3.5.0 |
+| `referenzwerk.json` | „Terra Exemplaris“: enthält jeden Baustein, jede Schemavariante, jeden Sonderfall | fertig, 0.3 |
 | `referenz_historica.json` | „Terra Historica Constitutionalis“: zweites Prüfwerk mit acht Provinzen (Höchstzahl), 39 Kacheln, zweiseitigem Verzeichnis, Strukturdiagramm; zugleich erste Überführung einer Bestandskarte mit Quellenkritik | fertig, 1.0 |
-| `tests/run_tests.py` | 54 Tests: Prüfwerke, Referenzexam, beide Decks, Quellen und Zitierformen; jeder eingeschleuste Fehler erkannt | fertig |
+| `tests/run_tests.py` | 96 Tests: Prüfwerke, Referenzexam, beide Decks, Quellen und Zitierformen, Grafik, Rechenprobe, Bildrechte; jeder eingeschleuste Fehler erkannt | fertig |
 | `skript.py` | Lernskript A4 mit Seitenmontage, Umbruch- und PDF-Prüfung | fertig, 3.1.0 |
 | `vorlage/skript.css` | Satzspiegel, Bausteinoptik, Druckregeln | fertig |
 | `vorlage/montage.js` | Seitenmontage, Tabellenteilung, Silbentrennung, Prüfung im Browser | fertig |
@@ -25,7 +27,7 @@ Daten statt Nachbau: Gestaltung, Seitenmontage und Prüfungen liegen im Code, ni
 | `tests/karte_test.py` | Browsertest der Karte (Funktion, Überlappung, Mobil, Dunkelmodus) | fertig |
 | `exam.py` | Prüfung: interaktiv (HTML) und mit `--pdf` als A4-Prüfungsbogen mit Lösungsteil | fertig, 3.1.0 |
 | `schema_exam.json` | Datenmodell eines Exams (verweist auf die Kacheln genau eines Werks) | fertig |
-| `exam_historica.json` | Referenzexam „Examen Historicum Constitutionale“: 28 Fragen, 20 Fallbeispiele, 16 Mehrfachauswahl | fertig, 1.0 |
+| `exam_historica.json` | Referenzexam „Examen Historicum Constitutionale“: 28 Fragen, 20 Fallbeispiele, 16 Mehrfachauswahl, ein Organigramm zum Sachverhalt (q11) | fertig, 1.1 |
 | `vorlage/exam.css`, `vorlage/exam.js`, `vorlage/exam_druck.css` | Oberfläche, Ablauf und Druckbild der Prüfung | fertig |
 | `vorlage/farben.css` | gemeinsame Farb- und Dunkelmodusregeln für Karte und Exam | fertig |
 | `tests/exam_test.py` | Browsertest des gesamten Prüfungsablaufs | fertig |
@@ -47,6 +49,7 @@ python3 karte.py werk.json --aus ausgabe/    # Wissenslandkarte (Format A), zur 
 python3 validate.py exam.json werk.json      # Exam prüfen, mit Prüfungsmatrix
 python3 exam.py exam.json werk.json --aus ausgabe/ --pdf   # Prüfung interaktiv und als A4-Bogen
 python3 anki.py werk.json --aus ausgabe/     # Anki-Deck (.apkg)
+python3 bild.py werk.json --einbetten        # verknüpfte Bilder einbetten (werk.json bleibt selbsttragend)
 python3 karte.py werk.json --aus /tmp/k --lokal && python3 tests/karte_test.py /tmp/k/<datei>_karte_lokal.html
 ```
 
@@ -74,7 +77,7 @@ Jede Inhaltsseite trägt einen lebenden Kolumnentitel (aktuelle Provinz) und ein
 6. Silbentrennung: Trennstellen nach österreichischem Wörterbuch (pyphen, de_AT) werden als Möglichkeit gesetzt. Nach der Montage werden zuerst die Tabellenspalten eingefroren, dann alle Trennstellen auf dem endgültigen Satz gemessen (Kriterium: Zeichen davor und danach auf verschiedenen Zeilen; die Glyphenbreite täuscht bei Ligaturen wie ft, ff, fl), dann alle ungenutzten auf einmal entfernt. An echten Umbrüchen bleibt das weiche Trennzeichen stehen, wie es ISO 32000 vorsieht; PDF-Leser fügen das Wort bei Suche und Kopieren zusammen. Höhen aller Einheiten werden vorher und nachher verglichen; jede Verschiebung ist ein Fehler.
 7. Danach geprüft: Überlauf je Seite, Einheiten über Seitengrenzen, Seitenzahl und Ausrichtung im PDF, Wasserzeichen auf jeder Seite, Gedankenstriche, weiche Trennzeichen im Textlayer, Schrifteinbettung, Ersatzschriften. Ergebnis in `_bericht.json`, Kontaktabzug aller Seiten in `_kontakt.png`.
 
-Symbolschrift: Zeichen, die in den Hausschriften fehlen (▸ ◆ ★ ○ ⚠ →), kommen bewusst aus genau einer Schrift (DejaVu Sans, `/usr/share/fonts/truetype/dejavu`), nicht aus zufälligen Ersatzschriften.
+Symbolschrift: Zeichen, die in den Hausschriften fehlen (▸ ◆ ★ ○ ⚠ → ✓, seit 3.5 auch ∞ ≈ ≠ ≤ ≥), kommen bewusst aus genau einer Schrift (DejaVu Sans, `/usr/share/fonts/truetype/dejavu`), nicht aus zufälligen Ersatzschriften.
 
 ## Inline-Auszeichnung in Texten
 
@@ -100,11 +103,41 @@ Keine festen Farben. Nur diese Klassen verwenden; der Renderer färbt sie für H
 
 Pflicht: `viewBox` und `beschreibung` (Alternativtext). Skripte und Event-Handler sind verboten.
 
+## Grafik (3.5): Organigramm, Rasterbild, Markierungen
+
+**Organigramm** (`variante: "baum"`): Knoten mit `id`, `text` und `eltern` (fehlt nur bei der Wurzel); optional `label` (Beschriftung der Kante vom Elternknoten) und `art` (`normal`, `betont` in Provinzfarbe, `neben` gestrichelt). Das Layout berechnet das Kit: Blätter in Lesereihenfolge, Eltern mittig, rechtwinklige Verbinder. Richtung `unten` (Wurzel oben, bis sechs Blätter, bis fünf Ebenen) oder `rechts` (Wurzel links, bis 14 Blätter, bis vier Ebenen); ohne Angabe wählt das Kit nach der Zahl der Blätter. Lange Wörter werden am Bindestrich, sonst nach Silben getrennt, kein Wort ragt aus dem Kasten. In der Karte erhalten Kacheln mit Organigramm doppelte Breite. Für Instanzenzüge, Zuständigkeiten, Gliederungen eines Begriffs; Entscheidungswege bleiben beim Flussdiagramm.
+
+**Rasterbild** (`variante: "bild"`): PNG, JPEG oder WebP, entweder verknüpft (`datei`, relativ zur werk.json) oder eingebettet (`daten`, data-URI). Pflicht: `beschreibung` (Alternativtext), `quelle`, `lizenz`; bei CC-BY-Lizenzen zusätzlich `urheber`. Optional `breite` in Prozent (30 bis 100). Geprüft werden Format, MIME-Typ, Größe (Warnung ab 1,5 MB, Fehler ab 4 MB), Auflösung auf der gesetzten Breite (Warnung unter 150 dpi, Fehler unter 96 dpi) und die Lizenz (eigenes Werk, gemeinfrei, CC, Zitat nach § 42f UrhG, freies Werk nach § 7 UrhG). Verknüpfte Bilder erzeugen eine Warnung: `python3 bild.py werk.json --einbetten` bettet sie ein, verkleinert auf höchstens 2.400 px und entfernt Metadaten (auch GPS-Ortsangaben). Unter jedem Bild steht der Bildnachweis.
+
+**Kurvenmarkierung** (`markierungen` der Kurve, bis vier): Punkt mit gestrichelten Hilfslinien zu beiden Achsen und Beschriftung, etwa Gleichgewicht oder Rechenbeispiel.
+
+**Abbildungen** (Kurve, Flussdiagramm, freies SVG, Organigramm, Bild) sind in Skript und Karte fortlaufend nummeriert („Abb 3“). Ab drei Abbildungen erhält das Lernskript im Anhang ein **Abbildungsverzeichnis** mit Nachweis, Kachel und Seite; die Lesezeichenleiste führt jede Abbildung einzeln. Im Kontaktabzug tragen Seiten mit Abbildungen die Marke „Abb“. Mehr als eine Abbildung je Kachel löst eine Warnung aus (Grafikdichte).
+
+**Wasserzeichen:** Jede vom Kit gesetzte Grafik trägt „(c) Oliver Bedernik“ im Bild, unten rechts. Eigene Rasterbilder (Lizenz „eigenes Werk“) erhalten es im Anki-Deck eingebrannt. **Fremde Bilder bleiben unverändert:** Ein Urhebervermerk auf fremdem Werk wiese die Urheberschaft falsch zu und kann Lizenzbedingungen verletzen; Seite, Karte und Kartenfuß tragen das Wasserzeichen ohnehin.
+
+**Exam:** Eine Frage mit Sachverhalt kann eine `grafik` tragen (jede Schemavariante); sie erscheint im Sachverhalt, interaktiv und im Prüfungsbogen, ohne Abbildungsnummer.
+
+## Rechenprobe (3.5)
+
+Ein Rechenweg kann eine `probe` tragen; das Kit rechnet jede Zeile dezimal exakt nach (34 Stellen, kaufmännische Rundung) und meldet jede Abweichung als Fehler.
+
+```json
+"probe": {
+  "werte":    {"C": 10000, "i": "0.05", "n": 3},
+  "rechnung": [{"name": "q",  "ausdruck": "1 + i",      "ergebnis": "1.05"},
+               {"name": "PV", "ausdruck": "C / q ** n", "ergebnis": "8638.38"}],
+  "stellen": 2,
+  "quelle":   {"kurz": "Online-Zinsrechner (Stand 2026)", "wert": "8638.37"}
+}
+```
+
+Zahlen mit Dezimalpunkt; erlaubt sind `+ − · / ** ^`, Klammern und `wurzel`, `ln`, `exp`, `log10`, `abs`, `min`, `max`, `runden(x, n)`. Benannte Zeilen stehen den folgenden ungerundet zur Verfügung. Der Ergebnistext muss den nachgerechneten Wert nennen (Warnung). Nennt die `quelle` ein anderes Endergebnis, ergänzt das Kit die Quellenkritik automatisch. Bestandene Proben tragen im Skript, in der Karte und im Deck den Vermerk „✓ nachgerechnet“. In Werken ohne Probe warnt der Validator; `pruefliste.py` führt jeden Rechenweg samt Ausgangswerten. **Grenze:** Die Probe prüft die Rechnung, nicht ob die Ausgangswerte zur Aufgabe passen; das bleibt Aufgabe des Advocatus diaboli.
+
 ## Was der Validator durchsetzt
 
-**Fehler:** Gedankenstriche · unpaarige Auszeichnung · fehlerhafte oder tote Verweise · Provinzcodes nicht lückenlos ab A oder L nicht zuletzt · Kachelcodes falsch, doppelt oder ungeordnet · Bausteinreihenfolge · mehr als vier gerahmte Bausteine oder fünf Textmarker je Kachel · Austriacum in der Rechtsdomäne · „auslassbar“ ohne Beleg · unvollständige Tabellenzeilen, mehr als neun Spalten · T-Konto unausgeglichen · Kurve unsortiert · Flussdiagramm mit Aufwärtskanten, unerreichbaren Knoten, unbeschrifteten Antworten · SVG mit festen Farben oder Skript · nicht setzbare Formeln · im Referenzwerk jede fehlende Abdeckung.
+**Fehler:** Gedankenstriche · unpaarige Auszeichnung · fehlerhafte oder tote Verweise · Rechenprobe falsch oder nicht berechenbar · Organigramm ohne genau eine Wurzel, mit Kreis, fehlendem Elternknoten oder zu breit bzw. zu tief · Bild unlesbar, im falschen Format, zu groß oder zu gering aufgelöst, CC BY ohne Urheber · Kurvenmarkierung außerhalb der Achse · Provinzcodes nicht lückenlos ab A oder L nicht zuletzt · Kachelcodes falsch, doppelt oder ungeordnet · Bausteinreihenfolge · mehr als vier gerahmte Bausteine oder fünf Textmarker je Kachel · Austriacum in der Rechtsdomäne · „auslassbar“ ohne Beleg · unvollständige Tabellenzeilen, mehr als neun Spalten · T-Konto unausgeglichen · Kurve unsortiert · Flussdiagramm mit Aufwärtskanten, unerreichbaren Knoten, unbeschrifteten Antworten · SVG mit festen Farben oder Skript · nicht setzbare Formeln · im Referenzwerk jede fehlende Abdeckung.
 
-**Warnungen:** Bindestrich als Gedankenstrich · gerade Anführungszeichen · „§7“ ohne Abstand · „Art.“ und „Abs.“ mit Punkt · Rechtsprechung ohne Geschäftszahl · fehlende Seitenangabe · überlange Titel · mehr als drei Viertel Kernstoff · doppelte Latinismen · zu wenige Selbsttestfragen.
+**Warnungen:** Rechenweg ohne Probe · Ergebnistext ohne nachgerechneten Wert · Bild verknüpft statt eingebettet, groß, unscharf oder mit unbekannter Lizenz · mehr als eine Abbildung je Kachel · Bindestrich als Gedankenstrich · gerade Anführungszeichen · „§7“ ohne Abstand · „Art.“ und „Abs.“ mit Punkt · Rechtsprechung ohne Geschäftszahl · fehlende Seitenangabe · überlange Titel · mehr als drei Viertel Kernstoff · doppelte Latinismen · zu wenige Selbsttestfragen.
 
 ## Versionierung
 
@@ -154,6 +187,19 @@ Namen als „Nachname, Vorname“; Körperschaften ohne Komma. Für AZR mit Init
 Der Validator prüft: Kurzzitate eindeutig, Pflichtangaben je Gattung, jede zitierte Quelle verzeichnet, jede strukturierte Quelle von mindestens einer Kachel zitiert.
 
 ## Änderungen
+
+**3.5.0** (Oktober 2026)
+- Organigramm (`baum`): Layout vom Kit, Richtung unten oder rechts, Kantenlabel, Knoten betont oder neben; Silbentrennung im Kasten.
+- Rasterbild (`bild`): verknüpft oder eingebettet, Pflicht zu Quelle, Lizenz und Alternativtext; Prüfung von Format, Größe, Auflösung und Lizenz; Bildnachweis unter dem Bild. Neues Werkzeug `bild.py --einbetten`.
+- Kurvenmarkierungen mit Hilfslinien.
+- Rechenprobe (`rechenprobe.py`): dezimal exakt, ohne `eval`; Abweichung ist ein Fehler; abweichende Quelle ergänzt die Quellenkritik automatisch; Vermerk „✓ nachgerechnet“.
+- Abbildungen nummeriert; Abbildungsverzeichnis ab drei Abbildungen, mit Lesezeichen je Abbildung; Marke „Abb“ im Kontaktabzug; PDF-Prüfung, ob jedes Rasterbild im PDF steckt.
+- Wasserzeichen in jeder vom Kit gesetzten Grafik; in Anki in eigenen Rasterbildern eingebrannt, fremde Bilder unverändert.
+- Exam: Grafik zum Sachverhalt; Referenzexam q11 mit Organigramm.
+- Prüfliste: Rechnungen mit Stand der Probe und Ausgangswerten, Bildrechte.
+- Symbolschrift deckt ∞ ≈ ≠ ≤ ≥ ab (zuvor Ersatzschrift).
+- Workflow auf Node 24 (`checkout@v6`, `setup-python@v6`, `setup-node@v6`); Referenzexam wird mitgesetzt. `einrichten.sh` prüft vorab poppler-utils und DejaVu Sans und installiert sie bei Bedarf (`apt-get update` inbegriffen).
+- Referenzwerk 0.3: A6 und B4 (Organigramme), L4 (Prüfbild), Rechenprobe in B1 und B4, Markierung in B1. Testreihe 96 Tests.
 
 **3.4.0** (Oktober 2026)
 - Querverweise im Lernskript tragen die Seitenzahl („D3, S 17“), beide Teile anklickbar; Karte, Exam und Anki bleiben ohne Seitenzahl.

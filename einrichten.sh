@@ -6,6 +6,20 @@ set -euo pipefail
 cd "$(dirname "$0")"
 echo "Terra-Kit v$(cat VERSION)"
 python3 versionspruefung.py || true
+echo "Terra-Kit: Systemwerkzeuge"
+# Vorabprüfung (3.5): Die PDF-Prüfungen brauchen poppler-utils, die Symbolschrift DejaVu Sans.
+fehlt=""
+for w in pdftotext pdffonts pdfimages pdftoppm; do command -v "$w" >/dev/null 2>&1 || fehlt="$fehlt $w"; done
+[ -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf ] || fehlt="$fehlt DejaVuSans"
+if [ -n "$fehlt" ]; then
+  echo "Es fehlt:$fehlt; Installation wird versucht (poppler-utils, fonts-dejavu-core)"
+  SUDO=""; if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then SUDO="sudo"; fi
+  { $SUDO apt-get update -q && $SUDO apt-get install -y -q poppler-utils fonts-dejavu-core; } >/tmp/terra-apt.log 2>&1 || true
+  for w in pdftotext pdffonts pdfimages pdftoppm; do
+    command -v "$w" >/dev/null 2>&1 || { echo "FEHLER: $w fehlt und ließ sich nicht installieren:"; tail -5 /tmp/terra-apt.log; exit 1; }
+  done
+  [ -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf ] || { echo "FEHLER: DejaVu Sans fehlt (fonts-dejavu-core)"; exit 1; }
+fi
 echo "Terra-Kit: Python-Abhängigkeiten"
 if ! pip install -q -r requirements.txt --break-system-packages 2>/tmp/terra-pip.log; then
   pip install -q -r requirements.txt 2>>/tmp/terra-pip.log || { echo "FEHLER: pip-Installation gescheitert:"; tail -5 /tmp/terra-pip.log; exit 1; }
