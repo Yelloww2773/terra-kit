@@ -76,7 +76,7 @@ def palette_dunkel_css():
 def kachel_html(k, farbe, kx):
     breit = any(b.get("typ") == "schema" and ((b.get("variante") == "tabelle" and b.get("breit")) or b.get("variante") == "baum")
                 for b in k["bausteine"])  # 3.5: Organigramme sind breit, sonst wird die Schrift im Kasten zu klein
-    inhalt = S.kachelkopf(k) + "".join(
+    inhalt = S.kachelkopf(k) + S.kernblock(k) + "".join(
         f'<div class="unit"><div class="bs bs-{b["typ"]}">{S.baustein_html(b, kx)}</div></div>' for b in k["bausteine"])
     return (f'<article class="kachel karte-kachel farbe-{farbe}{" breit" if breit else ""}" data-code="{k["code"]}" '
             f'data-rel="{k["relevanz"]}">{inhalt}</article>')

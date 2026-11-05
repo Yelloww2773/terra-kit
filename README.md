@@ -16,12 +16,15 @@ Daten statt Nachbau: Gestaltung, Seitenmontage und Prüfungen liegen im Code, ni
 | `validate.py` | Prüfung in vier Stufen (Struktur, Typografie, Logik samt Rechenprobe und Bildprüfung, Formeln) | fertig, 3.5.0 |
 | `rechenprobe.py` | rechnet Rechenwege dezimal exakt nach (ohne `eval`), erzeugt Quellenkritik bei abweichender Quelle | neu, 3.5.0 |
 | `bild.py` | bettet verknüpfte Rasterbilder in werk.json oder exam.json ein, verkleinert, entfernt EXIF | neu, 3.5.0 |
-| `referenzwerk.json` | „Terra Exemplaris“: enthält jeden Baustein, jede Schemavariante, jeden Sonderfall | fertig, 0.3 |
+| `referenzwerk.json` | „Terra Exemplaris“: enthält jeden Baustein, jede Schemavariante, jeden Sonderfall | fertig, 0.4 |
 | `referenz_historica.json` | „Terra Historica Constitutionalis“: zweites Prüfwerk mit acht Provinzen (Höchstzahl), 39 Kacheln, zweiseitigem Verzeichnis, Strukturdiagramm; zugleich erste Überführung einer Bestandskarte mit Quellenkritik | fertig, 1.0 |
-| `tests/run_tests.py` | 96 Tests: Prüfwerke, Referenzexam, beide Decks, Quellen und Zitierformen, Grafik, Rechenprobe, Bildrechte; jeder eingeschleuste Fehler erkannt | fertig |
+| `tests/run_tests.py` | 122 Tests: Prüfwerke, Referenzexam, beide Decks, Quellen und Zitierformen, Grafik, Rechenprobe, Bildrechte, Satz und Umbruch, Tabellen und Gewichtung; jeder eingeschleuste Fehler erkannt | fertig, 3.7.0 |
+| `tests/umbruch_messung.py` | misst Seiten, Fortsetzungen, Kleinreste, Anrisse, Füllstand und Grafikschrift eines gesetzten Werks, unabhängig von der Kit-Version (Vorher und Nachher gleich gemessen) | neu, 3.6.0 |
+| `tests/umbruch_kern_test.js` | Rechenkern des Umbruchs ohne Browser (Node) | neu, 3.6.0 |
 | `skript.py` | Lernskript A4 mit Seitenmontage, Umbruch- und PDF-Prüfung | fertig, 3.1.0 |
 | `vorlage/skript.css` | Satzspiegel, Bausteinoptik, Druckregeln | fertig |
-| `vorlage/montage.js` | Seitenmontage, Tabellenteilung, Silbentrennung, Prüfung im Browser | fertig |
+| `vorlage/montage.js` | Seitenmontage (Messsäule, Satz nach Plan, Korrektur, Rückfallebene), Tabellenteilung, Silbentrennung, Prüfung im Browser | fertig, 3.6.0 |
+| `vorlage/umbruch.js` | globaler Seitenumbruch: reine Rechnung, Gewichte fest im Code | neu, 3.6.0 |
 | `karte.py` | interaktive Wissenslandkarte als eine selbstständige HTML-Datei zur Veröffentlichung | fertig, 3.1.0 |
 | `vorlage/karte.css`, `vorlage/karte.js` | Arbeitsfläche, Gebiete, Kamera, Minikarte, Register, Dunkelmodus | fertig |
 | `tests/karte_test.py` | Browsertest der Karte (Funktion, Überlappung, Mobil, Dunkelmodus) | fertig |
@@ -45,6 +48,8 @@ python3 diff.py alt.json neu.json --eintragen   # Diff-Bericht, trägt ins Ände
 python3 versionspruefung.py              # neuere freigegebene Kit-Version verfügbar?
 python3 tests/run_tests.py         # vor jeder Freigabe einer Kit-Version
 python3 skript.py werk.json --aus ausgabe/   # Lernskript A4 (Format B)
+python3 skript.py werk.json --aus ausgabe/ --umbruch gierig   # Umbruch wie bis 3.5, nur zur Fehlersuche
+python3 tests/umbruch_messung.py werk.json [--kit ORDNER]     # Umbruch messen (Vorher und Nachher)
 python3 karte.py werk.json --aus ausgabe/    # Wissenslandkarte (Format A), zur Veröffentlichung
 python3 validate.py exam.json werk.json      # Exam prüfen, mit Prüfungsmatrix
 python3 exam.py exam.json werk.json --aus ausgabe/ --pdf   # Prüfung interaktiv und als A4-Bogen
@@ -70,14 +75,24 @@ Jede Inhaltsseite trägt einen lebenden Kolumnentitel (aktuelle Provinz) und ein
 ## Lernskript: wie die Seitenmontage arbeitet
 
 1. `validate.py` prüft das Werk; bei Fehlern bricht der Satz ab.
-2. Jede Kachel wird in atomare Einheiten zerlegt: Kachelkopf mit erstem Baustein, danach jeder weitere Baustein.
-3. `montage.js` setzt die Einheiten im Druckmodus von Chromium auf feste A4-Seiten und misst nach jeder Einheit, ob sie passt.
-4. Passt eine Einheit nicht: ganze Einheit auf die nächste Seite. Ist sie höher als eine Seite: Tabellen werden zwischen Zeilen geteilt (Kopf wiederholt, Vermerk „Fortsetzung“, mindestens drei Zeilen je Teil), Abbildungen bis 75 % verkleinert.
-5. Breite Tabellen (`breit: true`) erhalten eine Querformatseite.
-6. Silbentrennung: Trennstellen nach österreichischem Wörterbuch (pyphen, de_AT) werden als Möglichkeit gesetzt. Nach der Montage werden zuerst die Tabellenspalten eingefroren, dann alle Trennstellen auf dem endgültigen Satz gemessen (Kriterium: Zeichen davor und danach auf verschiedenen Zeilen; die Glyphenbreite täuscht bei Ligaturen wie ft, ff, fl), dann alle ungenutzten auf einmal entfernt. An echten Umbrüchen bleibt das weiche Trennzeichen stehen, wie es ISO 32000 vorsieht; PDF-Leser fügen das Wort bei Suche und Kopieren zusammen. Höhen aller Einheiten werden vorher und nachher verglichen; jede Verschiebung ist ein Fehler.
-7. Danach geprüft: Überlauf je Seite, Einheiten über Seitengrenzen, Seitenzahl und Ausrichtung im PDF, Wasserzeichen auf jeder Seite, Gedankenstriche, weiche Trennzeichen im Textlayer, Schrifteinbettung, Ersatzschriften. Ergebnis in `_bericht.json`, Kontaktabzug aller Seiten in `_kontakt.png`.
+2. Jede Kachel wird in atomare Einheiten zerlegt: Kachelkopf mit erstem Baustein, danach jeder weitere Baustein. Die generierten Abschnitte des Repetitoriums sind teilbare Tabellen (seit 3.6 auch Klausurfallen und Selbsttest).
+3. **Globaler Umbruch (3.6)** für Inhaltsseiten, je Strecke zwischen zwei festen Umbrüchen (Provinzanfang, Repetitorium, Seitenartwechsel): `montage.js` stellt die Strecke in einer Messsäule in Satzspiegelbreite auf und misst jede Einheit, jede Tabellenzeile, Fortsetzungskopf, Hinweiszeile und Abstände exakt; Tabellenspalten werden dabei nach dem Gesamtsatz eingefroren, damit alle Teile gleiche Spalten haben. `umbruch.js` bestimmt daraus die Umbruchfolge mit den geringsten Gesamtkosten (dynamische Programmierung, Muster Knuth-Plass). Kosten: Leerraum quadratisch, Zuschlag für Seiten unter 50 %; geteilte Kachel; Kleinrest (Fortsetzung aus einem Baustein unter 20 % der Seite) und Anriss (Kachelanfang aus einem Baustein unter 20 % am Seitenende) praktisch verboten; Provinzkopf allein praktisch verboten; Verkleinern von Abbildungen gering. Die letzte Seite vor einem festen Umbruch ist frei. Kopf ohne Inhalt am Seitenende ist schon durch den Zuschnitt der Einheiten ausgeschlossen. Seit 3.7 sind die Regeln zugunsten des Seitenbilds weicher: Seiten unter 75 % kosten einen Zuschlag, und eine Teilung kostet je nach Naht unterschiedlich (vor Kästen und Fallbeispielen die Hälfte, zwischen Definition und Kern, Formel und Rechenweg, Rechenweg und Abbildung das Doppelte). Bleibt eine Seite unter 75 %, nennt der Bericht den Verursacher („E3 fehlen 15 mm“), damit der Autor gezielt kürzen kann. Am Ende jeder Provinz setzt das Kit die Kernfakten der Provinz in den Rest der letzten Seite, wenn sie ganz passen.
+4. **Abbildungen atmen (3.6, 3.7)** zwischen 75 % und 100 %, Kurven seit 3.7 bis 115 %, wenn auf der fertigen Seite Platz bleibt: Kurven über die Plothöhe (100, 90, 80 %) bei unveränderter Schrift; alle übrigen über die Skala, höchstens so weit, dass die kleinste Grafikschrift 6,5 pt nicht unterschreitet (Wasserzeichen ausgenommen). Unter 75 % nur als Notverkleinerung einer Einheit, die sonst auf keine Seite passt, mit Warnung.
+5. **Setzen, prüfen, korrigieren:** Jede geplante Seite wird gesetzt und auf Überlauf geprüft. Weicht der Satz vom Modell ab, wird die Seite zurückgenommen, ausgeschlossen und der Rest neu geplant (Zahl der Korrekturen im Bericht). Scheitert die Planung oder überschreitet sie die Zeitgrenze, setzt das Kit gierig wie bis 3.5 und warnt. Gleiche Eingabe ergibt gleiche Seiten.
+6. Übrige Seitenarten (Titelei, Verzeichnisse, Anhang) gierig: ganze Einheit auf die nächste Seite; Tabellen zwischen Zeilen geteilt (Kopf wiederholt, Vermerk „Fortsetzung“, mindestens drei Zeilen je Teil).
+7. Breite Tabellen (`breit: true`) erhalten eine Querformatseite.
+8. Silbentrennung: Trennstellen nach österreichischem Wörterbuch (pyphen, de_AT) werden als Möglichkeit gesetzt. Nach der Montage werden zuerst die Tabellenspalten eingefroren, dann alle Trennstellen auf dem endgültigen Satz gemessen (Kriterium: Zeichen davor und danach auf verschiedenen Zeilen; die Glyphenbreite täuscht bei Ligaturen wie ft, ff, fl), dann alle ungenutzten auf einmal entfernt. An echten Umbrüchen bleibt das weiche Trennzeichen stehen, wie es ISO 32000 vorsieht; PDF-Leser fügen das Wort bei Suche und Kopieren zusammen. Höhen aller Einheiten werden vorher und nachher verglichen; jede Verschiebung ist ein Fehler.
+9. Danach geprüft: Überlauf je Seite, Einheiten über Seitengrenzen, Überstand über den rechten Seitenrand (Chromium verkleinerte sonst alle Seiten), Randspalt an der Blattkante, Kleinreste und Anrisse, Seitenzahl und Ausrichtung im PDF, Wasserzeichen auf jeder Seite, Gedankenstriche, weiche Trennzeichen im Textlayer, Schrifteinbettung, Ersatzschriften. Ergebnis in `_bericht.json`, Kontaktabzug aller Seiten in `_kontakt.png`.
 
 Symbolschrift: Zeichen, die in den Hausschriften fehlen (▸ ◆ ★ ○ ⚠ → ✓, seit 3.5 auch ∞ ≈ ≠ ≤ ≥), kommen bewusst aus genau einer Schrift (DejaVu Sans, `/usr/share/fonts/truetype/dejavu`), nicht aus zufälligen Ersatzschriften.
+
+## Gewichtung und Tabellen (3.7)
+
+**Kernfakten** (`kachel.kernfakten`, ein bis drei): atomare, prüfbare Aussagen. Sie erscheinen als Kernsatz direkt unter dem Kachelkopf, werden in Anki zu Lückenkarten (fett gesetzte Wörter sind die Lücken), stehen gesammelt im Repetitorium (L·K) und am Provinzende, wo Platz ist. Der Validator nennt Kacheln mit Kernfakten, die kein Selbsttest abfragt. **Merkhilfe** (`kachel.merkhilfe`) für Dreiheiten, Reihenfolgen und Gegensatzpaare, im Kernsatz gesetzt.
+
+**Auszeichnung:** Fett bleibt den Fachbegriffen. Ein Gerüstwort am Stichpunktanfang („**Ziel:**“, „**Einordnung:**“ und ähnliche) wird leise in Kapitälchen gesetzt. Kästen tragen ihr Gewicht nach Relevanz: Kernsatz und Klausurfalle kräftig, Merke mittel, Feinheit ohne Fläche, Latinum als einzeilige Leiste.
+
+**Tabellen:** mehr Luft, feinere Linien, leisere Kopfzeile. Spaltenrollen (`spalten`): `begriff` (halbfett, nie getrennt; ohne Angabe die erste Spalte), `text`, `stichworte` (kleiner, ohne Trennung), `zahl` (Tabellenziffern). Zweck (`art`): `uebersicht` setzt Begriff und Erklärung als Begriffsliste; `vergleich` stürzt eine Tabelle mit höchstens vier Zeilen, sodass die Begriffe nebeneinander stehen (Spaltenrollen gelten dann je Zeile). Eine `aussage` steht als Lesehilfe unter der Tabelle, bei geteilten Tabellen nur unter dem letzten Teil.
 
 ## Inline-Auszeichnung in Texten
 
@@ -137,6 +152,10 @@ Zahlen mit Dezimalpunkt; erlaubt sind `+ − · / ** ^`, Klammern und `wurzel`, 
 
 **Fehler:** Gedankenstriche · unpaarige Auszeichnung · fehlerhafte oder tote Verweise · Rechenprobe falsch oder nicht berechenbar · Organigramm ohne genau eine Wurzel, mit Kreis, fehlendem Elternknoten oder zu breit bzw. zu tief · Bild unlesbar, im falschen Format, zu groß oder zu gering aufgelöst, CC BY ohne Urheber · Kurvenmarkierung außerhalb der Achse · Provinzcodes nicht lückenlos ab A oder L nicht zuletzt · Kachelcodes falsch, doppelt oder ungeordnet · Bausteinreihenfolge · mehr als vier gerahmte Bausteine oder fünf Textmarker je Kachel · Austriacum in der Rechtsdomäne · „auslassbar“ ohne Beleg · unvollständige Tabellenzeilen, mehr als neun Spalten · T-Konto unausgeglichen · Kurve unsortiert · Flussdiagramm mit Aufwärtskanten, unerreichbaren Knoten, unbeschrifteten Antworten · SVG mit festen Farben oder Skript · nicht setzbare Formeln · im Referenzwerk jede fehlende Abdeckung.
 
+Seit 3.7 auch: Spaltenrollen passen nicht zur Spaltenzahl · mehr als drei Kernfakten · im Referenzwerk fehlende Kernfakten, Merkhilfe, Tabellenarten, Spaltenrollen oder Aussage.
+
+**Hinweise (3.7):** Tabelle ab drei Zeilen ohne Aussage · Vergleich mit mehr als vier Zeilen (wird nicht gestürzt) · Kernfakten ohne Selbsttestfrage.
+
 **Warnungen:** Rechenweg ohne Probe · Ergebnistext ohne nachgerechneten Wert · Bild verknüpft statt eingebettet, groß, unscharf oder mit unbekannter Lizenz · mehr als eine Abbildung je Kachel · Bindestrich als Gedankenstrich · gerade Anführungszeichen · „§7“ ohne Abstand · „Art.“ und „Abs.“ mit Punkt · Rechtsprechung ohne Geschäftszahl · fehlende Seitenangabe · überlange Titel · mehr als drei Viertel Kernstoff · doppelte Latinismen · zu wenige Selbsttestfragen.
 
 ## Versionierung
@@ -187,6 +206,25 @@ Namen als „Nachname, Vorname“; Körperschaften ohne Komma. Für AZR mit Init
 Der Validator prüft: Kurzzitate eindeutig, Pflichtangaben je Gattung, jede zitierte Quelle verzeichnet, jede strukturierte Quelle von mindestens einer Kachel zitiert.
 
 ## Änderungen
+
+**3.7.0** (November 2026) „Gewichtung, Tabellen, Format“
+- Kernfakten (ein bis drei je Kachel) und Merkhilfe: Kernsatz am Kachelanfang, Anki-Lückenkarten, Abschnitt L·K im Repetitorium, Kernfakten der Provinz im Rest der letzten Provinzseite, Hinweis auf nicht abgefragte Kernfakten.
+- Tabellenreform: mehr Luft, Spaltenrollen (Begriffsspalte halbfett und nie getrennt), Übersicht als Begriffsliste, Vergleich gestürzt, Aussage unter der Tabelle (bei Teilung nur unter dem letzten Teil).
+- Formatreform: Gerüstwörter leise, Feinheit ohne Fläche, Latinum als Leiste.
+- Umbruch weicher zugunsten des Seitenbilds: Zuschlag unter 75 %, Teilung nach Bindung gewichtet, Kleinrest und Anriss stärker gesperrt (1000); Kurven bis 115 %, wo Platz bleibt; Verursacher schwacher Seiten im Bericht.
+- Referenzwerk 0.4 (A1, B1, B4, L1, L3). Testreihe 122 Tests.
+- Ergebnis an Terra Concurrentiae v1.1 (ohne Kernfakten, unverändertes Werk): 62 Seiten, Füllstand 83 %, eine übrige Seite unter 75 % (74 %), 16 Fortsetzungen, 0 Kleinreste, 0 Anrisse, 0 Fehler, 0 Warnungen.
+
+**3.6.0** (Oktober 2026) „Satzspiegel und Umbruch“
+- Globaler Seitenumbruch für Inhaltsseiten (`vorlage/umbruch.js`): Messsäule, Planung mit geringsten Gesamtkosten, Satz nach Plan, Korrektur bei Messabweichung, Rückfallebene gierig mit Warnung; deterministisch. Gewichte fest im Code, begründet. Schalter `--umbruch gierig` zur Fehlersuche.
+- Abbildungen atmen zwischen 75 % und 100 %: Kurven über die Plothöhe bei gleicher Schrift, übrige über die Skala mit Mindestschrift 6,5 pt.
+- Generierte Abschnitte teilbar: Klausurfallen und Selbsttest als Tabellen mit wiederholtem Kopf (zuvor Überlauf bei vielen Einträgen); Kachelverweise mit Seitenzahl.
+- Randspalt beseitigt: Ursache war eine überlange URL im Quellenverzeichnis, über die Chromium alle Seiten verkleinerte, dazu die Seitenhöhe von 296,6 mm. URLs brechen jetzt um; Seitenhintergrund reicht bis an die Blattkante. Neue Prüfungen: Überstand nach rechts, reinweiße Blattkante.
+- Prüfungsbogen (`exam.py --pdf`) nutzt denselben Umbruch.
+- Notverkleinerung bei Abbildungen fester Höhe (`hoehe_mm`) wirkt jetzt (bis 3.5 blieb die Höhe unverändert).
+- Bericht und Konsole: Fortsetzungen, Kleinreste, Anrisse, Leerraum je Seite, Skala und kleinste Schrift je Abbildung, Korrekturen, Planungsdauer, Front (Teilungsstrafe gegen Seiten und Füllstand); Hinweis auf Kacheln, die höher als eine Seite sind, und auf Grafikschrift unter 6,5 pt.
+- Messskript `tests/umbruch_messung.py`. Testreihe 109 Tests.
+- Ergebnis an Terra Concurrentiae v1.1: 61 Seiten (wie 3.5 nach Behebung des Überlaufs), Fortsetzungen 26 auf 10, Kleinreste 4 auf 0, Anrisse 10 auf 0, Füllstand 80,9 %, 0 Fehler, 0 Warnungen.
 
 **3.5.0** (Oktober 2026)
 - Organigramm (`baum`): Layout vom Kit, Richtung unten oder rechts, Kantenlabel, Knoten betont oder neben; Silbentrennung im Kasten.

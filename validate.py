@@ -204,6 +204,16 @@ def pruefe_kacheln(werk, codes, b, ordner=None):
             b.f(c, f"Bausteinreihenfolge verletzt: {typen}")
         if typen and typen[0] not in ("definition", "kern") and not c.startswith("L"):
             b.w(c, f"Kachel beginnt mit „{typen[0]}“ statt mit Definition oder Kern")
+        # 3.7: Tabellenfelder und Kernfakten
+        for x in bausteine:
+            if x.get("variante") == "tabelle":
+                n_sp = len(x.get("kopf", []))
+                if x.get("spalten") and len(x["spalten"]) != n_sp:
+                    b.f(c, f"Tabelle „{x.get('titel', '')}“: {len(x['spalten'])} Spaltenrollen für {n_sp} Spalten")
+                if len(x.get("zeilen", [])) >= 3 and not x.get("aussage"):
+                    b.h(c, f"Tabelle „{x.get('titel', '')}“ ohne Aussage (ein Satz, was sie zeigt)")
+                if x.get("art") == "vergleich" and len(x.get("zeilen", [])) > 4:
+                    b.h(c, f"Vergleichstabelle „{x.get('titel', '')}“ mit mehr als vier Zeilen wird nicht gestürzt")
         gerahmt = [t for t in typen if t in GERAHMT]
         if len(gerahmt) > MAX_GERAHMT:
             b.f(c, f"{len(gerahmt)} gerahmte Bausteine (max. {MAX_GERAHMT}); Kachel teilen")
@@ -497,6 +507,11 @@ def pruefe_provinzen(werk, b):
             rest = re.sub(r"\b\d+\.(?=\s)", "", rest)  # Ordinalzahlen („19. Jahrhundert“) sind kein Satzende
             if len(re.findall(r"[.!?](?=\s+[A-ZÄÖÜ])", rest)) > 0:
                 b.w(f"Provinz {p.get('code')} kompakt[{i}]", "mehrere Sätze in einem Eintrag; je Eintrag ein Satz")
+    # 3.7: Prüfpflicht der Kernfakten (Selbsttest oder Exam)
+    abgefragt = {s.get("kachel") for s in werk.get("selbsttest", [])}
+    ohne = [k["code"] for p in werk.get("provinzen", []) for k in p.get("kacheln", []) if k.get("kernfakten") and k["code"] not in abgefragt]
+    if ohne:
+        b.h("Kernfakten", "nicht im Selbsttest abgefragt: " + ", ".join(ohne) + " (im Exam abdecken oder Selbsttestfrage ergänzen)")
     if werk.get("meta", {}).get("typ") == "werk":
         n = len(werk.get("selbsttest", []))
         if n < 5:
@@ -586,6 +601,20 @@ def pruefe_abdeckung(werk, codes, b):
         b.f("Abdeckung", "kein Baum mit Kantenlabel")
     if not any(x.get("markierungen") for x in alle if x.get("variante") == "kurve"):
         b.f("Abdeckung", "keine Kurve mit Markierung")
+    # 3.7: Kernfakten, Merkhilfe, Tabellenarten und -rollen
+    if not any(k.get("kernfakten") for k in codes.values()):
+        b.f("Abdeckung", "keine Kachel mit Kernfakten")
+    if not any(k.get("merkhilfe") for k in codes.values()):
+        b.f("Abdeckung", "keine Kachel mit Merkhilfe")
+    for art in ("uebersicht", "vergleich"):
+        if not any(x.get("art") == art for x in tabellen):
+            b.f("Abdeckung", f"keine Tabelle der Art „{art}“")
+    rollen = {r for x in tabellen for r in x.get("spalten", [])}
+    for r in ("begriff", "text", "stichworte", "zahl"):
+        if r not in rollen:
+            b.f("Abdeckung", f"keine Tabellenspalte mit Rolle „{r}“")
+    if not any(x.get("aussage") for x in tabellen):
+        b.f("Abdeckung", "keine Tabelle mit Aussage")
     proben = [x["probe"] for x in alle if x.get("typ") == "rechenweg" and x.get("probe")]
     if not proben:
         b.f("Abdeckung", "kein Rechenweg mit Rechenprobe")

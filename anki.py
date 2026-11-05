@@ -66,6 +66,10 @@ def css():
 .nightMode.card, .night_mode .card, .card.night_mode { --papier: #1A1D23; --kachel: #22262D; --tinte: #E9E4D8; --tinte2: #B8B2A5; --linie: #3B414C; --ocker: #D6A95E;
   --merke: #3A321F; --merke-bar: #C9A24A; --fein: #2C3036; --fein-bar: #8A949E; --falle: #3E2522; --falle-bar: #E07A64; }
 .terra { max-width: 680px; margin: 0 auto; padding: 14px 16px 10px; }
+.kernfakt { font-size: 1.08em; }
+.luecke { display: inline-block; min-width: 3em; padding: 0 4px; border-bottom: 2px solid var(--p); color: var(--p); font-weight: 700; text-align: center; }
+.merkhilfe { margin-top: 10px; font: 600 15px "Terra UI", sans-serif; }
+.merkhilfe b { color: var(--p); margin-right: 6px; text-transform: uppercase; font-size: 12px; letter-spacing: .08em; }
 .kontext { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; padding-bottom: 8px; margin-bottom: 14px; border-bottom: 2px solid var(--p); }
 .chip { font: 700 12px "Terra UI", sans-serif; color: #fff; background: var(--p); padding: 3px 7px; border-radius: 3px; }
 .nightMode .chip, .night_mode .chip { color: #15171C; background: var(--pd, var(--p)); }
@@ -230,6 +234,15 @@ def karten(werk, ordner, quelle=None):
             beispiele = [b for b in k["bausteine"] if b["typ"] == "beispiel"]
             bsp = "".join(f'<div class="sv">{m(b["sachverhalt"])}</div>' + (f'<div><b>Lösung:</b> {m(b["loesung"])}</div>' if b.get("loesung") else "")
                           for b in beispiele)
+            # 3.7: Kernfakten als Lückenkarten; fett ausgezeichnete Wörter werden zu Lücken
+            for j, f in enumerate(k.get("kernfakten", [])):
+                voll = m(f)
+                if re.search(r"<(b|strong)>", voll):
+                    vorne = re.sub(r"<(b|strong)>.*?</\1>", '<span class="luecke">[…]</span>', voll)
+                else:
+                    vorne = f'Welcher Kernfakt gilt zu „{esc(k["titel"])}“?'
+                hinten = voll + (f'<div class="merkhilfe"><b>Merkhilfe</b> {m(k["merkhilfe"])}</div>' if k.get("merkhilfe") else "")
+                neu(p, k, "Kernfakt", vorne, hinten, f'{k["code"]}:kf{j}', klasse="kernfakt")
             for i, b in enumerate(k["bausteine"]):
                 t, sk = b["typ"], f'{k["code"]}:{i}'
                 if t == "definition":

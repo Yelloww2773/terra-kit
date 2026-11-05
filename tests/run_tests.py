@@ -91,6 +91,12 @@ TESTS = [
     ("Rechenprobe: Ergebnistext ohne Wert", lambda w: baustein(w, "B1", "rechenweg").__setitem__("ergebnis", "rund 8.600 €"), "nennt den nachgerechneten Wert", "W"),
     ("Rechenprobe: Python statt Rechnung", lambda w: baustein(w, "B1", "rechenweg")["probe"]["rechnung"][0].__setitem__("ausdruck", "__import__('os')"), "nicht erlaubt", "F"),
     ("Grafikdichte", lambda w: kachel(w, "A6")["bausteine"].insert(2, copy.deepcopy(baustein(w, "A5", "schema", "svg"))), "Grafikdichte", "W"),
+    # 3.7: Tabellenfelder, Kernfakten, Prüfpflicht, Abdeckung
+    ("Tabelle: Spaltenrollen passen nicht", lambda w: baustein(w, "L3", "schema", "tabelle").__setitem__("spalten", ["begriff", "text"]), "Spaltenrollen für 3 Spalten", "F"),
+    ("Kernfakten: mehr als drei", lambda w: kachel(w, "A1").__setitem__("kernfakten", ["Ein Satz."] * 4), "is too long", "F"),
+    ("Kernfakten ohne Selbsttest", lambda w: w.__setitem__("selbsttest", [s for s in w["selbsttest"] if s["kachel"] != "B1"]), "nicht im Selbsttest abgefragt: B1", "H"),
+    ("Tabelle ohne Aussage", lambda w: baustein(w, "L3", "schema", "tabelle").pop("aussage"), "ohne Aussage", "H"),
+    ("Abdeckung Übersichtstabelle fehlt", lambda w: baustein(w, "L1", "schema", "tabelle").__setitem__("art", "tabelle"), "keine Tabelle der Art „uebersicht“", "F"),
     ("Abdeckung Rechenprobe fehlt", lambda w: [baustein(w, c, "rechenweg").pop("probe") for c in ("B1", "B4")], "kein Rechenweg mit Rechenprobe", "F"),
 ]
 
@@ -132,12 +138,12 @@ def main():
             print(("✓ " if ok else "✗ ") + name)
             fehlschlaege += 0 if ok else 1
             continue
-        zeilen = b.fehler if stufe == "F" else b.warnungen
+        zeilen = {"F": b.fehler, "W": b.warnungen, "H": b.hinweise}[stufe]
         if any(erwartet in z for z in zeilen):
             print(f"✓ {name}")
         else:
             fehlschlaege += 1
-            print(f"✗ {name}: erwartet „{erwartet}“ als {'Fehler' if stufe == 'F' else 'Warnung'}")
+            print(f"✗ {name}: erwartet „{erwartet}“ als {dict(F='Fehler', W='Warnung', H='Hinweis')[stufe]}")
             for z in (b.fehler + b.warnungen)[:4]:
                 print("     gemeldet:", z)
     # Exam: Referenzexam sauber, eingeschleuste Fehler erkannt
@@ -351,13 +357,202 @@ def main():
         ("Anki: Wasserzeichen nur in eigenen Bildern", _wasserzeichen_bildrecht),
         ("Workflow Node 24, Einrichtung, Symbolschrift", _werkzeuge_35),
     ]
-    for name, fn in NEU:
+    # Satz und Umbruch (3.6): Werke werden wirklich gesetzt (Chromium); daher zuletzt und gebündelt.
+    import subprocess as SPX, re as RX
+    _satz = {}
+    def setze(name, werk, *args):
+        """Setzt ein Werk einmal je Name und merkt sich Bericht, PDF und montiertes HTML."""
+        if name in _satz:
+            return _satz[name]
+        d = Path(TF.mkdtemp(prefix="terra-test-"))
+        if isinstance(werk, dict):
+            pfad = d / "w.json"; pfad.write_text(json.dumps(werk, ensure_ascii=False), encoding="utf-8")
+        else:
+            pfad = werk
+        r = SPX.run([sys.executable, str(KIT / "skript.py"), str(pfad), "--aus", str(d / "aus"), *args], capture_output=True, text=True)
+        b = next((d / "aus").glob("*_bericht.json"), None)
+        _satz[name] = {"bericht": json.loads(b.read_text(encoding="utf-8")) if b else None, "pdf": next((d / "aus").glob("*.pdf"), None),
+                       "html": next((d / "aus").glob("*_montiert.html"), None), "aus": r.stdout[-600:] + r.stderr[-600:]}
+        if b is None:
+            print("     Satz gescheitert:", _satz[name]["aus"])
+        return _satz[name]
+    def _werk_vierzig():
+        """Referenzwerk mit 40 Klausurfallen (L·F über mehrere Seiten) und einer Abbildung fester Höhe,
+        die auf keine Seite passt (Notverkleinerung über die Höhe)."""
+        w = copy.deepcopy(BASIS)
+        ks = [k for p in w["provinzen"] if p["code"] != "L" for k in p["kacheln"]]
+        n = sum(1 for k in ks for b in k["bausteine"] if b["typ"] == "klausurfalle")
+        i = 0
+        while n < 40:
+            ks[i % len(ks)]["bausteine"].append({"typ": "klausurfalle", "text": f"Prüffalle {n + 1}: Wer die Regel ohne ihre Ausnahme lernt, verliert in der Klausur Punkte."})
+            n += 1; i += 1
+        gross = copy.deepcopy(baustein(w, "A5", "schema", "svg")); gross["hoehe_mm"] = 420; gross["titel"] = "Übergroße Abbildung"
+        kachel(w, "B3")["bausteine"].append(gross)
+        return w
+    VIERZIG = _werk_vierzig()
+    UEBER = copy.deepcopy(BASIS)
+    baustein(UEBER, "L3", "schema", "tabelle")["zeilen"][0][1] = "1234567890" * 30
+    def _kanten():
+        from PIL import Image
+        s = setze("ex", KIT / "referenzwerk.json"); b = s["bericht"]
+        inhalt = next(x["nr"] for x in b["seiten"] if x["art"] == "normal")
+        ok = True
+        with TF.TemporaryDirectory() as d:
+            for nr, farbe in ((1, (241, 233, 218)), (inhalt, (252, 250, 245))):
+                SPX.run(["pdftoppm", "-r", "300", "-f", str(nr), "-l", str(nr), "-png", str(s["pdf"]), f"{d}/k{nr}"], check=True)
+                im = Image.open(next(Path(d).glob(f"k{nr}-*.png"))).convert("RGB"); w_, h_ = im.size
+                kante = ([im.getpixel((x, 0)) for x in range(0, w_, 2)] + [im.getpixel((x, h_ - 1)) for x in range(0, w_, 2)]
+                         + [im.getpixel((0, y)) for y in range(0, h_, 2)] + [im.getpixel((w_ - 1, y)) for y in range(0, h_, 2)])
+                ok &= (255, 255, 255) not in kante and im.getpixel((2, h_ - 1)) == farbe and im.getpixel((w_ // 2, h_ - 1)) == farbe
+        return ok and not b["fehler"] and not b["warnungen"]
+    def _vierzig():
+        s = setze("vierzig", VIERZIG, "--trotzdem"); b = s["bericht"]
+        teil = [t for t in b["teilungen"] if t["kachel"] == "L·F"]
+        html = s["html"].read_text(encoding="utf-8")
+        kopf = RX.search(r'<div class="kachel[^"]*fortsetzung[^"]*" data-code="L·F"><div class="fkopf">(?:(?!</section>).)*?<thead>', html, RX.S)
+        return not b["fehler"] and teil and teil[0]["zeilen"] == 40 and teil[0]["teile"] >= 2 and bool(kopf)
+    def _kleinrest():
+        return all(not setze(n, *a)["bericht"]["umbruch"]["kleinreste"] and not setze(n, *a)["bericht"]["umbruch"]["anrisse"]
+                   for n, a in (("ex", (KIT / "referenzwerk.json",)), ("vierzig", (VIERZIG, "--trotzdem"))))
+    KOPF_JS = """() => { const f = [];
+      document.querySelectorAll('#buch > .page').forEach((p, i) => {
+        p.querySelectorAll('.koerper > .kachel').forEach(k => {
+          const us = k.querySelectorAll(':scope > .unit');
+          if (!us.length) f.push('S ' + (i + 1) + ': Kachel ' + k.dataset.code + ' ohne Baustein');
+          us.forEach(u => { const bs = u.querySelector('.bs'); if (!bs || !bs.textContent.trim()) f.push('S ' + (i + 1) + ': Kopf ohne Inhalt in ' + k.dataset.code); });
+        });
+        p.querySelectorAll('table.teilbar').forEach(t => { if (t.tBodies[0] && !t.tBodies[0].rows.length) f.push('S ' + (i + 1) + ': Tabellenkopf ohne Zeile'); });
+      }); return f; }"""
+    def _dom(html, js):
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as pw:
+            br = pw.chromium.launch(args=["--allow-file-access-from-files"]); pg = br.new_page()
+            pg.route("**/montage.js", lambda r: r.abort()); pg.goto(html.as_uri()); pg.wait_for_load_state("load")
+            erg = pg.evaluate(js); br.close()
+        return erg
+    def _kopf():
+        return all(not _dom(setze(n, *a)["html"], KOPF_JS) for n, a in (("ex", (KIT / "referenzwerk.json",)), ("vierzig", (VIERZIG, "--trotzdem"))))
+    def _leerraum():
+        ok = True
+        for n, a in (("ex", (KIT / "referenzwerk.json",)), ("vierzig", (VIERZIG, "--trotzdem"))):
+            S_ = setze(n, *a)["bericht"]["seiten"]
+            for i, s in enumerate(S_):
+                fest = i + 1 == len(S_) or S_[i + 1]["art"] != s["art"] or S_[i + 1]["zwang"]
+                ok &= not (s["art"] in ("normal", "quer") and s["fuellstand"] < 0.5 and not fest)
+        return ok
+    def _abbildungen():
+        normal = {a["abb"]: a for a in setze("ex", KIT / "referenzwerk.json")["bericht"]["umbruch"]["abbildungen"]}
+        klein = setze("kleinste", KIT / "referenzwerk.json", "--umbruch", "test-kleinste")["bericht"]["umbruch"]["abbildungen"]
+        ok = len(klein) == len(normal) == 6 and all(0.75 - 1e-6 <= a["skala"] <= 1.15 + 1e-6 for a in klein + list(normal.values()))
+        for a in klein:
+            if a["art"] == "skala" and a["min_pt"] is not None:
+                ok &= a["min_pt"] >= 6.45 and (a["skala"] < 1 or normal[a["abb"]]["min_pt"] < 6.5)
+            if a["art"] == "hoehe":  # Kurven: Schrift bleibt gleich, nur die Plotfläche wird niedriger
+                ok &= a["skala"] < 1 and abs(a["min_pt"] - normal[a["abb"]]["min_pt"]) < 0.01
+        return ok and any(a["skala"] < 1 for a in klein)
+    def _determinismus():
+        a, b = setze("ex", KIT / "referenzwerk.json")["bericht"], setze("ex2", KIT / "referenzwerk.json")["bericht"]
+        return a["anker"] == b["anker"] and [s["fuellstand"] for s in a["seiten"]] == [s["fuellstand"] for s in b["seiten"]]
+    def _rueckfall():
+        b = setze("scheitern", KIT / "referenzwerk.json", "--umbruch", "test-scheitern")["bericht"]
+        return b["umbruch"]["verfahren"] == "gierig" and any("gescheitert" in w for w in b["warnungen"]) and not b["fehler"]
+    def _reparatur():
+        b = setze("messfehler", KIT / "referenzwerk.json", "--umbruch", "test-messfehler")["bericht"]
+        return b["umbruch"]["korrekturen"] >= 1 and not b["fehler"] and not any(s["ueberlauf"] for s in b["seiten"])
+    def _notverkleinerung():
+        b = setze("vierzig", VIERZIG, "--trotzdem")["bericht"]
+        return (any(s["kachel"] == "B3" and s["skala"] < 0.75 for s in b["skalierungen"])
+                and not any("passt auch verkleinert nicht" in f for f in b["fehler"]))
+    def _ueberstand():
+        b = setze("ueberstand", UEBER, "--trotzdem")["bericht"]
+        return any("über den rechten Seitenrand" in f for f in b["fehler"]) and any("Randspalt" in f for f in b["fehler"])
+    def _rechenkern():
+        r = SPX.run(["node", str(KIT / "tests" / "umbruch_kern_test.js")], capture_output=True, text=True)
+        if r.stdout.strip() != "ok":
+            print("     ", r.stdout.strip()[:160], r.stderr.strip()[:160])
+        return r.returncode == 0 and r.stdout.strip() == "ok"
+    def _umbruch_geladen():
+        """Jedes Dokument, das montage.js lädt, lädt zuvor umbruch.js (sonst Rückfall mit Warnung, so im Exam-Bogen gefunden)."""
+        ok = True
+        for datei in ("skript.py", "exam.py"):
+            t = (KIT / datei).read_text(encoding="utf-8")
+            ok &= "montage.js" in t and "umbruch.js" in t and t.index("umbruch.js") < t.index("montage.js')")
+        return ok
+    EX = KIT / "referenzwerk.json"
+    def _begriffsspalte():
+        f = _dom(setze("ex", EX)["html"], """() => { const f = [];
+          document.querySelectorAll('#buch td.begriff').forEach(td => { const s = getComputedStyle(td);
+            if (+s.fontWeight < 600 || s.hyphens !== 'none') f.push(td.textContent.slice(0, 30)); });
+          document.querySelectorAll('#buch td.begriff .nb, #buch th.begriff .nb').forEach(n => { if (n.getClientRects().length > 1) f.push('getrennt: ' + n.textContent); });
+          return [document.querySelectorAll('#buch td.begriff').length, f]; }""")
+        return f[0] > 40 and not f[1]
+    def _tabellenarten():
+        r = _dom(setze("ex", EX)["html"], """() => { const g = document.querySelector('#buch table.gestuerzt'), u = document.querySelector('#buch table.uebersicht');
+          return [g ? g.querySelectorAll('thead th.begriff').length : 0, g ? g.querySelectorAll('td.zahl').length : 0,
+                  u ? getComputedStyle(u.querySelector('tbody tr')).display : '', u ? getComputedStyle(u.querySelector('thead')).display : '']; }""")
+        return r == [3, 3, "block", "none"]
+    def _aussage():
+        r = _dom(setze("ex", EX)["html"], """() => { const sicht = [];
+          document.querySelectorAll('#buch .page').forEach((p, i) => p.querySelectorAll('.kachel[data-code="L3"] .t-aussage').forEach(a => {
+            if (getComputedStyle(a).display !== 'none') sicht.push(i + 1); }));
+          const teile = []; document.querySelectorAll('#buch .page').forEach((p, i) => { if (p.querySelector('.kachel[data-code="L3"] table')) teile.push(i + 1); });
+          return [sicht, teile]; }""")
+        return len(r[1]) >= 2 and r[0] == [r[1][-1]]
+    def _kernsatz():
+        r = _dom(setze("ex", EX)["html"], """() => { const u = document.getElementById('k-A1').closest('.unit');
+          return [!!u.querySelector('.kernblock .kernsatz'), !!u.querySelector('.kernblock .merkhilfe')]; }""")
+        d = Path(TF.mkdtemp(prefix="terra-karte-"))
+        SPX.run([sys.executable, str(KIT / "karte.py"), str(EX), "--aus", str(d)], capture_output=True, text=True)
+        karte = next(d.glob("*_karte.html"), None)
+        return r == [True, True] and karte is not None and 'class="kernblock"' in karte.read_text(encoding="utf-8")
+    def _anki_kernfakten():
+        import anki as AN
+        with TF.TemporaryDirectory() as d:
+            notizen = AN.karten(copy.deepcopy(BASIS), Path(d), KIT)[0]
+        kf = [n for n in notizen if n["felder"]["Art"] == "Kernfakt"]
+        return len(kf) == 3 and all('class="luecke"' in n["felder"]["Vorderseite"] for n in kf) and any("Merkhilfe" in n["felder"]["Rückseite"] for n in kf)
+    def _kernfakten_satz():
+        b = setze("ex", EX)["bericht"]
+        fl = {f["prov"]: f["seite"] for f in b["umbruch"]["fuellungen"]}
+        return "k-LK" in b["anker"] and fl.get("A") and fl.get("B")
+    def _geruest():
+        return ('class="geruest"' in SK.stichpunkt("**Ziel:** den Prozess begleiten") and "<strong>" in SK.stichpunkt("**Faktorpreis** (Arbeit, Kapital)")
+                and "<strong>" in SK.stichpunkt("**Kernberuf:** IT im Zentrum"))
+    def _verursacher():
+        v = setze("hic", KIT / "referenz_historica.json")["bericht"]["umbruch"]["verursacher"]
+        return bool(v) and all(x["fehlen_mm"] > 0 and x["kachel"] and x["fuellstand"] < 0.75 for x in v)
+    SATZ37 = [
+        ("Tabellen: Begriffsspalte halbfett und ungetrennt", _begriffsspalte),
+        ("Tabellen: Vergleich gestürzt, Übersicht als Begriffsliste", _tabellenarten),
+        ("Tabellen: Aussage nur unter dem letzten Teil", _aussage),
+        ("Kernsatz und Merkhilfe in Skript und Karte", _kernsatz),
+        ("Kernfakten als Anki-Lückenkarten", _anki_kernfakten),
+        ("Kernfakten im Repetitorium und am Provinzende", _kernfakten_satz),
+        ("Gerüstwörter leise, Fachbegriffe fett", _geruest),
+        ("Verursacher schwacher Seiten im Bericht", _verursacher),
+    ]
+    SATZ = [
+        ("Umbruch: Rechenkern (Kleinrest, Stufen, Tabellen, Ausschluss)", _rechenkern),
+        ("Umbruch: Lernskript und Prüfungsbogen laden umbruch.js", _umbruch_geladen),
+        ("Randspalt: Hintergrundfarbe an allen vier Kanten", _kanten),
+        ("Generierte Abschnitte: 40 Klausurfallen, Kopf wiederholt", _vierzig),
+        ("Kein Kleinrest und kein Anriss", _kleinrest),
+        ("Kein Kopf ohne Inhalt am Seitenende", _kopf),
+        ("Leerraum: keine Inhaltsseite unter 50 % außer vor festen Umbrüchen", _leerraum),
+        ("Abbildungen: Skala 0,75 bis 1,15, Mindestschrift 6,5 pt", _abbildungen),
+        ("Determinismus: zweimal gesetzt, gleiche Seiten", _determinismus),
+        ("Rückfallebene: Scheitern führt zu gierigem Satz mit Warnung", _rueckfall),
+        ("Reparatur: Messabweichung wird korrigiert", _reparatur),
+        ("Notverkleinerung bei fester Höhe (hoehe_mm)", _notverkleinerung),
+        ("Überstand nach rechts und Randspalt werden gemeldet", _ueberstand),
+    ]
+    for name, fn in NEU + SATZ + SATZ37:
         try:
             ok = bool(fn())
         except Exception as ex_:
             ok = False; print("     Ausnahme:", repr(ex_)[:160])
         print(("✓ " if ok else "✗ ") + name); fehlschlaege += 0 if ok else 1
-    gesamt = len(TESTS) + 5 + len(EXAMTESTS) + len(QTESTS) + len(NEU)
+    gesamt = len(TESTS) + 5 + len(EXAMTESTS) + len(QTESTS) + len(NEU) + len(SATZ) + len(SATZ37)
     print(f"\n{gesamt - fehlschlaege} von {gesamt} Tests bestanden")
     sys.exit(1 if fehlschlaege else 0)
 

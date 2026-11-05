@@ -593,6 +593,19 @@
           "items": {
             "$ref": "#/$defs/text"
           }
+        },
+        "kernfakten": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "description": "3.7: ein bis drei atomare, prüfbare Kernaussagen der Kachel. Werden als Kernsatz am Kachelanfang gesetzt, als Anki-Lückenkarte abgefragt (fett ausgezeichnete Wörter werden zu Lücken) und im Repetitorium gesammelt.",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "merkhilfe": {
+          "$ref": "#/$defs/text",
+          "description": "3.7: kurze Merkhilfe für Dreiheiten, Reihenfolgen oder Gegensatzpaare (etwa „wer · wie · was“); erscheint im Kernsatz."
         }
       },
       "if": {
@@ -1156,6 +1169,30 @@
               "type": "string"
             }
           }
+        },
+        "art": {
+          "enum": [
+            "tabelle",
+            "uebersicht",
+            "vergleich"
+          ],
+          "description": "3.7: Zweck der Tabelle. uebersicht: Begriff und Erklärung, als Begriffsliste gesetzt; vergleich: mit höchstens vier Zeilen gestürzt (Begriffe als Spalten)."
+        },
+        "spalten": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "begriff",
+              "text",
+              "stichworte",
+              "zahl"
+            ]
+          },
+          "description": "3.7: Rolle je Spalte; ohne Angabe ist die erste Spalte die Begriffsspalte (halbfett, nie getrennt)."
+        },
+        "aussage": {
+          "$ref": "#/$defs/text",
+          "description": "3.7: ein Satz, was die Tabelle zeigt; erscheint unter der Tabelle."
         }
       }
     },

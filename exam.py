@@ -195,6 +195,7 @@ def pdf(exam, werk, aus, name):
 <style>{S.palette_css()}</style>
 <script id="meta" type="application/json">{json.dumps(meta, ensure_ascii=False)}</script></head>
 <body class="schema-nacht"><main id="buch"></main><div id="quelle">{"".join(einheiten_pdf(exam, werk))}</div>
+<script src="{(KIT / 'vorlage' / 'umbruch.js').as_uri()}"></script>
 <script src="{(KIT / 'vorlage' / 'montage.js').as_uri()}"></script></body></html>"""
     hp, pp = aus / f"{name}.html", aus / f"{name}.pdf"
     hp.write_text(html_doc, encoding="utf-8")

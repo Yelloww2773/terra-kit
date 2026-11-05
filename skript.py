@@ -80,6 +80,16 @@ except Exception:  # Silbentrennung ist Komfort, kein Muss
 # ── Text: Typografie, Trennung, Auszeichnung ──────────────────────────────
 NBSP, SCHMAL = "\u00a0", "\u202f"
 SEITENVERWEIS = False  # wird nur beim Setzen des Lernskripts eingeschaltet (Karte, Exam und Anki bleiben ohne Seitenzahl)
+ATMEN = False  # 3.6: nur im Lernskript; Kurven tragen Fassungen mit geringerer Plothöhe für den Umbruch
+KURVEN_STUFEN = (1.0, 0.9, 0.8)  # Anteil der Grafikhöhe; die Schrift bleibt unverändert
+KURVEN_GROSS = (1.15,)  # 3.7: größere Fassung, nur wenn auf der Seite Platz bleibt (Abbildungen atmen nach oben)
+GERUEST = {"Einordnung", "Motivation", "Ziel", "Ziele", "Zweck", "Merkmal", "Merkmale", "Beispiel", "Beispiele", "Folge", "Folgen",
+           "Inhalt", "Kritik", "Vorteil", "Vorteile", "Nachteil", "Nachteile", "Grundsatz", "Ausnahme", "Abgrenzung", "Voraussetzung",
+           "Voraussetzungen", "Rechtsfolge", "Bedeutung", "Hintergrund", "Ursache", "Wirkung", "Ergebnis", "Idee", "Problem", "Lösung",
+           "Ablauf", "Aufbau", "Funktion", "Aufgabe", "Anwendung", "Umsetzung", "Methode", "Ansatz", "Kern", "Fazit"}
+# 3.7: Gerüstwörter am Stichpunktanfang („**Ziel:**“) tragen keine Fachbedeutung; sie werden leise gesetzt,
+# damit Fett allein den Fachbegriffen bleibt.
+UMBRUCH = "global"  # 3.6: global (Standard) oder gierig (Verfahren bis 3.5, zur Fehlersuche)
 ABB_NR = {}  # id(Baustein) → (Abbildungsnummer, Baustein); füllt abbildungen(), liest schema_html()
 ABB_ART = {"kurve": "Diagramm", "fluss": "Ablaufschema", "svg": "Grafik", "baum": "Organigramm", "bild": "Bild"}
 
@@ -192,8 +202,10 @@ def schoene_schritte(lo, hi, n=5):
     return 10 * p
 
 
-def svg_kurve(b):
-    W, H, L, R, T, U = 600, 300, 66, 18, 22, 46
+def svg_kurve(b, hf=1.0):
+    """hf (3.6): Anteil der Grafikhöhe. Die Breite und damit die Schriftgröße bleiben gleich; nur die
+    Plotfläche wird niedriger. So kann der Umbruch eine Kurve verkleinern, ohne die Lesbarkeit zu mindern."""
+    W, H, L, R, T, U = 600, round(300 * hf), 66, 18, 22, 46
     pw, ph = W - L - R, H - T - U
     xs = [pt[0] for r in b["reihen"] for pt in r["punkte"]]
     ys = [pt[1] for r in b["reihen"] for pt in r["punkte"]] + [mk["y"] for mk in b.get("markierungen", [])]
@@ -443,17 +455,36 @@ def bild_html(b):
 
 
 # ── Bausteine ─────────────────────────────────────────────────────────────
-def tabelle(kopf, zeilen, klasse="t", lat_spalten=(), teilbar=True):
+def ungetrennt(h):
+    """3.7: Wörter mit Bindestrich in Begriffszellen zusammenhalten (keine Zeile endet mit „IT-“)."""
+    teile = re.split(r"(<[^>]+>)", h)
+    return "".join(t if t.startswith("<") else re.sub(r"([\w\u00ad]+(?:-[\w\u00ad]+)+)", r'<span class="nb">\1</span>', t) for t in teile)
+
+
+def tabelle(kopf, zeilen, klasse="t", lat_spalten=(), teilbar=True, rollen=None, aussage=None, kopfrollen=None, zeilenrollen=None):
+    """rollen (3.7): je Spalte begriff, text, stichworte, zahl oder dimension; setzt Klassen an th und td.
+    kopfrollen: abweichende Rollen der Kopfzeile (gestürzter Vergleich: Begriffe stehen im Kopf)."""
     cls = f"{klasse}{' teilbar' if teilbar else ''}"
-    o = [f'<table class="{cls}"><thead><tr>' + "".join(f"<th>{md(h, latein=True)}</th>" for h in kopf) + "</tr></thead><tbody>"]
-    for z in zeilen:
-        zellen = []
-        for i, c in enumerate(z):
-            lat = i in lat_spalten
-            klasse = ' class="lat"' if lat else ""
-            zellen.append(f"<td{klasse}>{md(c, latein=lat)}</td>")
-        o.append("<tr>" + "".join(zellen) + "</tr>")
+    def zelle(tag, i, c, kopfzeile=False, zeile=0):
+        quelle = kopfrollen if (kopfzeile and kopfrollen) else rollen
+        r = quelle[i] if quelle and i < len(quelle) else ""
+        if zeilenrollen and not kopfzeile and i >= 1 and zeile < len(zeilenrollen):
+            r = zeilenrollen[zeile]  # gestürzter Vergleich: die Rolle gehört zur Zeile (frühere Spalte)
+        lat = i in lat_spalten
+        kl = " ".join(x for x in (r, "lat" if lat else "") if x)
+        attr = f' class="{kl}"' if kl else ""
+        if not kopfzeile and rollen and r != "begriff" and i < len(kopf) and i >= 1:
+            attr += f' data-label="{esc(_klartext(kopf[i]))}"'
+        inhalt = md(c, latein=lat or kopfzeile)
+        if r == "begriff":
+            inhalt = ungetrennt(inhalt)
+        return f"<{tag}{attr}>{inhalt}</{tag}>"
+    o = [f'<table class="{cls}"><thead><tr>' + "".join(zelle("th", i, h, True) for i, h in enumerate(kopf)) + "</tr></thead><tbody>"]
+    for j, z in enumerate(zeilen):
+        o.append("<tr>" + "".join(zelle("td", i, c, zeile=j) for i, c in enumerate(z)) + "</tr>")
     o.append("</tbody></table>")
+    if aussage:
+        o.append(f'<p class="t-aussage nach-tabelle"><span class="lbl">Aussage</span>{md(aussage)}</p>')
     return "".join(o)
 
 
@@ -465,7 +496,18 @@ def schema_html(b):
     titel = f'<div class="schema-titel">{abb}{md(b["titel"], latein=True)}</div>'
     if v == "tabelle":
         lat = tuple(i for i, h in enumerate(b["kopf"]) if h.lower() in ("terminus", "latinum", "begriff"))
-        return titel + tabelle(b["kopf"], b["zeilen"], lat_spalten=lat)
+        art = b.get("art", "tabelle")
+        rollen = list(b.get("spalten") or (["begriff"] + ["text"] * (len(b["kopf"]) - 1)))
+        if art == "vergleich" and len(b["zeilen"]) <= 4:
+            # 3.7: gestürzt; die Begriffe werden Spalten, die Vergleichsdimensionen Zeilen
+            kopf = [b["kopf"][0]] + [z[0] for z in b["zeilen"]]
+            zeilen = [[b["kopf"][j]] + [z[j] for z in b["zeilen"]] for j in range(1, len(b["kopf"]))]
+            r_neu = ["dimension"] + ["text"] * len(b["zeilen"])
+            zr = [r if r != "begriff" else "text" for r in rollen[1:]]
+            return titel + tabelle(kopf, zeilen, klasse="t vergleich gestuerzt", rollen=r_neu, aussage=b.get("aussage"),
+                                   kopfrollen=["ecke"] + ["begriff"] * len(b["zeilen"]), zeilenrollen=zr)
+        klasse = "t uebersicht" if art == "uebersicht" else ("t vergleich" if art == "vergleich" else "t")
+        return titel + tabelle(b["kopf"], b["zeilen"], klasse=klasse, lat_spalten=lat, rollen=rollen, aussage=b.get("aussage"))
     if v == "abgrenzung":
         zeilen = [[k["kriterium"], k["links"], k["rechts"]] for k in b["kriterien"]]
         return titel + tabelle(["Kriterium", b["links"], b["rechts"]], zeilen, klasse="t abgr")
@@ -493,20 +535,25 @@ def schema_html(b):
         if b.get("buchungssatz"):
             o.append(f'<div class="buchungssatz"><b>Buchungssatz</b>{md(b["buchungssatz"])}</div>')
         return titel + "".join(o)
+    da = f' data-abb="{nr}"' if nr else ""
     if v == "kurve":
         alt = "; ".join(f'{r["name"]}: ' + ", ".join(f"{zahl(a, 0)} → {zahl(c)}" for a, c in r["punkte"]) for r in b["reihen"])
-        return titel + f'<div class="fig skalierbar">{svg_kurve(b)}<span class="alt">{esc(alt)}</span></div>'
+        if ATMEN:  # 3.6: alle Stufen mitliefern, die Montage wählt je Seite eine
+            svgs = "".join(svg_kurve(b, hf).replace("<svg ", f'<svg data-hf="{hf}"' + (' class="var-aus"' if i else "") + " ", 1)
+                           for i, hf in enumerate(KURVEN_STUFEN + KURVEN_GROSS))
+            return titel + f'<div class="fig skalierbar atmend"{da}>{svgs}<span class="alt">{esc(alt)}</span></div>'
+        return titel + f'<div class="fig skalierbar"{da}>{svg_kurve(b)}<span class="alt">{esc(alt)}</span></div>'
     if v == "fluss":
-        return titel + f'<div class="fig skalierbar">{svg_fluss(b)}</div>'
+        return titel + f'<div class="fig skalierbar"{da}>{svg_fluss(b)}</div>'
     if v == "svg":
         stil = f' style="max-width:100%;height:{b["hoehe_mm"]}mm"' if b.get("hoehe_mm") else ""
         svg = b["svg"].replace("<svg", f'<svg{stil}', 1) if stil else b["svg"]
-        return titel + f'<div class="fig skalierbar">{svg}<span class="alt">{esc(b["beschreibung"])}</span></div>'
+        return titel + f'<div class="fig skalierbar"{da}>{svg}<span class="alt">{esc(b["beschreibung"])}</span></div>'
     if v == "baum":
         alt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", baum_klartext(b))).strip()
-        return titel + f'<div class="fig skalierbar">{svg_baum(b)}<span class="alt">{esc(alt)}</span></div>'
+        return titel + f'<div class="fig skalierbar"{da}>{svg_baum(b)}<span class="alt">{esc(alt)}</span></div>'
     if v == "bild":
-        return titel + bild_html(b)
+        return titel + bild_html(b).replace('<div class="fig skalierbar bild"', f'<div class="fig skalierbar bild"{da}', 1)
     raise ValueError(v)
 
 
@@ -519,7 +566,7 @@ def baustein_html(b, kx):
         return f'<div class="label">Definition</div><p>{md(b["text"])}</p>{z}'
     if t == "kern":
         lbl = f'<div class="label">{md(b["titel"])}</div>' if b.get("titel") else ""
-        return lbl + '<ul class="kern">' + "".join(f"<li>{md(p)}</li>" for p in b["punkte"]) + "</ul>"
+        return lbl + '<ul class="kern">' + "".join(f"<li>{stichpunkt(p)}</li>" for p in b["punkte"]) + "</ul>"
     if t == "formel":
         nr = f'<span class="nr">{esc(b["nummer"])}</span>' if b.get("nummer") else ""
         var = ""
@@ -634,6 +681,25 @@ def abbildungsverzeichnis(werk):
 
 
 # ── Einheiten ─────────────────────────────────────────────────────────────
+def stichpunkt(p):
+    """3.7: „**Ziel:** …“ mit einem Gerüstwort wird leise gesetzt; Fett bleibt den Fachbegriffen."""
+    m_ = re.match(r"^\*\*([A-ZÄÖÜ][a-zäöüß]+)(?::\*\*|\*\*:)\s*(.*)$", p, re.S)
+    if m_ and m_.group(1) in GERUEST:
+        return f'<span class="geruest">{esc(m_.group(1))}</span>{md(m_.group(2))}'
+    return md(p)
+
+
+def kernblock(k):
+    """3.7: Kernsatz (Kernfakten) und Merkhilfe am Kachelanfang."""
+    if not k.get("kernfakten") and not k.get("merkhilfe"):
+        return ""
+    fakten = k.get("kernfakten", [])
+    satz = (f'<p class="kernsatz">{md(fakten[0])}</p>' if len(fakten) == 1
+            else '<ul class="kernsatz">' + "".join(f"<li>{md(f)}</li>" for f in fakten) + "</ul>") if fakten else ""
+    mh = f'<div class="merkhilfe"><span class="lbl">Merkhilfe</span>{md(k["merkhilfe"])}</div>' if k.get("merkhilfe") else ""
+    return f'<div class="kernblock"><div class="lbl">Kernsatz</div>{satz}{mh}</div>' if fakten else f'<div class="kernblock">{mh}</div>'
+
+
 def einheit(inhalt, **attr):
     spann = attr.pop("spann", None)
     a = " ".join(f'data-{k.replace("_", "-")}="{esc(str(v))}"' for k, v in attr.items() if v not in (None, False, ""))
@@ -653,17 +719,33 @@ def kachel_einheiten(k, prov, kx, farbe):
     out = []
     for i, b in enumerate(k["bausteine"]):
         quer = b.get("typ") == "schema" and b.get("variante") == "tabelle" and b.get("breit")
-        inhalt = (kachelkopf(k) if i == 0 else "") + f'<div class="bs bs-{b["typ"]}">{baustein_html(b, kx)}</div>'
-        out.append(einheit(inhalt, kachel=k["code"], prov=prov, farbe=farbe, titel=k["titel"], quer="1" if quer else ""))
+        inhalt = (kachelkopf(k) + kernblock(k) if i == 0 else "") + f'<div class="bs bs-{b["typ"]}">{baustein_html(b, kx)}</div>'
+        out.append(einheit(inhalt, kachel=k["code"], prov=prov, farbe=farbe, titel=k["titel"], quer="1" if quer else "", bs=b["typ"]))
     return out
 
 
-def l_generiert(werk):
-    """Repetitorium: automatisch erzeugte Abschnitte (Codes L·F, L·Q, L·V, L·S, L·A)."""
+def kernfakten_provinz(p):
+    """3.7: Füllblock am Provinzende; die Montage setzt ihn nur, wenn er auf die letzte Seite passt."""
+    z = [(k["code"], f) for k in p["kacheln"] for f in k.get("kernfakten", [])]
+    if not z:
+        return None
+    li = "".join(f'<li>{md(f)} <span class="kf-code">{md("[[" + c + "]]")}</span></li>' for c, f in z)
+    return einheit(f'<div class="fuellblock farbe-{p["farbe"]}"><div class="lbl">Kernfakten · Provinz {p["nr"]}</div><ul>{li}</ul></div>',
+                   fuell="1", prov=p["code"], name=f'Kernfakten {p["code"]}')
+
+
+def l_generiert(werk, teilbar=False):
+    """Repetitorium: automatisch erzeugte Abschnitte (Codes L·F, L·Q, L·V, L·S, L·A).
+    teilbar (3.6, Lernskript): Klausurfallen und Selbsttest als teilbare Tabellen, damit die Montage sie
+    zeilenweise über Seiten verteilen kann (vorher eine unteilbare Einheit: Überlauf bei vielen Einträgen).
+    Die Karte ruft ohne teilbar auf und behält die Listenform."""
     kacheln = [(k, p["code"]) for p in werk["provinzen"] for k in p["kacheln"]]
     teile = []
     fallen = [(k["code"], b["text"]) for k, _ in kacheln for b in k["bausteine"] if b["typ"] == "klausurfalle"]
-    if fallen:
+    if fallen and teilbar:
+        z = [[str(i), t, f"[[{c}]]"] for i, (c, t) in enumerate(fallen, 1)]
+        teile.append(("LF", "Klausurfallen im Überblick", tabelle(["Nr", "Klausurfalle", "Kachel"], z, klasse="t gen")))
+    elif fallen:
         li = "".join(f'<li>{md(t)} <a class="vw" href="#k-{c}">{c}</a></li>' for c, t in fallen)
         teile.append(("LF", "Klausurfallen im Überblick", f'<ol class="fallen">{li}</ol>'))
     if werk.get("quellenkritik"):
@@ -679,7 +761,15 @@ def l_generiert(werk):
     if lex:
         z = [[b, d, f"[[{c}]]"] for b, (d, c) in sorted(lex.items(), key=lambda x: x[0].lower())]
         teile.append(("LV", "Lexicon", tabelle(["Begriff", "Bedeutung", "Kachel"], z, lat_spalten=(0,))))
-    if werk.get("selbsttest"):
+    kf = [(k["code"], f) for p in werk["provinzen"] for k in p["kacheln"] for f in k.get("kernfakten", [])]
+    if kf and teilbar:  # 3.7: alle Kernfakten im Überblick
+        teile.append(("LK", "Kernfakten im Überblick", tabelle(["Nr", "Kernfakt", "Kachel"], [[str(i), f, f"[[{c}]]"] for i, (c, f) in enumerate(kf, 1)], klasse="t gen")))
+    if werk.get("selbsttest") and teilbar:
+        fr = [[str(i), s["frage"], f'[[{s["kachel"]}]]'] for i, s in enumerate(werk["selbsttest"], 1)]
+        an = [[str(i), s["antwort"]] for i, s in enumerate(werk["selbsttest"], 1)]
+        teile.append(("LS", "Selbsttest", [tabelle(["Nr", "Frage", "Kachel"], fr, klasse="t gen"),
+                                           '<div class="schema-titel">Auflösung</div>' + tabelle(["Nr", "Antwort"], an, klasse="t gen loes-t")]))
+    elif werk.get("selbsttest"):
         fr = "".join(f'<li>{md(s["frage"])} <a class="vw" href="#k-{s["kachel"]}">{s["kachel"]}</a></li>' for s in werk["selbsttest"])
         an = "".join(f'<li>{md(s["antwort"])}</li>' for s in werk["selbsttest"])
         teile.append(("LS", "Selbsttest", f'<div class="selbsttest"><ol>{fr}</ol><div class="loes"><div class="label">Auflösung</div><ol>{an}</ol></div></div>'))
@@ -691,7 +781,10 @@ def l_generiert(werk):
         anzeige = "L·" + code[1]
         kopf = (f'<div class="kkopf" id="k-{code}"><span class="code">{anzeige}</span><h2>{titel}</h2>'
                 f'<span class="kanker">generiert</span></div>')
-        out.append((code, titel, einheit(kopf + f'<div class="bs">{inhalt}</div>', kachel=anzeige, prov="L", farbe="grau", titel=titel)))
+        stuecke = inhalt if isinstance(inhalt, list) else [inhalt]  # 3.6: mehrere Einheiten je Abschnitt möglich
+        html = "".join(einheit((kopf if i == 0 else "") + f'<div class="bs">{s}</div>', kachel=anzeige, prov="L", farbe="grau", titel=titel)
+                       for i, s in enumerate(stuecke))
+        out.append((code, titel, html))
     return out
 
 
@@ -1150,16 +1243,16 @@ def _strings(obj, pfad="$"):
 
 
 def baue_einheiten(werk, kx):
-    global SEITENVERWEIS
-    SEITENVERWEIS = True
+    global SEITENVERWEIS, ATMEN
+    SEITENVERWEIS = ATMEN = True
     try:
         return _baue_einheiten(werk, kx)
     finally:
-        SEITENVERWEIS = False
+        SEITENVERWEIS = ATMEN = False
 
 
 def _baue_einheiten(werk, kx):
-    gen = l_generiert(werk)
+    gen = l_generiert(werk, teilbar=True)
     abk = abkuerzungen(werk)
     out = [titelseite(werk), impressum(werk)] + inhaltsverzeichnis(werk, gen, bool(abk)) + [zum_gebrauch(werk)] + abk
     for p in werk["provinzen"]:
@@ -1167,6 +1260,9 @@ def _baue_einheiten(werk, kx):
                            provstart="1", nr=p["nr"], pname=p["name_lat"], farbe=p["farbe"], name=f'Provinz {p["code"]}'))
         for k in p["kacheln"]:
             out += kachel_einheiten(k, p["code"], kx, p["farbe"])
+        fb = kernfakten_provinz(p) if p["code"] != "L" else None
+        if fb:
+            out.append(fb)
         if p["code"] == "L":
             out += [u for _, _, u in gen]
     out += abbildungsverzeichnis(werk)
@@ -1265,6 +1361,7 @@ def dokument(werk, einheiten):
         "kopf_links": f'<b>{esc(m["titel"])}</b> · {esc(m["untertitel"])}',
         "fuss_links": esc(stand_text(werk)),
         "provinzen": [{"code": p["code"], "nr": p["nr"], "farbe": p["farbe"], "name": p["name_lat"], "de": esc(p["name_de"])} for p in werk["provinzen"]],
+        "umbruch": UMBRUCH,
     }
     return f"""<!DOCTYPE html>
 <html lang="de-AT"><head><meta charset="utf-8">
@@ -1277,6 +1374,7 @@ def dokument(werk, einheiten):
 </head><body class="schema-{m.get("farbschema", "nacht")}">
 <main id="buch"></main>
 <div id="quelle">{"".join(einheiten)}</div>
+<script src="{(KIT / 'vorlage' / 'umbruch.js').as_uri()}"></script>
 <script src="{(KIT / 'vorlage' / 'montage.js').as_uri()}"></script>
 </body></html>"""
 
@@ -1396,6 +1494,11 @@ def pruefe_pdf(pdf_pfad, bericht, werk=None):
     fremd = [f for f in bericht["schriften"] if not re.match(r"(CormorantGaramond|Spectral|AlegreyaSans|KaTeX_|DejaVuSans)", f)]
     if fremd:
         bericht["warnungen"].append(f"Ersatzschriften eingebettet (fehlende Glyphen): {fremd}")
+    # 3.6: Kantenprüfung. Kein Seitenhintergrund ist reinweiß; reinweiße Pixel an der rechten oder unteren
+    # Blattkante bedeuten einen Randspalt (Seitenhöhe, Rundung oder Verkleinerung durch Überstand).
+    spalt = kantenspalt(pdf_pfad, [1, min(2, n)])
+    if spalt:
+        bericht["fehler"].append("Randspalt (reinweiße Blattkante) auf Seite(n) " + ", ".join(str(s) for s in spalt))
     seiten = bericht["seiten"]
     # Unvermeidbar und daher nicht gemeldet: Seiten vor einem erzwungenen Neubeginn (neue Provinz, Lösungsteil)
     leer = [s["nr"] for i, s in enumerate(seiten) if s["art"] in ("normal", "quer") and s["fuellstand"] < 0.25
@@ -1403,6 +1506,24 @@ def pruefe_pdf(pdf_pfad, bericht, werk=None):
     if leer:
         bericht["warnungen"].append(f"Seiten unter 25 % Füllstand: {leer}")
     return n
+
+
+def kantenspalt(pdf_pfad, seiten, dpi=150):
+    """Seiten (1-basiert), deren rechte oder untere Blattkante reinweiße Pixel trägt (3.6)."""
+    from PIL import Image
+    import tempfile
+    befund = []
+    with tempfile.TemporaryDirectory() as d:
+        for s in sorted(set(seiten)):
+            subprocess.run(["pdftoppm", "-r", str(dpi), "-f", str(s), "-l", str(s), "-png", str(pdf_pfad), f"{d}/k"], check=True)
+            im = Image.open(next(Path(d).glob("k-*.png"))).convert("RGB")
+            w, h = im.size
+            kante = [im.getpixel((x, h - 1)) for x in range(0, w, 3)] + [im.getpixel((w - 1, y)) for y in range(0, h, 3)]
+            if any(px == (255, 255, 255) for px in kante):
+                befund.append(s)
+            for f in Path(d).glob("k-*.png"):
+                f.unlink()
+    return befund
 
 
 def kontaktabzug(pdf_pfad, ziel, markiert=()):
@@ -1430,6 +1551,16 @@ def kontaktabzug(pdf_pfad, ziel, markiert=()):
         b.unlink()
 
 
+def umbruch_zeile(bericht):
+    """Kennzahlen des Umbruchs für die Konsole (3.6)."""
+    u = bericht.get("umbruch", {})
+    inhalt = [s for s in bericht["seiten"] if s["art"] in ("normal", "quer") and s["fuellstand"] <= 1.001]
+    mittel = sum(s["fuellstand"] for s in inhalt) / len(inhalt) if inhalt else 0
+    return (f'Umbruch: {u.get("verfahren", "?")} · {len(bericht["seiten"])} Seiten · {u.get("fortsetzungen", 0)} Fortsetzungen'
+            f' · {len(u.get("kleinreste", []))} Kleinreste · {len(u.get("anrisse", []))} Anrisse · Füllstand {round(mittel * 100)} %'
+            f' · Korrekturen {u.get("korrekturen", 0)} · Planung {u.get("planung_ms", 0)} ms')
+
+
 def dateiname(werk):
     m = werk["meta"]
     return "Terra_" + "_".join(m["titel"].split()[1:]) + f'_v{m["version"]}_{m["stand"]}'
@@ -1440,7 +1571,11 @@ def main():
     ap.add_argument("werk")
     ap.add_argument("--aus", default=".")
     ap.add_argument("--trotzdem", action="store_true", help="trotz Validierungsfehlern rendern")
+    ap.add_argument("--umbruch", choices=["global", "gierig", "test-scheitern", "test-messfehler", "test-kleinste"], default="global",
+                    help="Seitenumbruch: global (Standard) oder gierig wie bis 3.5 (Fehlersuche)")
     a = ap.parse_args()
+    global UMBRUCH
+    UMBRUCH = a.umbruch
     t0 = time.time()
     werk = json.loads(Path(a.werk).read_text(encoding="utf-8"))
     ordner = Path(a.werk).resolve().parent
@@ -1472,7 +1607,11 @@ def main():
     for t in bericht["teilungen"]:
         print(f'Tabellenteilung {t["kachel"]}: {t["zeilen"]} Zeilen auf {t["teile"]} Teile, Seiten {t["seiten"]}')
     for s in bericht["skalierungen"]:
-        print(f'Skalierung {s["kachel"]}: {round(s["skala"]*100)} % auf Seite {s["seite"]}')
+        print(f'Notverkleinerung {s["kachel"]}: {round(s["skala"]*100)} % auf Seite {s["seite"]}')
+    print(umbruch_zeile(bericht))
+    ab = bericht.get("umbruch", {}).get("abbildungen", [])
+    if ab:
+        print("Abbildungsskala: " + " ".join(f'{a["kachel"]}:{round(a["skala"]*100)}%{"H" if a["art"] == "hoehe" else ""}' for a in ab))
     abb = abbildungen(werk)
     if abb:
         print(f"Abbildungen: {len(abb)}, auf Seite(n) {sorted(set(bericht.get('abbildungsseiten', [])))}"
@@ -1484,6 +1623,17 @@ def main():
         print("FEHLER  ", z)
     for z in bericht["warnungen"]:
         print("WARNUNG ", z)
+    for z in bericht.get("hinweise", []):
+        print("HINWEIS ", z)
+    for v in bericht.get("umbruch", {}).get("verursacher", []):
+        rest = (f'fehlen {v["fehlen_mm"]} mm, um noch auf die Seite zu passen' if v["fehlen_mm"] <= 40
+                else f'ist für den Rest der Seite {v["fehlen_mm"]} mm zu hoch und unteilbar (kürzen oder Baustein teilen)')
+        if v.get("zurueckgehalten"):
+            rest += "; davor hätte nur ein Anriss oder eine Teilung an starker Bindung gepasst"
+        print(f'HINWEIS  Leerraum S {v["seite"]} ({round(v["fuellstand"] * 100)} %): {v["kachel"]} {rest}')
+    fl = bericht.get("umbruch", {}).get("fuellungen", [])
+    if fl:
+        print("Kernfakten am Provinzende: " + ", ".join(f'{f["prov"]} S {f["seite"]}' if f["seite"] else f'{f["prov"]} kein Platz' for f in fl))
     print(f"Ergebnis: {len(bericht['fehler'])} Fehler, {len(bericht['warnungen'])} Warnungen")
     sys.exit(1 if bericht["fehler"] else 0)
 
