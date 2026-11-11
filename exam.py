@@ -76,7 +76,6 @@ def html_interaktiv(exam, werk, lokal=False):
 </style>
 </head>
 <body>
-{K.wasserzeichen()}
 <header class="ekopf" id="ekopf" hidden>
   <div class="reihe"><span class="titel">{esc(m["titel"])}</span><span class="uhr" id="uhr" aria-live="off" title="Restzeit"></span>
     <button class="knopf" id="b-uebersicht">{K.ICON["ganz"]}<span class="lbl">Übersicht</span></button>

@@ -521,6 +521,22 @@ def main():
     def _verursacher():
         v = setze("hic", KIT / "referenz_historica.json")["bericht"]["umbruch"]["verursacher"]
         return bool(v) and all(x["fehlen_mm"] > 0 and x["kachel"] and x["fuellstand"] < 0.75 for x in v)
+    def _ohne_diagonale():
+        """3.7.1: kein diagonales Wasserzeichen; Vermerk auf jeder Seite (Fußzeile, Titelseite), im Impressum, in Metadaten, Grafik und Signet."""
+        from pypdf import PdfReader
+        s = setze("ex", KIT / "referenzwerk.json"); b = s["bericht"]
+        html = s["html"].read_text(encoding="utf-8")
+        seiten = SPX.run(["pdftotext", str(s["pdf"]), "-"], capture_output=True, text=True).stdout.split("\f")[:len(b["seiten"])]
+        pdf_ok = (all("Oliver Bedernik" in x for x in seiten) and "Bedernik" in (PdfReader(str(s["pdf"])).metadata.author or "")
+                  and not any("Wasserzeichen" in f for f in b["fehler"]))
+        css = (KIT / "vorlage/skript.css").read_text(encoding="utf-8") + (KIT / "vorlage/montage.js").read_text(encoding="utf-8")
+        ohne = 'class="wz"' not in html and "rotate(-35deg)" not in css and 'class="wz"' not in css
+        with TF.TemporaryDirectory() as d:
+            SPX.run([sys.executable, str(KIT / "karte.py"), str(KIT / "referenzwerk.json"), "--aus", d], capture_output=True, text=True)
+            k = next(Path(d).glob("*_karte.html")).read_text(encoding="utf-8")
+        e = (KIT / "exam.py").read_text(encoding="utf-8")
+        netz = "wz-muster" not in k and 'class="signet"' in k and "wasserzeichen()" not in e and 'class="signet"' in e
+        return pdf_ok and ohne and netz and 'class="t-wz"' in html
     SATZ37 = [
         ("Tabellen: Begriffsspalte halbfett und ungetrennt", _begriffsspalte),
         ("Tabellen: Vergleich gestürzt, Übersicht als Begriffsliste", _tabellenarten),
@@ -530,6 +546,7 @@ def main():
         ("Kernfakten im Repetitorium und am Provinzende", _kernfakten_satz),
         ("Gerüstwörter leise, Fachbegriffe fett", _geruest),
         ("Verursacher schwacher Seiten im Bericht", _verursacher),
+        ("Kein diagonales Wasserzeichen, Vermerk auf jeder Seite", _ohne_diagonale),
     ]
     SATZ = [
         ("Umbruch: Rechenkern (Kleinrest, Stufen, Tabellen, Ausschluss)", _rechenkern),

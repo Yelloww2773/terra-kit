@@ -170,13 +170,6 @@ ICON = {
 }
 
 
-def wasserzeichen():
-    return ('<svg class="wz-muster" aria-hidden="true" width="100%" height="100%"><defs><pattern id="wzp" width="560" height="320" '
-            'patternUnits="userSpaceOnUse" patternTransform="rotate(-28)"><text x="24" y="170" fill="currentColor" '
-            'style="font: 600 46px \'Cormorant Garamond\', Georgia, serif">(c) Oliver Bedernik</text></pattern></defs>'
-            '<rect width="100%" height="100%" fill="url(#wzp)"/></svg>')
-
-
 def css_basis():
     c = (KIT / "vorlage" / "skript.css").read_text(encoding="utf-8")
     c = re.sub(r"@font-face \{[^}]*Terra Symbole[^}]*\}\s*", "", c)
@@ -251,7 +244,6 @@ def baue(werk, lokal=False, ordner=None):
   <button class="knopf" id="k-info" aria-pressed="false" aria-label="Über diese Karte">{ICON["info"]}</button>
 </header>
 <main class="flaeche" id="flaeche" aria-label="Wissenslandkarte">
-  {wasserzeichen()}
   <div class="welt" id="welt">
 {"".join(regionen)}
   </div>

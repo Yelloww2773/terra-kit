@@ -42,12 +42,11 @@
   function neueSeite(a) {
     const p = document.createElement('section');
     p.className = 'page ' + a;
-    const wz = '<div class="wz" aria-hidden="true"><span>(c) Oliver Bedernik</span></div>';
     const rechts = (a === 'normal' || a === 'quer') && akt ? 'Provinz ' + akt.nr + ' · ' + akt.name : '';
     const kopf = '<div class="kopfzeile"><span class="l">' + META.kopf_links + '</span><span class="r">' + rechts + '</span></div>';
     const fuss = '<div class="fusszeile"><span class="l">' + META.fuss_links + '</span><span class="m">(c) Oliver Bedernik</span><span class="r seitennr"></span></div>';
-    if (a === 'deck') p.innerHTML = '<div class="koerper"></div>' + wz;
-    else p.innerHTML = kopf + '<div class="koerper"></div>' + fuss + wz;
+    if (a === 'deck') p.innerHTML = '<div class="koerper"></div>' + '<div class="deckvermerk">(c) Oliver Bedernik</div>';
+    else p.innerHTML = kopf + '<div class="koerper"></div>' + fuss;
     BUCH.appendChild(p);
     if (a === 'deck') daumen(p, false, 150);
     else if (a === 'spalten') daumen(p, false);

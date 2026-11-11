@@ -64,11 +64,8 @@ body {
 .fusszeile .r { position: absolute; right: 0; top: 1.2mm; }
 .fusszeile .m { position: absolute; left: 0; right: 0; top: 1.2mm; text-align: center; }
 .kopfzeile b { font-weight: 700; color: var(--tinte); }
-.wz { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 20; mix-blend-mode: multiply; }
-.wz span {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-35deg);
-  font: 600 56pt/1 var(--f-titel); color: var(--tinte); opacity: 0.055; white-space: nowrap; letter-spacing: 0.02em;
-}
+/* 3.7.1: kein diagonales Seitenwasserzeichen mehr; Vermerk in Fußzeile, Titelseite, Grafik, Impressum, Metadaten */
+.deckvermerk { position: absolute; right: 17mm; bottom: 8mm; font: 400 7pt var(--f-ui); color: var(--tinte-2); opacity: 0.75; z-index: 20; }
 
 /* ── Provinzkopf ─────────────────────────────────────────────────── */
 .provkopf { background: var(--p-hell); border-left: 4pt solid var(--p); padding: 5mm 6mm 4.5mm; border-radius: 0 3pt 3pt 0; margin-bottom: 4.5mm; }

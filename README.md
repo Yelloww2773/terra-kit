@@ -18,7 +18,7 @@ Daten statt Nachbau: Gestaltung, Seitenmontage und Prüfungen liegen im Code, ni
 | `bild.py` | bettet verknüpfte Rasterbilder in werk.json oder exam.json ein, verkleinert, entfernt EXIF | neu, 3.5.0 |
 | `referenzwerk.json` | „Terra Exemplaris“: enthält jeden Baustein, jede Schemavariante, jeden Sonderfall | fertig, 0.4 |
 | `referenz_historica.json` | „Terra Historica Constitutionalis“: zweites Prüfwerk mit acht Provinzen (Höchstzahl), 39 Kacheln, zweiseitigem Verzeichnis, Strukturdiagramm; zugleich erste Überführung einer Bestandskarte mit Quellenkritik | fertig, 1.0 |
-| `tests/run_tests.py` | 122 Tests: Prüfwerke, Referenzexam, beide Decks, Quellen und Zitierformen, Grafik, Rechenprobe, Bildrechte, Satz und Umbruch, Tabellen und Gewichtung; jeder eingeschleuste Fehler erkannt | fertig, 3.7.0 |
+| `tests/run_tests.py` | 123 Tests: Prüfwerke, Referenzexam, beide Decks, Quellen und Zitierformen, Grafik, Rechenprobe, Bildrechte, Satz und Umbruch, Tabellen und Gewichtung; jeder eingeschleuste Fehler erkannt | fertig, 3.7.1 |
 | `tests/umbruch_messung.py` | misst Seiten, Fortsetzungen, Kleinreste, Anrisse, Füllstand und Grafikschrift eines gesetzten Werks, unabhängig von der Kit-Version (Vorher und Nachher gleich gemessen) | neu, 3.6.0 |
 | `tests/umbruch_kern_test.js` | Rechenkern des Umbruchs ohne Browser (Node) | neu, 3.6.0 |
 | `skript.py` | Lernskript A4 mit Seitenmontage, Umbruch- und PDF-Prüfung | fertig, 3.1.0 |
@@ -168,7 +168,7 @@ Satz der Kacheln, Diagramme und Tabellen kommt unverändert aus `skript.py`; Kar
 
 Jede Provinz ist ein Gebiet; ihre Kacheln werden als Mauerwerk gesetzt, breite Tabellen erhalten doppelte Breite. Die Gebiete werden in gleichmäßig gefüllten Reihen angeordnet, und zwar so, dass die ganze Karte beim Einpassen den größten Maßstab erreicht. Aus der Ferne erscheinen die Provinznamen als Landesnamen in fester Bildschirmgröße.
 
-Bedienung: Ziehen, Mausrad, Trackpad, Zwei-Finger-Geste, Tastatur (+, −, 0, /, Pfeile, Esc); Provinzleiste; Minikarte; Register mit Volltextsuche; Filter „Kernstoff“; anklickbare Querverweise mit Adresse (`#k-D7`); Darstellung Automatisch, Hell, Dunkel; letzte Ansicht wird im Browser gespeichert. Wasserzeichen als diagonales Muster im Hintergrund und als Signet.
+Bedienung: Ziehen, Mausrad, Trackpad, Zwei-Finger-Geste, Tastatur (+, −, 0, /, Pfeile, Esc); Provinzleiste; Minikarte; Register mit Volltextsuche; Filter „Kernstoff“; anklickbare Querverweise mit Adresse (`#k-D7`); Darstellung Automatisch, Hell, Dunkel; letzte Ansicht wird im Browser gespeichert. Wasserzeichen als Signet (seit 3.7.1 kein diagonales Hintergrundmuster).
 
 ## Exam: wie es arbeitet
 
@@ -206,6 +206,11 @@ Namen als „Nachname, Vorname“; Körperschaften ohne Komma. Für AZR mit Init
 Der Validator prüft: Kurzzitate eindeutig, Pflichtangaben je Gattung, jede zitierte Quelle verzeichnet, jede strukturierte Quelle von mindestens einer Kachel zitiert.
 
 ## Änderungen
+
+**3.7.1** (November 2026) „Ohne Diagonale“
+
+- Diagonales Wasserzeichen entfernt: im Lernskript (Seitenüberlagerung), in Karte und Exam (Hintergrundmuster). Der Vermerk „(c) Oliver Bedernik“ steht weiterhin in Fußzeile jeder Seite, auf der Titelseite, in jeder Grafik, im Impressum, in den PDF-Metadaten und als Signet in Karte und Exam; die PDF-Prüfung „Wasserzeichen auf jeder Seite“ bleibt scharf.
+- Neuer Test: kein diagonales Wasserzeichen, Vermerk auf jeder Seite (123 Tests).
 
 **3.7.0** (November 2026) „Gewichtung, Tabellen, Format“
 - Kernfakten (ein bis drei je Kachel) und Merkhilfe: Kernsatz am Kachelanfang, Anki-Lückenkarten, Abschnitt L·K im Repetitorium, Kernfakten der Provinz im Rest der letzten Provinzseite, Hinweis auf nicht abgefragte Kernfakten.

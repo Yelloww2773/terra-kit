@@ -33,7 +33,6 @@ button, input { font: inherit; color: inherit; }
 .flaeche { position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + var(--kopf-h)); bottom: calc(env(safe-area-inset-bottom, 0px) + var(--fuss-h));
   overflow: hidden; touch-action: none; cursor: grab; background: var(--grund); }
 .flaeche.zieht { cursor: grabbing; }
-.wz-muster { position: absolute; inset: 0; pointer-events: none; opacity: 0.06; color: var(--wz-farbe); }
 .welt { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
 .region { container-type: inline-size; position: absolute; border-radius: 22px; background: var(--region); border: 1.5px solid color-mix(in srgb, var(--p) 45%, transparent); }
 .region::before { content: ""; position: absolute; inset: 10px; border-radius: 14px; border: 1px dashed color-mix(in srgb, var(--p) 30%, transparent); pointer-events: none; }

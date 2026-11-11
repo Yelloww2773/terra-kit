@@ -8,7 +8,6 @@ body { margin: 0; min-height: 100vh; background: var(--grund); color: var(--tint
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--leiste); }
 button, input { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--fokus); outline-offset: 2px; }
-.wz-muster { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.05; color: var(--wz-farbe); }
 .signet { position: fixed; z-index: 45; right: 14px; bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); font: 600 11px var(--f-ui);
   letter-spacing: 0.04em; color: var(--tinte); opacity: 0.38; pointer-events: none; }
 main { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 22px 18px 110px; }
