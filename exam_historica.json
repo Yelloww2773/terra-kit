@@ -1,14 +1,14 @@
 {
- "standard": "3.1",
+ "standard": "4.0",
  "meta": {
   "titel": "Examen Historicum Constitutionale",
   "werk": "Terra Historica Constitutionalis",
-  "werk_version": "1.0",
-  "version": "1.1",
-  "stand": "2026-10",
+  "werk_version": "2.0",
+  "version": "2.0",
+  "stand": "2026-11",
   "urheber": "(c) Oliver Bedernik",
   "minuten": 60,
-  "karte_url": "https://claude.ai/artifact/71hdTrgX1EmR74Rr9ab8H1",
+  "karte_url": "https://claude.ai/artifact/1e8EMQgJVmshnAuDKLeECx",
   "proverbium": {
    "lat": "Non scholae, sed vitae discimus.",
    "de": "Nicht für die Schule, für das Leben lernen wir.",
@@ -20,7 +20,7 @@
    "id": "q1",
    "typ": "mehrfach",
    "provinz": "A",
-   "kacheln": [
+   "abschnitte": [
     "A1",
     "E8",
     "E7"
@@ -63,7 +63,7 @@
    "id": "q2",
    "typ": "einfach",
    "provinz": "A",
-   "kacheln": [
+   "abschnitte": [
     "A2"
    ],
    "dimension": "Abgrenzung",
@@ -107,7 +107,7 @@
    "id": "q3",
    "typ": "mehrfach",
    "provinz": "A",
-   "kacheln": [
+   "abschnitte": [
     "A3",
     "A4"
    ],
@@ -148,7 +148,7 @@
    "id": "q4",
    "typ": "einfach",
    "provinz": "B",
-   "kacheln": [
+   "abschnitte": [
     "B2",
     "B5"
    ],
@@ -160,7 +160,7 @@
      "id": "a",
      "text": "Oktroyiert; der Monarch kann die Verfassung einseitig wieder zurücknehmen.",
      "richtig": true,
-     "begruendung": "Eine oktroyierte Verfassung wird einseitig gewährt und ist einseitig widerruflich; genau das geschah 1851.",
+     "begruendung": "Eine oktroyierte Verfassung wird einseitig gewährt und ist vom Geber einseitig widerruflich; so hob das Silvesterpatent 1851 die ebenfalls oktroyierte Märzverfassung auf.",
      "norm": "Pillersdorfsche Verfassung 25.4.1848"
     },
     {
@@ -181,7 +181,7 @@
      "id": "d",
      "text": "Oktroyiert; sie trat mit ihrer Kundmachung wirksam in Kraft und galt bis zum Silvesterpatent.",
      "richtig": false,
-     "begruendung": "Richtiger Typ, falsche Folge: Die Pillersdorfsche Verfassung trat nie wirksam in Kraft.",
+     "begruendung": "Richtiger Typ, falsche Folge: Die Pillersdorfsche Verfassung galt formell, wurde aber nie umgesetzt; nach der Sturmpetition trat an die Stelle ihrer Kammern ein konstituierender Reichstag.",
      "norm": "Pillersdorfsche Verfassung 25.4.1848"
     }
    ],
@@ -193,7 +193,7 @@
    "id": "q5",
    "typ": "mehrfach",
    "provinz": "B",
-   "kacheln": [
+   "abschnitte": [
     "B3",
     "B6"
    ],
@@ -235,7 +235,7 @@
    "id": "q6",
    "typ": "mehrfach",
    "provinz": "B",
-   "kacheln": [
+   "abschnitte": [
     "B4",
     "B5"
    ],
@@ -260,7 +260,7 @@
      "id": "c",
      "text": "Der Kremsierer Entwurf trat nach der Auflösung des Reichstages in Kraft.",
      "richtig": false,
-     "begruendung": "Der Entwurf trat nie in Kraft; der Reichstag wurde am 7.3.1849 aufgelöst.",
+     "begruendung": "Der Entwurf trat nie in Kraft; der Reichstag wurde mit Manifest vom 4.3.1849 aufgelöst und am 7.3.1849 militärisch geräumt.",
      "norm": "Patent vom 7.3.1849"
     },
     {
@@ -276,7 +276,7 @@
    "id": "q7",
    "typ": "einfach",
    "provinz": "B",
-   "kacheln": [
+   "abschnitte": [
     "B6"
    ],
    "dimension": "Chronologie",
@@ -285,30 +285,30 @@
    "optionen": [
     {
      "id": "a",
-     "text": "Es ergingen drei Erlässe; die Gleichheit vor dem Gesetz im Zivil- und Strafrecht blieb bestehen.",
+     "text": "Es ergingen drei Akte, zwei Patente und ein Kabinettschreiben; die Gleichheit vor dem Gesetz im Zivil- und Strafrecht blieb bestehen.",
      "richtig": true,
-     "begruendung": "Drei kaiserliche Erlässe vom 31.12.1851; bestehen blieben unter anderem Grundentlastung und Gleichheit vor dem Gesetz im Zivil- und Strafrecht.",
+     "begruendung": "RGBl 1852/2 und 3 (Patente) sowie RGBl 1852/4 (Kabinettschreiben); das Patent RGBl 1852/2 bestätigt ausdrücklich die Gleichheit vor dem Gesetz, ebenso blieb die Grundentlastung bestehen.",
      "norm": "Silvesterpatent 31.12.1851"
     },
     {
      "id": "b",
-     "text": "Es ergingen drei Erlässe; beseitigt wurde auch die Grundentlastung.",
+     "text": "Es ergingen drei Akte, zwei Patente und ein Kabinettschreiben; beseitigt wurde auch die Grundentlastung.",
      "richtig": false,
      "begruendung": "Die Grundentlastung blieb ausdrücklich unangetastet.",
      "norm": "Silvesterpatent 31.12.1851"
     },
     {
      "id": "c",
-     "text": "Es erging ein einziger Erlass; erhalten blieben aber die politischen Grundrechte.",
+     "text": "Es erging ein einziges Patent; erhalten blieben aber die politischen Grundrechte.",
      "richtig": false,
-     "begruendung": "Doppelt falsch: drei Erlässe, und gerade die politischen Grundrechte entfielen ersatzlos.",
+     "begruendung": "Doppelt falsch: drei Akte, und gerade die politischen Grundrechte entfielen mit der Aufhebung des Grundrechtspatents (RGBl 1852/3) ersatzlos.",
      "norm": "Silvesterpatent 31.12.1851"
     },
     {
      "id": "d",
      "text": "Die Aussage der Klausur ist zutreffend.",
      "richtig": false,
-     "begruendung": "Sowohl die Zahl der Erlässe als auch die Gleichheit vor dem Gesetz sind falsch wiedergegeben.",
+     "begruendung": "Sowohl die Zahl der Akte als auch die Gleichheit vor dem Gesetz sind falsch wiedergegeben.",
      "norm": "Silvesterpatent 31.12.1851"
     }
    ]
@@ -317,7 +317,7 @@
    "id": "q8",
    "typ": "mehrfach",
    "provinz": "C",
-   "kacheln": [
+   "abschnitte": [
     "C2",
     "C3"
    ],
@@ -359,7 +359,7 @@
    "id": "q9",
    "typ": "einfach",
    "provinz": "C",
-   "kacheln": [
+   "abschnitte": [
     "C3",
     "C4"
    ],
@@ -400,7 +400,7 @@
    "id": "q10",
    "typ": "mehrfach",
    "provinz": "C",
-   "kacheln": [
+   "abschnitte": [
     "C1",
     "C4"
    ],
@@ -447,14 +447,15 @@
    "id": "q11",
    "typ": "einfach",
    "provinz": "D",
-   "kacheln": [
+   "abschnitte": [
     "D1"
    ],
    "dimension": "Abgrenzung",
    "sachverhalt": "Nach 1867 haben Österreich und Ungarn einen gemeinsamen Monarchen und gemeinsame Angelegenheiten (Äußeres, Heerwesen und deren Finanzierung), die über Delegationen beider Parlamente behandelt werden. Eine gemeinsame Gesetzgebung im eigentlichen Sinn gibt es nicht.",
    "grafik": {
-    "variante": "baum",
     "titel": "Aufbau nach dem Ausgleich 1867",
+    "nachweis": "Eigene Darstellung",
+    "variante": "baum",
     "knoten": [
      {
       "id": "m",
@@ -532,7 +533,7 @@
    "id": "q12",
    "typ": "mehrfach",
    "provinz": "D",
-   "kacheln": [
+   "abschnitte": [
     "D2"
    ],
    "dimension": "Legitimationstyp",
@@ -572,7 +573,7 @@
    "id": "q13",
    "typ": "mehrfach",
    "provinz": "D",
-   "kacheln": [
+   "abschnitte": [
     "D3"
    ],
    "dimension": "Fundstelle und Status",
@@ -613,7 +614,7 @@
    "id": "q14",
    "typ": "einfach",
    "provinz": "D",
-   "kacheln": [
+   "abschnitte": [
     "D4"
    ],
    "dimension": "Abgrenzung",
@@ -657,7 +658,7 @@
    "id": "q15",
    "typ": "einfach",
    "provinz": "D",
-   "kacheln": [
+   "abschnitte": [
     "D4"
    ],
    "dimension": "Fundstelle und Status",
@@ -697,7 +698,7 @@
    "id": "q16",
    "typ": "mehrfach",
    "provinz": "D",
-   "kacheln": [
+   "abschnitte": [
     "D5"
    ],
    "dimension": "Abgrenzung",
@@ -738,7 +739,7 @@
    "id": "q17",
    "typ": "mehrfach",
    "provinz": "E",
-   "kacheln": [
+   "abschnitte": [
     "E1"
    ],
    "dimension": "Chronologie",
@@ -779,7 +780,7 @@
    "id": "q18",
    "typ": "einfach",
    "provinz": "E",
-   "kacheln": [
+   "abschnitte": [
     "E2",
     "F3"
    ],
@@ -821,7 +822,7 @@
    "id": "q19",
    "typ": "mehrfach",
    "provinz": "E",
-   "kacheln": [
+   "abschnitte": [
     "E3"
    ],
    "dimension": "Fundstelle und Status",
@@ -862,7 +863,7 @@
    "id": "q20",
    "typ": "einfach",
    "provinz": "E",
-   "kacheln": [
+   "abschnitte": [
     "E4",
     "E8"
    ],
@@ -903,7 +904,7 @@
    "id": "q21",
    "typ": "mehrfach",
    "provinz": "E",
-   "kacheln": [
+   "abschnitte": [
     "E5"
    ],
    "dimension": "Abgrenzung",
@@ -949,7 +950,7 @@
    "id": "q22",
    "typ": "mehrfach",
    "provinz": "E",
-   "kacheln": [
+   "abschnitte": [
     "E6"
    ],
    "dimension": "Abgrenzung",
@@ -995,7 +996,7 @@
    "id": "q23",
    "typ": "einfach",
    "provinz": "G",
-   "kacheln": [
+   "abschnitte": [
     "G1",
     "E7"
    ],
@@ -1037,7 +1038,7 @@
    "id": "q24",
    "typ": "mehrfach",
    "provinz": "F",
-   "kacheln": [
+   "abschnitte": [
     "F1",
     "F2"
    ],
@@ -1079,7 +1080,7 @@
    "id": "q25",
    "typ": "einfach",
    "provinz": "F",
-   "kacheln": [
+   "abschnitte": [
     "F4"
    ],
    "dimension": "Abgrenzung",
@@ -1125,7 +1126,7 @@
    "id": "q26",
    "typ": "mehrfach",
    "provinz": "G",
-   "kacheln": [
+   "abschnitte": [
     "G3"
    ],
    "dimension": "Fundstelle und Status",
@@ -1171,7 +1172,7 @@
    "id": "q27",
    "typ": "mehrfach",
    "provinz": "G",
-   "kacheln": [
+   "abschnitte": [
     "G4"
    ],
    "dimension": "Fundstelle und Status",
@@ -1211,7 +1212,7 @@
    "id": "q28",
    "typ": "einfach",
    "provinz": "L",
-   "kacheln": [
+   "abschnitte": [
     "L3"
    ],
    "dimension": "Kontinuität und Rezeption",

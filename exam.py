@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""(c) Oliver Bedernik · Terra-Kit · exam.py (Standard 3.1)
+"""(c) Oliver Bedernik · Terra-Kit 4.0 · exam.py
 
-Erzeugt aus einer exam.json und dem zugehörigen werk.json
+Erzeugt aus einer exam.json und dem zugehörigen werk.json (beide Standard 4.0; Verweise auf Abschnitte)
   1. die interaktive Prüfung (eine selbstständige HTML-Datei zur Veröffentlichung) und
   2. mit --pdf den A4-Prüfungsbogen mit Lösungsteil (Seitenmontage wie das Skript).
 
@@ -17,9 +17,10 @@ from pathlib import Path
 
 KIT = Path(__file__).resolve().parent
 sys.path.insert(0, str(KIT))
-import skript as S  # noqa: E402
+import satz as S  # noqa: E402
 import karte as K  # noqa: E402
 from validate import validiere_exam  # noqa: E402
+import sicht  # noqa: E402
 
 VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
 esc = S.esc
@@ -222,7 +223,9 @@ def main():
     print(f"Validierung: {len(v.fehler)} Fehler, {len(v.warnungen)} Warnungen")
     if v.fehler:
         print("\n".join(v.fehler)); sys.exit("Abbruch: exam.json fehlerhaft")
-    S.bilder_laden(exam, ordner)  # 3.5: verknüpfte Bilder einer Grafik einbetten (Prüfung bleibt eine Datei)
+    S.bilder_laden(exam, ordner)  # verknüpfte Bilder einer Grafik einbetten (Prüfung bleibt eine Datei)
+    exam = sicht.exam_sicht(exam, werk)  # 4.0: Abschnitte und Abbildungen in der Sicht des Renderers
+    werk = sicht.kachelsicht(werk, Path(a.werk).resolve().parent)
     aus = Path(a.aus).resolve(); aus.mkdir(parents=True, exist_ok=True)
     name = "Examen_" + "_".join(exam["meta"]["titel"].split()[1:]) + f'_v{exam["meta"]["version"]}_{exam["meta"]["stand"]}'
     datei = aus / (name + ("_lokal.html" if a.lokal else ".html"))

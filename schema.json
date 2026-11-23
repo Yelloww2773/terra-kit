@@ -1,1740 +1,1863 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "terra-standard/schema/3.1",
-  "title": "Terra-Werk",
-  "description": "(c) Oliver Bedernik · Terra-Kit · Datenmodell eines Terra-Werks (Standard 3.x). Eine werk.json speist Karte, Lernskript, Exam und Anki.",
-  "type": "object",
-  "required": [
-    "standard",
-    "meta",
-    "modul",
-    "motto",
-    "provinzen"
-  ],
-  "additionalProperties": false,
-  "properties": {
-    "standard": {
-      "type": "string",
-      "pattern": "^3\\.[0-9]+$"
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "terra-kit/schema.json/4.0",
+ "title": "(c) Oliver Bedernik · Terra-Kit 4.0 · Werkschema (Kapitel, Abschnitte, Bausteine)",
+ "description": "Kapitel statt Provinz, Abschnitt statt Kachel, Blockfolge statt Bausteinen. Inline: **Fachbegriff**, *Latein*, [[B2]] Abschnittsverweis, ^[Randbeleg] mit @Sigle (Fundstelle) für Quellen, {{abb:id}} und {{tab:id}} für Abbildungs- und Tabellenverweise. Rollen als Farbschlüssel, Prüfdimensionen je Abschnitt, Diagramme (Fluss, BPMN), Merkband, Zitat, Kapitelabschluss.",
+ "type": "object",
+ "required": [
+  "standard",
+  "meta",
+  "modul",
+  "quellen",
+  "kapitel"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "standard": {
+   "const": "4.0"
+  },
+  "meta": {
+   "type": "object",
+   "required": [
+    "titel",
+    "untertitel",
+    "version",
+    "stand",
+    "urheber"
+   ],
+   "properties": {
+    "titel": {
+     "type": "string"
     },
-    "meta": {
-      "$ref": "#/$defs/meta"
+    "kurz": {
+     "type": "string"
     },
-    "modul": {
-      "$ref": "#/$defs/modul"
+    "untertitel": {
+     "type": "string"
     },
-    "quellen": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/quelle"
-      }
+    "reihe": {
+     "type": "string"
     },
-    "motto": {
-      "$ref": "#/$defs/terminus"
+    "lehrveranstaltung": {
+     "type": "string"
+    },
+    "version": {
+     "type": "string"
+    },
+    "stand": {
+     "type": "string",
+     "pattern": "^[0-9]{4}-[0-9]{2}$"
+    },
+    "urheber": {
+     "const": "(c) Oliver Bedernik"
+    },
+    "ort": {
+     "type": "string"
+    },
+    "probesatz": {
+     "type": "string"
     },
     "provinzen": {
-      "type": "array",
-      "minItems": 2,
-      "maxItems": 8,
-      "items": {
-        "$ref": "#/$defs/provinz"
+     "type": "array",
+     "description": "Provinzregister der ganzen Terra (Titelseite, Daumenregister); im Probesatz auch Provinzen ohne Inhalt",
+     "items": {
+      "type": "object",
+      "required": [
+       "code",
+       "nr",
+       "name_de",
+       "farbe"
+      ],
+      "properties": {
+       "code": {
+        "type": "string"
+       },
+       "nr": {
+        "type": "string"
+       },
+       "name_de": {
+        "type": "string"
+       },
+       "farbe": {
+        "type": "string"
+       }
       }
+     }
     },
-    "lexicon": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/lexikoneintrag"
-      },
-      "description": "Zusatzbegriffe; Latinum-Bausteine werden automatisch ergänzt"
+    "farbschema": {
+     "enum": [
+      "nacht",
+      "bordeaux",
+      "tanne",
+      "graphit"
+     ]
     },
-    "selbsttest": {
-      "type": "array",
-      "maxItems": 10,
-      "items": {
-        "$ref": "#/$defs/selbsttestfrage"
-      }
+    "titelseite": {
+     "enum": [
+      "band",
+      "einband",
+      "karte",
+      "klassisch",
+      "studienbuch",
+      "grundriss",
+      "handbuch",
+      "kurzlehrbuch",
+      "leinen",
+      "halbleinen",
+      "umschlag",
+      "relief",
+      "relief-halbleinen",
+      "relief-umschlag",
+      "band-relief",
+      "band-bezug",
+      "band-rahmen"
+     ],
+     "description": "Gestaltung der Titelseite; Standard band-relief (seit 4.0), band ist die Fassung von Kit 3.7"
     },
-    "quellenkritik": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/kritik"
-      }
+    "titel_stil": {
+     "type": "array",
+     "uniqueItems": true,
+     "items": {
+      "enum": [
+       "terra-kursiv",
+       "band-hoch",
+       "band-schmal",
+       "band-unten",
+       "relief-dicht",
+       "relief-papier",
+       "papier-weiss",
+       "fussband",
+       "relief-blind",
+       "relief-weit",
+       "relief-kraeftig",
+       "papier-bronze",
+       "papier-deutlich",
+       "papier-praegung",
+       "papier-zaehl",
+       "ohne-fileten",
+       "papier-hell"
+      ]
+     },
+     "description": "Abwandlungen der Titelseiten band-relief, band-bezug, band-rahmen"
     },
-    "aenderungen": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/aenderung"
-      }
+    "typ": {
+     "enum": [
+      "werk",
+      "referenz"
+     ],
+     "description": "referenz: Musterwerk des Kits mit Abdeckungsprüfung; Standard werk"
     }
+   }
   },
-  "$defs": {
-    "code": {
+  "modul": {
+   "type": "object",
+   "required": [
+    "domaene",
+    "zitierstil"
+   ],
+   "properties": {
+    "domaene": {
+     "enum": [
+      "recht",
+      "wirtschaft",
+      "gemischt",
+      "sonstige"
+     ]
+    },
+    "zitierstil": {
+     "enum": [
+      "AZR",
+      "APA7"
+     ]
+    },
+    "primaerquelle": {
+     "type": "string"
+    },
+    "sekundaerquelle": {
+     "type": "string"
+    },
+    "stand_art": {
+     "type": "string"
+    },
+    "pruefdimensionen": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "anker": {
+     "type": "string"
+    }
+   }
+  },
+  "quellen": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": [
+     "kurz"
+    ],
+    "properties": {
+     "kurz": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Kurzzitat, eindeutig; erscheint im Quellenverzeichnis"
+     },
+     "fn": {
+      "type": "string",
+      "description": "Kurzform (AZR) bzw. Kurzbeleg (APA); im Buchsatz Grundlage des Quellenverzeichnisses"
+     },
+     "voll": {
+      "type": "string"
+     },
+     "gattung": {
+      "enum": [
+       "literatur",
+       "beitrag",
+       "kommentar",
+       "aufsatz",
+       "lv",
+       "daten",
+       "online",
+       "norm",
+       "entscheidung",
+       "materialien"
+      ]
+     },
+     "rand": {
+      "type": "string",
+      "maxLength": 14,
+      "description": "Randsigle im Randbeleg (Autor oder Sigle); fehlt sie, gilt kurz"
+     },
+     "sigle": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9ÄÖÜäöü]+$",
+      "description": "Schlüssel für Randbelege (@Sigle in ^[…]); fehlt sie, gilt kurz, sofern es nur aus Buchstaben und Ziffern besteht"
+     }
+    },
+    "anyOf": [
+     {
+      "required": [
+       "voll"
+      ]
+     },
+     {
+      "required": [
+       "gattung"
+      ]
+     }
+    ]
+   }
+  },
+  "kapitel": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "$ref": "#/$defs/kapitel"
+   }
+  },
+  "rollen": {
+   "type": "object",
+   "description": "Farbschlüssel des Werks: Rolle → Name und Kit-Farbe; Diagramme, Zeitstrahl, Merkband und Vergleich färben nach Rolle",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "name",
+     "farbe"
+    ],
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "farbe": {
+      "enum": [
+       "indigo",
+       "petrol",
+       "moos",
+       "bronze",
+       "terrakotta",
+       "wein",
+       "pflaume",
+       "grau",
+       "tinte"
+      ]
+     }
+    }
+   }
+  },
+  "personen": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "name",
+     "suche",
+     "rolle",
+     "funktion"
+    ],
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "suche": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "rolle": {
+      "type": "string"
+     },
+     "funktion": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "abkuerzungen": {
+   "type": "array",
+   "items": {
+    "type": "array",
+    "minItems": 2,
+    "maxItems": 2,
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "quellenkritik": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "quelle",
+     "befund",
+     "richtig",
+     "abschnitt"
+    ],
+    "properties": {
+     "quelle": {
+      "type": "string"
+     },
+     "befund": {
+      "type": "string"
+     },
+     "richtig": {
+      "type": "string"
+     },
+     "abschnitt": {
       "type": "string",
       "pattern": "^[A-GL][1-9][0-9]?$"
+     }
+    }
+   }
+  },
+  "motto": {
+   "type": "object",
+   "required": [
+    "lat",
+    "de",
+    "stelle"
+   ],
+   "properties": {
+    "lat": {
+     "type": "string"
     },
-    "text": {
+    "de": {
+     "type": "string"
+    },
+    "stelle": {
+     "type": "string"
+    }
+   }
+  },
+  "lexicon": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "begriff",
+     "bedeutung",
+     "abschnitt"
+    ],
+    "properties": {
+     "begriff": {
+      "type": "string"
+     },
+     "bedeutung": {
+      "type": "string"
+     },
+     "abschnitt": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^[A-GL][1-9][0-9]?$"
+     },
+     "sprache": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "repetitorium": {
+   "type": "object",
+   "required": [
+    "nr",
+    "code",
+    "name_lat",
+    "name_de",
+    "leitfrage",
+    "kompakt"
+   ],
+   "properties": {
+    "nr": {
+     "type": "string"
     },
-    "datum": {
+    "code": {
+     "const": "L"
+    },
+    "name_lat": {
+     "type": "string"
+    },
+    "name_de": {
+     "type": "string"
+    },
+    "leitfrage": {
+     "type": "string"
+    },
+    "kompakt": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "string"
+     }
+    },
+    "abschnitte": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/abschnitt"
+     },
+     "description": "4.0: eigene Abschnitte des Repetitoriums (L1 …) vor den generierten Teilen"
+    }
+   }
+  },
+  "aenderungen": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "version",
+     "datum",
+     "text"
+    ],
+    "properties": {
+     "version": {
+      "type": "string"
+     },
+     "datum": {
       "type": "string",
-      "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+     },
+     "text": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "$defs": {
+  "text": {
+   "type": "string",
+   "minLength": 1
+  },
+  "kapitel": {
+   "type": "object",
+   "required": [
+    "abschnitte",
+    "code",
+    "einleitung",
+    "kompakt",
+    "leitfrage",
+    "name_de",
+    "nr"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "code": {
+     "type": "string",
+     "pattern": "^[A-GL]$"
     },
-    "farbe": {
-      "enum": [
-        "indigo",
-        "petrol",
-        "moos",
-        "bronze",
-        "terrakotta",
-        "wein",
-        "pflaume",
-        "tinte",
-        "blau",
-        "ocker",
-        "gruen",
-        "rot",
-        "violett",
-        "braun",
-        "grau"
-      ],
-      "description": "Optional. Ohne Angabe nach Position: A indigo, B petrol, C moos, D bronze, E terrakotta, F wein, G pflaume, L tinte. Alte Namen werden übersetzt."
+    "nr": {
+     "type": "string"
     },
-    "meta": {
-      "type": "object",
-      "required": [
-        "titel",
-        "untertitel",
-        "kicker",
-        "version",
-        "stand",
-        "typ",
-        "urheber"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "titel": {
-          "type": "string",
-          "pattern": "^Terra( [A-Z][a-z]+)+$"
-        },
-        "kurz": {
-          "type": "string",
-          "pattern": "^[A-Z]{2,5}$",
-          "description": "Sigle für terraübergreifende Verweise, etwa ADM"
-        },
-        "untertitel": {
-          "$ref": "#/$defs/text"
-        },
-        "kicker": {
-          "$ref": "#/$defs/text"
-        },
-        "lehrveranstaltung": {
-          "type": "string"
-        },
-        "lehrende": {
-          "type": "string"
-        },
-        "semester": {
-          "type": "string"
-        },
-        "version": {
-          "type": "string",
-          "pattern": "^[0-9]+\\.[0-9]+$"
-        },
-        "stand": {
-          "type": "string",
-          "pattern": "^20[0-9]{2}-(0[1-9]|1[0-2])$"
-        },
-        "typ": {
-          "enum": [
-            "werk",
-            "referenz"
-          ]
-        },
-        "urheber": {
-          "const": "(c) Oliver Bedernik"
-        },
-        "reihe": {
-          "type": "string",
-          "description": "Reihentitel für die Titelseite, etwa „Lernskripten zur Einführung in die Rechtswissenschaften“"
-        },
-        "ort": {
-          "type": "string",
-          "description": "Verlagsort für Titelseite und Impressum, Standard Wien"
-        },
-        "farbschema": {
-          "enum": [
-            "nacht",
-            "bordeaux",
-            "tanne",
-            "graphit"
-          ],
-          "description": "Farbschema für Titelseite und Inhaltsverzeichnis; die Provinzfarben bleiben unberührt"
-        }
-      }
+    "name_lat": {
+     "type": "string"
     },
-    "modul": {
-      "type": "object",
-      "required": [
-        "domaene",
-        "primaerquelle",
-        "sekundaerquelle",
-        "anker",
-        "stand_art",
-        "terminussprache",
-        "pruefdimensionen"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "domaene": {
-          "enum": [
-            "recht",
-            "wirtschaft",
-            "naturwissenschaft",
-            "geschichte",
-            "sprache",
-            "philosophie",
-            "gemischt"
-          ]
-        },
-        "primaerquelle": {
-          "$ref": "#/$defs/text"
-        },
-        "sekundaerquelle": {
-          "$ref": "#/$defs/text"
-        },
-        "anker": {
-          "$ref": "#/$defs/text"
-        },
-        "stand_art": {
-          "enum": [
-            "Rechtsstand",
-            "Datenstand",
-            "Forschungsstand",
-            "Kursfassung"
-          ]
-        },
-        "terminussprache": {
-          "$ref": "#/$defs/text"
-        },
-        "pruefdimensionen": {
-          "type": "array",
-          "minItems": 3,
-          "items": {
-            "$ref": "#/$defs/text"
-          }
-        },
-        "zitierstil": {
-          "enum": [
-            "AZR",
-            "APA"
-          ],
-          "description": "Zitierform des Quellenverzeichnisses. Standard: AZR in den Domänen recht und gemischt, sonst APA (Autor-Jahr)."
-        }
-      }
+    "name_de": {
+     "type": "string"
     },
-    "quelle": {
-      "type": "object",
-      "description": "Eine Quelle. Strukturiert (gattung und Felder; das Kit setzt die Zitierform nach dem Zitierstil des Moduls) oder im alten Format (nur kurz und voll). Ein vorhandenes voll ersetzt stets die erzeugte Vollangabe.",
-      "required": [
-        "kurz"
-      ],
-      "additionalProperties": false,
+    "leitfrage": {
+     "type": "string"
+    },
+    "einleitung": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
       "anyOf": [
-        {
-          "required": [
-            "voll"
-          ]
-        },
-        {
-          "required": [
-            "gattung"
-          ]
-        }
-      ],
-      "properties": {
-        "kurz": {
-          "$ref": "#/$defs/text",
-          "description": "Kurzzitat, so wie die Quelle im Werk angeführt wird; auf diesen Wert verweisen die Kacheln."
-        },
-        "voll": {
-          "$ref": "#/$defs/text"
-        },
-        "gattung": {
-          "enum": [
-            "literatur",
-            "beitrag",
-            "kommentar",
-            "aufsatz",
-            "lv",
-            "daten",
-            "online",
-            "norm",
-            "entscheidung",
-            "materialien"
-          ]
-        },
-        "autoren": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/text",
-            "description": "„Nachname, Vorname“; Körperschaften ohne Komma."
-          }
-        },
-        "hrsg": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/text"
-          }
-        },
-        "institution": {
-          "$ref": "#/$defs/text"
-        },
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "untertitel": {
-          "$ref": "#/$defs/text"
-        },
-        "auflage": {
-          "type": "integer",
-          "minimum": 2
-        },
-        "ort": {
-          "$ref": "#/$defs/text"
-        },
-        "verlag": {
-          "$ref": "#/$defs/text"
-        },
-        "jahr": {
-          "type": "string",
-          "pattern": "^(1[0-9]{3}|20[0-9]{2})[a-z]?$"
-        },
-        "in": {
-          "$ref": "#/$defs/text",
-          "description": "Sammelwerk, Kommentar oder Zeitschrift"
-        },
-        "band": {
-          "$ref": "#/$defs/text"
-        },
-        "heft": {
-          "$ref": "#/$defs/text"
-        },
-        "seiten": {
-          "$ref": "#/$defs/text"
-        },
-        "fundstelle": {
-          "$ref": "#/$defs/text"
-        },
-        "abk": {
-          "$ref": "#/$defs/text"
-        },
-        "gericht": {
-          "$ref": "#/$defs/text"
-        },
-        "datum": {
-          "type": "string",
-          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
-        },
-        "gz": {
-          "$ref": "#/$defs/text"
-        },
-        "name": {
-          "$ref": "#/$defs/text"
-        },
-        "slg": {
-          "$ref": "#/$defs/text"
-        },
-        "ecli": {
-          "$ref": "#/$defs/text"
-        },
-        "art": {
-          "$ref": "#/$defs/text",
-          "description": "Art der Unterlage, etwa Foliensatz oder Datensatz"
-        },
-        "url": {
-          "type": "string",
-          "pattern": "^https?://"
-        },
-        "abruf": {
-          "type": "string",
-          "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"
-        },
-        "zusatz": {
-          "$ref": "#/$defs/text"
-        }
-      }
+       {
+        "$ref": "#/$defs/text"
+       },
+       {
+        "$ref": "#/$defs/block"
+       }
+      ]
+     },
+     "description": "Pflicht: Anschluss an das vorige Kapitel und Wegweiser; darf eine Übersichtsabbildung enthalten"
     },
-    "terminus": {
+    "abschnitte": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "$ref": "#/$defs/abschnitt"
+     }
+    },
+    "kontrollfragen": {
+     "type": "array",
+     "items": {
       "type": "object",
       "required": [
-        "lat",
-        "de",
-        "stelle"
+       "frage",
+       "antwort",
+       "abschnitt"
       ],
-      "additionalProperties": false,
       "properties": {
-        "lat": {
-          "$ref": "#/$defs/text",
-          "description": "Terminus in Originalsprache (Feldname historisch)"
-        },
-        "de": {
-          "$ref": "#/$defs/text"
-        },
-        "stelle": {
-          "$ref": "#/$defs/text"
-        },
-        "sprache": {
-          "type": "string",
-          "pattern": "^[a-z]{2,3}$",
-          "description": "ISO 639, Standard la"
-        }
+       "frage": {
+        "$ref": "#/$defs/text"
+       },
+       "antwort": {
+        "$ref": "#/$defs/text"
+       },
+       "abschnitt": {
+        "type": "string",
+        "pattern": "^[A-GL][1-9][0-9]?$"
+       }
       }
+     }
     },
-    "lexikoneintrag": {
-      "type": "object",
-      "required": [
-        "begriff",
-        "bedeutung",
-        "kachel"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "begriff": {
-          "$ref": "#/$defs/text"
-        },
-        "bedeutung": {
-          "$ref": "#/$defs/text"
-        },
-        "kachel": {
-          "$ref": "#/$defs/code"
-        },
-        "sprache": {
-          "type": "string",
-          "pattern": "^[a-z]{2,3}$"
-        }
-      }
+    "abschluss": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/block"
+     },
+     "description": "„Auf einen Blick“ am Kapitelende, vor Kernaussagen und Kontrollfragen"
     },
-    "selbsttestfrage": {
-      "type": "object",
-      "required": [
-        "frage",
-        "antwort",
-        "kachel"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "frage": {
-          "$ref": "#/$defs/text"
-        },
-        "antwort": {
-          "$ref": "#/$defs/text"
-        },
-        "kachel": {
-          "$ref": "#/$defs/code"
-        }
-      }
+    "kompakt": {
+     "type": "array",
+     "minItems": 3,
+     "maxItems": 6,
+     "items": {
+      "type": "string"
+     },
+     "description": "„In 60 Sekunden“ im Provinzkopf (wie bisher)"
     },
-    "kritik": {
-      "type": "object",
-      "required": [
-        "quelle",
-        "befund",
-        "richtig",
-        "kachel"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "quelle": {
-          "$ref": "#/$defs/text"
-        },
-        "befund": {
-          "$ref": "#/$defs/text"
-        },
-        "richtig": {
-          "$ref": "#/$defs/text"
-        },
-        "kachel": {
-          "$ref": "#/$defs/code"
-        }
-      }
+    "anker": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     },
-    "aenderung": {
-      "type": "object",
-      "required": [
-        "version",
-        "datum",
-        "text"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "version": {
-          "type": "string"
-        },
-        "datum": {
-          "$ref": "#/$defs/datum"
-        },
-        "text": {
-          "$ref": "#/$defs/text"
-        }
-      }
+    "seiten": {
+     "type": "string"
+    }
+   }
+  },
+  "abschnitt": {
+   "type": "object",
+   "required": [
+    "code",
+    "titel",
+    "bloecke"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "code": {
+     "type": "string",
+     "pattern": "^[A-GL][1-9][0-9]?$",
+     "description": "stabil, nie umnummerieren (früher Kachelcode)"
     },
-    "provinz": {
-      "type": "object",
-      "required": [
-        "nr",
-        "code",
-        "name_lat",
-        "name_de",
-        "leitfrage",
-        "kompakt",
-        "anker",
-        "kacheln"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "nr": {
-          "type": "string",
-          "pattern": "^(I|II|III|IV|V|VI|VII|VIII)$"
-        },
-        "code": {
-          "type": "string",
-          "pattern": "^[A-GL]$"
-        },
-        "name_lat": {
-          "$ref": "#/$defs/text"
-        },
-        "name_de": {
-          "$ref": "#/$defs/text"
-        },
-        "farbe": {
-          "$ref": "#/$defs/farbe"
-        },
-        "leitfrage": {
-          "$ref": "#/$defs/text"
-        },
-        "kompakt": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 5,
-          "items": {
-            "$ref": "#/$defs/text"
-          }
-        },
-        "anker": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/text"
-          }
-        },
-        "seiten": {
-          "type": "string"
-        },
-        "kacheln": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/kachel"
-          }
-        }
-      }
+    "titel": {
+     "type": "string"
     },
-    "kachel": {
-      "type": "object",
-      "required": [
-        "code",
-        "titel",
-        "anker",
-        "relevanz",
-        "bausteine"
-      ],
-      "additionalProperties": false,
+    "anker": {
+     "type": "string"
+    },
+    "quellen": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "bloecke": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "$ref": "#/$defs/block"
+     }
+    },
+    "dimensionen": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Prüfdimensionen des Moduls, denen der Abschnitt dient"
+    },
+    "fundstelle": {
+     "type": "string",
+     "description": "Seiten-, Rz- oder Folienangabe im Abschnittskopf (früher kachel.seite)"
+    },
+    "wichtig": {
+     "type": "boolean",
+     "description": "Schlüssel am Abschnittskopf (ersetzt die Relevanzmarken von 3.x); sparsam, höchstens ein Drittel der Abschnitte"
+    }
+   }
+  },
+  "block": {
+   "type": "object",
+   "required": [
+    "typ"
+   ],
+   "properties": {
+    "typ": {
+     "enum": [
+      "absatz",
+      "kernsatz",
+      "spitzmarke",
+      "aufzaehlung",
+      "tabelle",
+      "abbildung",
+      "fallbeispiel",
+      "merkband",
+      "zitat",
+      "steckbrief",
+      "glossar",
+      "akteure",
+      "latinum",
+      "definition",
+      "kern",
+      "formel",
+      "rechenweg"
+     ]
+    },
+    "wichtig": {
+     "type": "boolean",
+     "description": "Schlüssel am linken Rand (Einbettungen: im Titel); sparsam, höchstens ein Viertel der Bausteine"
+    }
+   },
+   "allOf": [
+    {
+     "if": {
       "properties": {
-        "code": {
-          "$ref": "#/$defs/code"
-        },
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "anker": {
-          "$ref": "#/$defs/text"
-        },
-        "seite": {
-          "type": "string"
-        },
-        "relevanz": {
-          "enum": [
-            "kern",
-            "vertiefung",
-            "auslassbar"
-          ]
-        },
-        "beleg_auslassbar": {
-          "$ref": "#/$defs/text"
-        },
-        "test": {
-          "type": "string",
-          "description": "Nur im Referenzwerk: welcher Sonderfall hier geprüft wird"
-        },
-        "bausteine": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/baustein"
-          }
-        },
-        "quellen": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "description": "Kurzzitate der Quellen, auf die sich die Kachel stützt (Verwendungsnachweis im Quellenverzeichnis).",
-          "items": {
-            "$ref": "#/$defs/text"
-          }
-        },
-        "kernfakten": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 3,
-          "description": "3.7: ein bis drei atomare, prüfbare Kernaussagen der Kachel. Werden als Kernsatz am Kachelanfang gesetzt, als Anki-Lückenkarte abgefragt (fett ausgezeichnete Wörter werden zu Lücken) und im Repetitorium gesammelt.",
-          "items": {
-            "$ref": "#/$defs/text"
-          }
-        },
-        "merkhilfe": {
-          "$ref": "#/$defs/text",
-          "description": "3.7: kurze Merkhilfe für Dreiheiten, Reihenfolgen oder Gegensatzpaare (etwa „wer · wie · was“); erscheint im Kernsatz."
-        }
-      },
-      "if": {
-        "properties": {
-          "relevanz": {
-            "const": "auslassbar"
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "beleg_auslassbar"
+       "typ": {
+        "enum": [
+         "absatz",
+         "kernsatz",
+         "definition"
         ]
+       }
       }
-    },
-    "baustein": {
-      "type": "object",
+     },
+     "then": {
       "required": [
-        "typ"
+       "text"
       ],
       "properties": {
-        "typ": {
-          "enum": [
-            "definition",
-            "kern",
-            "formel",
-            "rechenweg",
-            "schema",
-            "beispiel",
-            "merke",
-            "feinheit",
-            "klausurfalle",
-            "austriacum",
-            "aktualisierung",
-            "latinum",
-            "luecke"
-          ]
+       "text": {
+        "$ref": "#/$defs/text"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "spitzmarke"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "art",
+       "text"
+      ],
+      "properties": {
+       "art": {
+        "enum": [
+         "klausurhinweis",
+         "austriacum",
+         "aktualisierung",
+         "luecke",
+         "merke",
+         "feinheit"
+        ]
+       },
+       "norm": {
+        "$ref": "#/$defs/text",
+        "description": "Austriacum: österreichische Norm"
+       },
+       "datum": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "description": "Aktualisierung: gilt seit"
+       },
+       "quelle": {
+        "$ref": "#/$defs/text",
+        "description": "Aktualisierung: Fundstelle der Änderung"
+       },
+       "grund": {
+        "$ref": "#/$defs/text",
+        "description": "Lücke: warum sinngemäß ergänzt"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "aufzaehlung"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "punkte"
+      ],
+      "properties": {
+       "nummeriert": {
+        "type": "boolean"
+       },
+       "punkte": {
+        "type": "array",
+        "minItems": 2,
+        "items": {
+         "$ref": "#/$defs/text"
         }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "definition"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_definition"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "kern"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_kern"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "formel"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_formel"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "rechenweg"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_rechenweg"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "schema"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_schema"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "beispiel"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_beispiel"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "enum": [
-                  "merke",
-                  "feinheit",
-                  "klausurfalle"
-                ]
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_hinweis"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "austriacum"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_austriacum"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "aktualisierung"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_aktualisierung"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "latinum"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_latinum"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "typ": {
-                "const": "luecke"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/b_luecke"
-          }
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "tabelle"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "id",
+       "titel",
+       "kopf",
+       "zeilen"
+      ],
+      "properties": {
+       "spalten": {
+        "type": "array",
+        "items": {
+         "enum": [
+          "begriff",
+          "text",
+          "stichworte",
+          "zahl"
+         ]
         }
+       },
+       "aussage": {
+        "type": "string"
+       },
+       "art": {
+        "enum": [
+         "uebersicht",
+         "vergleich"
+        ]
+       },
+       "unterkopf": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "spaltenrollen": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "lesehilfe": {
+        "$ref": "#/$defs/text",
+        "description": "nur bei anspruchsvollen Vergleichstabellen: wie man die Tabelle liest"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "abbildung"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "id",
+       "titel",
+       "variante",
+       "nachweis"
+      ],
+      "properties": {
+       "variante": {
+        "enum": [
+         "zeitstrahl",
+         "zeitleiste",
+         "diagramm",
+         "baum",
+         "kurve",
+         "tkonto",
+         "svg",
+         "bild"
+        ]
+       },
+       "lesehilfe": {
+        "$ref": "#/$defs/text",
+        "description": "nur bei anspruchsvollen Grafiken (BPMN, Fluss mit zwei oder mehr Entscheidungen): wie man sie liest; unten angekoppelt"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "fallbeispiel"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "sachverhalt",
+       "loesung"
       ]
+     }
     },
-    "b_definition": {
-      "required": [
-        "text"
-      ],
-      "additionalProperties": false,
+    {
+     "if": {
       "properties": {
-        "typ": true,
-        "text": {
-          "$ref": "#/$defs/text"
-        },
-        "zitat": {
-          "type": "object",
-          "required": [
-            "text",
-            "quelle"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "text": {
-              "$ref": "#/$defs/text"
-            },
-            "quelle": {
-              "$ref": "#/$defs/text"
-            }
+       "typ": {
+        "const": "merkband"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "titel",
+       "schritte"
+      ],
+      "properties": {
+       "schritte": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 6,
+        "items": {
+         "type": "object",
+         "required": [
+          "kopf",
+          "text"
+         ],
+         "properties": {
+          "kopf": {
+           "type": "string"
+          },
+          "text": {
+           "type": "string"
+          },
+          "rolle": {
+           "type": "string"
           }
+         }
         }
+       }
       }
+     }
     },
-    "b_kern": {
-      "required": [
-        "punkte"
-      ],
-      "additionalProperties": false,
+    {
+     "if": {
       "properties": {
-        "typ": true,
-        "titel": {
-          "type": "string"
-        },
-        "punkte": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/text"
+       "typ": {
+        "const": "zitat"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "text",
+       "quelle"
+      ]
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "abbildung"
+       },
+       "variante": {
+        "const": "diagramm"
+       }
+      },
+      "required": [
+       "variante"
+      ]
+     },
+     "then": {
+      "required": [
+       "knoten",
+       "kanten"
+      ],
+      "properties": {
+       "stil": {
+        "enum": [
+         "fluss",
+         "bpmn"
+        ]
+       },
+       "knoten": {
+        "type": "array",
+        "minItems": 2,
+        "items": {
+         "type": "object",
+         "required": [
+          "id",
+          "art",
+          "zeile"
+         ],
+         "properties": {
+          "art": {
+           "enum": [
+            "start",
+            "ende",
+            "abbruch",
+            "ereignis",
+            "aufgabe",
+            "zustand",
+            "frage",
+            "ergebnis",
+            "notiz"
+           ]
           }
+         }
         }
-      }
-    },
-    "b_formel": {
-      "required": [
-        "tex"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "tex": {
-          "$ref": "#/$defs/text"
-        },
-        "nummer": {
-          "type": "string",
-          "pattern": "^\\([0-9]+[a-z]?\\)$"
-        },
-        "variablen": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "symbol",
-              "bedeutung"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "symbol": {
-                "$ref": "#/$defs/text"
-              },
-              "bedeutung": {
-                "$ref": "#/$defs/text"
-              }
-            }
-          }
-        }
-      }
-    },
-    "b_rechenweg": {
-      "required": [
-        "schritte",
-        "ergebnis"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "aufgabe": {
-          "type": "string"
-        },
-        "schritte": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "required": [
-              "text"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "text": {
-                "$ref": "#/$defs/text"
-              },
-              "tex": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "ergebnis": {
-          "$ref": "#/$defs/text"
-        },
-        "probe": {
-          "$ref": "#/$defs/probe"
-        }
-      }
-    },
-    "b_beispiel": {
-      "required": [
-        "sachverhalt"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "sachverhalt": {
-          "$ref": "#/$defs/text"
-        },
-        "loesung": {
-          "type": "string"
-        }
-      }
-    },
-    "b_hinweis": {
-      "required": [
-        "text"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "text": {
-          "$ref": "#/$defs/text"
-        }
-      }
-    },
-    "b_austriacum": {
-      "required": [
-        "text",
-        "norm"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "text": {
-          "$ref": "#/$defs/text"
-        },
-        "norm": {
-          "$ref": "#/$defs/text"
-        }
-      }
-    },
-    "b_aktualisierung": {
-      "required": [
-        "text",
-        "datum",
-        "quelle"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "text": {
-          "$ref": "#/$defs/text"
-        },
-        "datum": {
-          "$ref": "#/$defs/datum"
-        },
-        "quelle": {
-          "$ref": "#/$defs/text"
-        }
-      }
-    },
-    "b_latinum": {
-      "required": [
-        "lat",
-        "de",
-        "stelle"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "lat": {
-          "$ref": "#/$defs/text"
-        },
-        "de": {
-          "$ref": "#/$defs/text"
-        },
-        "stelle": {
-          "$ref": "#/$defs/text"
-        },
-        "sprache": {
-          "type": "string",
-          "pattern": "^[a-z]{2,3}$"
-        }
-      }
-    },
-    "b_luecke": {
-      "required": [
-        "text",
-        "grund"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "text": {
-          "$ref": "#/$defs/text"
-        },
-        "grund": {
-          "$ref": "#/$defs/text"
-        }
-      }
-    },
-    "b_schema": {
-      "required": [
-        "variante",
-        "titel"
-      ],
-      "properties": {
-        "variante": {
-          "enum": [
-            "tabelle",
-            "abgrenzung",
-            "kurve",
-            "tkonto",
-            "zeitleiste",
+       },
+       "kanten": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "required": [
+          "von",
+          "nach"
+         ],
+         "properties": {
+          "art": {
+           "enum": [
             "fluss",
-            "svg",
-            "baum",
-            "bild"
-          ]
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "tabelle"
-              }
-            }
+            "nachricht",
+            "bezug"
+           ]
           },
-          "then": {
-            "$ref": "#/$defs/s_tabelle"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "abgrenzung"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/s_abgrenzung"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "kurve"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/s_kurve"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "tkonto"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/s_tkonto"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "zeitleiste"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/s_zeitleiste"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "fluss"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/s_fluss"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "svg"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/s_svg"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "baum"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/s_baum"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "variante": {
-                "const": "bild"
-              }
-            }
-          },
-          "then": {
-            "$ref": "#/$defs/s_bild"
-          }
-        }
-      ]
-    },
-    "s_tabelle": {
-      "required": [
-        "kopf",
-        "zeilen"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "breit": {
-          "type": "boolean"
-        },
-        "kopf": {
-          "type": "array",
-          "minItems": 2,
-          "items": {
-            "$ref": "#/$defs/text"
-          }
-        },
-        "zeilen": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "art": {
-          "enum": [
-            "tabelle",
-            "uebersicht",
-            "vergleich"
-          ],
-          "description": "3.7: Zweck der Tabelle. uebersicht: Begriff und Erklärung, als Begriffsliste gesetzt; vergleich: mit höchstens vier Zeilen gestürzt (Begriffe als Spalten)."
-        },
-        "spalten": {
-          "type": "array",
-          "items": {
-            "enum": [
-              "begriff",
-              "text",
-              "stichworte",
-              "zahl"
-            ]
-          },
-          "description": "3.7: Rolle je Spalte; ohne Angabe ist die erste Spalte die Begriffsspalte (halbfett, nie getrennt)."
-        },
-        "aussage": {
-          "$ref": "#/$defs/text",
-          "description": "3.7: ein Satz, was die Tabelle zeigt; erscheint unter der Tabelle."
-        }
-      }
-    },
-    "s_abgrenzung": {
-      "required": [
-        "links",
-        "rechts",
-        "kriterien"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "links": {
-          "$ref": "#/$defs/text"
-        },
-        "rechts": {
-          "$ref": "#/$defs/text"
-        },
-        "kriterien": {
-          "type": "array",
-          "minItems": 2,
-          "items": {
-            "type": "object",
-            "required": [
-              "kriterium",
-              "links",
-              "rechts"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "kriterium": {
-                "$ref": "#/$defs/text"
-              },
-              "links": {
-                "$ref": "#/$defs/text"
-              },
-              "rechts": {
-                "$ref": "#/$defs/text"
-              }
-            }
-          }
-        }
-      }
-    },
-    "s_kurve": {
-      "required": [
-        "x",
-        "y",
-        "reihen"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "x": {
-          "$ref": "#/$defs/achse"
-        },
-        "y": {
-          "$ref": "#/$defs/achse"
-        },
-        "reihen": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 4,
-          "items": {
-            "type": "object",
-            "required": [
-              "name",
-              "punkte"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "$ref": "#/$defs/text"
-              },
-              "punkte": {
-                "type": "array",
-                "minItems": 2,
-                "items": {
-                  "type": "array",
-                  "minItems": 2,
-                  "maxItems": 2,
-                  "items": {
-                    "type": "number"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "markierungen": {
-          "type": "array",
-          "maxItems": 4,
-          "description": "Hervorgehobene Punkte (etwa Gleichgewicht, Rechenbeispiel) mit gestrichelten Hilfslinien zu beiden Achsen.",
-          "items": {
-            "type": "object",
-            "required": [
-              "x",
-              "y",
-              "text"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "x": {
-                "type": "number"
-              },
-              "y": {
-                "type": "number"
-              },
-              "text": {
-                "$ref": "#/$defs/text"
-              }
-            }
-          }
-        }
-      }
-    },
-    "s_tkonto": {
-      "required": [
-        "konten"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "buchungssatz": {
-          "type": "string"
-        },
-        "konten": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "required": [
-              "name",
-              "soll",
-              "haben"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "$ref": "#/$defs/text"
-              },
-              "soll": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/$defs/buchung"
-                }
-              },
-              "haben": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/$defs/buchung"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "s_zeitleiste": {
-      "required": [
-        "ereignisse"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "ereignisse": {
-          "type": "array",
-          "minItems": 2,
-          "items": {
-            "type": "object",
-            "required": [
-              "datum",
-              "text"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "datum": {
-                "$ref": "#/$defs/text"
-              },
-              "text": {
-                "$ref": "#/$defs/text"
-              }
-            }
-          }
-        }
-      }
-    },
-    "s_fluss": {
-      "required": [
-        "knoten",
-        "kanten"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "knoten": {
-          "type": "array",
-          "minItems": 2,
-          "items": {
-            "type": "object",
-            "required": [
-              "id",
-              "text",
-              "zeile",
-              "spalte",
-              "art"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "id": {
-                "type": "string",
-                "pattern": "^[a-z][a-z0-9]*$"
-              },
-              "text": {
-                "$ref": "#/$defs/text"
-              },
-              "zeile": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 8
-              },
-              "spalte": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 4
-              },
-              "art": {
-                "enum": [
-                  "start",
-                  "frage",
-                  "station",
-                  "ergebnis",
-                  "sperre"
-                ]
-              }
-            }
-          }
-        },
-        "kanten": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "required": [
-              "von",
-              "nach"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "von": {
-                "type": "string"
-              },
-              "nach": {
-                "type": "string"
-              },
-              "label": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
-    "s_svg": {
-      "required": [
-        "svg",
-        "beschreibung"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "svg": {
-          "type": "string",
-          "pattern": "^<svg[\\s>]"
-        },
-        "hoehe_mm": {
-          "type": "number",
-          "minimum": 20,
-          "maximum": 240
-        },
-        "beschreibung": {
-          "$ref": "#/$defs/text",
-          "description": "Alternativtext; Pflicht (Barrierefreiheit, Anki, Prüfung durch Lesende)"
-        }
-      }
-    },
-    "achse": {
-      "type": "object",
-      "required": [
-        "label"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "label": {
-          "$ref": "#/$defs/text"
-        },
-        "einheit": {
-          "type": "string"
-        }
-      }
-    },
-    "buchung": {
-      "type": "object",
-      "required": [
-        "text",
-        "betrag"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "text": {
-          "$ref": "#/$defs/text"
-        },
-        "betrag": {
-          "type": "number"
-        }
-      }
-    },
-    "s_baum": {
-      "description": "Organigramm oder Hierarchie (Instanzenzug, Zuständigkeiten, Gliederung eines Begriffs). Das Kit berechnet das Layout; Kanten führen stets vom Elternknoten zum Kind.",
-      "required": [
-        "knoten"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "richtung": {
-          "enum": [
+          "aus": {
+           "enum": [
+            "oben",
             "unten",
+            "links",
             "rechts"
-          ],
-          "description": "unten: Wurzel oben (Standard bis sechs Blätter); rechts: Wurzel links (Standard ab sieben Blättern)"
-        },
-        "knoten": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 24,
-          "items": {
-            "type": "object",
-            "required": [
-              "id",
-              "text"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "id": {
-                "type": "string",
-                "pattern": "^[a-z][a-z0-9]*$"
-              },
-              "text": {
-                "$ref": "#/$defs/text"
-              },
-              "eltern": {
-                "type": "string",
-                "pattern": "^[a-z][a-z0-9]*$",
-                "description": "id des übergeordneten Knotens; fehlt nur bei der Wurzel"
-              },
-              "label": {
-                "type": "string",
-                "minLength": 1,
-                "description": "Beschriftung der Kante vom Elternknoten, etwa „Berufung“"
-              },
-              "art": {
-                "enum": [
-                  "normal",
-                  "betont",
-                  "neben"
-                ],
-                "description": "betont: Provinzfarbe; neben: gestrichelt (etwa außerhalb der Hierarchie)"
-              }
-            }
+           ]
+          },
+          "ein": {
+           "enum": [
+            "oben",
+            "unten",
+            "links",
+            "rechts"
+           ]
           }
+         }
         }
+       },
+       "lesehilfe": {
+        "$ref": "#/$defs/text",
+        "description": "nur bei anspruchsvollen Grafiken (BPMN, Fluss mit zwei oder mehr Entscheidungen): wie man sie liest; unten angekoppelt"
+       }
       }
+     }
     },
-    "s_bild": {
-      "description": "Rasterbild (PNG, JPEG, WebP) mit Pflichtangaben zu Quelle und Lizenz. datei: Pfad relativ zur werk.json; daten: eingebettet als data-URI (python3 bild.py werk.json --einbetten).",
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "steckbrief"
+       }
+      }
+     },
+     "then": {
       "required": [
-        "beschreibung",
-        "quelle",
-        "lizenz"
-      ],
-      "additionalProperties": false,
-      "oneOf": [
-        {
-          "required": [
-            "datei"
-          ]
-        },
-        {
-          "required": [
-            "daten"
-          ]
-        }
+       "titel",
+       "rolle",
+       "felder"
       ],
       "properties": {
-        "typ": true,
-        "variante": true,
-        "titel": {
-          "$ref": "#/$defs/text"
-        },
-        "datei": {
-          "type": "string",
-          "pattern": "^(?!/)(?!.*\\.\\.)[^\\\\]+\\.(png|jpe?g|webp|PNG|JPE?G|WEBP)$"
-        },
-        "daten": {
-          "type": "string",
-          "pattern": "^data:image/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$"
-        },
-        "beschreibung": {
-          "$ref": "#/$defs/text",
-          "description": "Alternativtext; Pflicht"
-        },
-        "quelle": {
-          "$ref": "#/$defs/text",
-          "description": "Herkunft, etwa Kurzzitat und Seite oder „Eigene Aufnahme“"
-        },
-        "lizenz": {
-          "$ref": "#/$defs/text",
-          "description": "etwa „eigenes Werk“, „CC BY 4.0“, „gemeinfrei“, „Zitat (§ 42f UrhG)“, „freies Werk (§ 7 UrhG)“"
-        },
-        "urheber": {
-          "type": "string",
-          "minLength": 1,
-          "description": "bei fremden Werken: Urheberin oder Urheber für die Namensnennung"
-        },
-        "breite": {
-          "type": "integer",
-          "minimum": 30,
-          "maximum": 100,
-          "description": "Breite in Prozent des Satzspiegels, Standard 100"
+       "felder": {
+        "type": "array",
+        "minItems": 3,
+        "items": {
+         "type": "array",
+         "minItems": 2,
+         "maxItems": 2,
+         "items": {
+          "type": "string"
+         }
         }
+       }
       }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "glossar"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "titel",
+       "eintraege"
+      ],
+      "properties": {
+       "eintraege": {
+        "type": "array",
+        "minItems": 3,
+        "items": {
+         "type": "array",
+         "minItems": 2,
+         "maxItems": 2,
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "latein": {
+        "type": "boolean",
+        "description": "auch die Latinum-Bausteine des ganzen Werks anfügen (Standard: nein)"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "akteure"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "id",
+       "titel"
+      ],
+      "properties": {
+       "kopf": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {
+         "type": "string"
+        },
+        "description": "Spaltenköpfe (Person, Funktion, Zuordnung); Zuordnung ist die Rolle im Farbschlüssel"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "latinum"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "lat",
+       "de",
+       "stelle"
+      ]
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "kern"
+       }
+      }
+     },
+     "then": {
+      "required": [
+       "punkte"
+      ],
+      "properties": {
+       "titel": {
+        "type": "string",
+        "description": "Spitzmarke über der Liste wie in den Kacheln: Inhalt, Kerngehalt, Merkmale …"
+       },
+       "punkte": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "oneOf": [
+          {
+           "$ref": "#/$defs/text"
+          },
+          {
+           "type": "object",
+           "required": [
+            "text"
+           ],
+           "additionalProperties": false,
+           "properties": {
+            "text": {
+             "$ref": "#/$defs/text"
+            },
+            "wichtig": {
+             "type": "boolean"
+            }
+           }
+          }
+         ]
+        },
+        "description": "„**Fachbegriff:** Erklärung in ein bis drei Sätzen“; ein Gerüstwort als Vorspann wird nicht fett gesetzt"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "formel"
+       }
+      }
+     },
+     "then": {
+      "$ref": "#/$defs/x_formel"
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "rechenweg"
+       }
+      }
+     },
+     "then": {
+      "$ref": "#/$defs/x_rechenweg"
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "abbildung"
+       },
+       "variante": {
+        "const": "kurve"
+       }
+      },
+      "required": [
+       "variante"
+      ]
+     },
+     "then": {
+      "$ref": "#/$defs/a_kurve"
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "abbildung"
+       },
+       "variante": {
+        "const": "tkonto"
+       }
+      },
+      "required": [
+       "variante"
+      ]
+     },
+     "then": {
+      "$ref": "#/$defs/a_tkonto"
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "abbildung"
+       },
+       "variante": {
+        "const": "svg"
+       }
+      },
+      "required": [
+       "variante"
+      ]
+     },
+     "then": {
+      "$ref": "#/$defs/a_svg"
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "abbildung"
+       },
+       "variante": {
+        "const": "baum"
+       }
+      },
+      "required": [
+       "variante"
+      ]
+     },
+     "then": {
+      "$ref": "#/$defs/a_baum"
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "abbildung"
+       },
+       "variante": {
+        "const": "bild"
+       }
+      },
+      "required": [
+       "variante"
+      ]
+     },
+     "then": {
+      "$ref": "#/$defs/a_bild"
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "typ": {
+        "const": "abbildung"
+       },
+       "variante": {
+        "const": "zeitleiste"
+       }
+      },
+      "required": [
+       "variante"
+      ]
+     },
+     "then": {
+      "$ref": "#/$defs/a_zeitleiste"
+     }
+    }
+   ]
+  },
+  "x_formel": {
+   "required": [
+    "tex"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "typ": true,
+    "tex": {
+     "$ref": "#/$defs/text"
+    },
+    "nummer": {
+     "type": "string",
+     "pattern": "^\\([0-9]+[a-z]?\\)$"
+    },
+    "variablen": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "symbol",
+       "bedeutung"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "symbol": {
+        "$ref": "#/$defs/text"
+       },
+       "bedeutung": {
+        "$ref": "#/$defs/text"
+       }
+      }
+     }
+    },
+    "wichtig": {
+     "type": "boolean"
+    }
+   }
+  },
+  "x_rechenweg": {
+   "required": [
+    "schritte",
+    "ergebnis"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "typ": true,
+    "aufgabe": {
+     "type": "string"
+    },
+    "schritte": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "text": {
+        "$ref": "#/$defs/text"
+       },
+       "tex": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "ergebnis": {
+     "$ref": "#/$defs/text"
     },
     "probe": {
+     "$ref": "#/$defs/probe"
+    },
+    "wichtig": {
+     "type": "boolean"
+    }
+   }
+  },
+  "a_kurve": {
+   "required": [
+    "x",
+    "y",
+    "reihen"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "typ": true,
+    "variante": true,
+    "titel": {
+     "$ref": "#/$defs/text"
+    },
+    "x": {
+     "$ref": "#/$defs/achse"
+    },
+    "y": {
+     "$ref": "#/$defs/achse"
+    },
+    "reihen": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 4,
+     "items": {
       "type": "object",
       "required": [
-        "rechnung"
+       "name",
+       "punkte"
       ],
       "additionalProperties": false,
-      "description": "Rechenprobe (3.5): das Kit rechnet jede Zeile dezimal exakt nach; Abweichung ist ein Fehler. Steht neben dem Rechenweg, ändert seine Darstellung nicht.",
       "properties": {
-        "werte": {
-          "type": "object",
-          "propertyNames": {
-            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-          },
-          "additionalProperties": {
-            "type": [
-              "number",
-              "string"
-            ]
-          },
-          "description": "Ausgangsgrößen; Dezimalpunkt, etwa {\"i\": \"0.05\"}"
-        },
-        "rechnung": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "required": [
-              "ausdruck",
-              "ergebnis"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
-                "description": "Zwischenergebnis steht folgenden Zeilen unter diesem Namen zur Verfügung (ungerundet)"
-              },
-              "ausdruck": {
-                "$ref": "#/$defs/text"
-              },
-              "ergebnis": {
-                "type": [
-                  "number",
-                  "string"
-                ]
-              },
-              "stellen": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 10
-              }
-            }
-          }
-        },
-        "stellen": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 10,
-          "description": "Nachkommastellen für den Vergleich, Standard 2"
-        },
-        "quelle": {
-          "type": "object",
-          "required": [
-            "kurz",
-            "wert"
-          ],
-          "additionalProperties": false,
-          "description": "Endergebnis laut Quelle; weicht es ab, erzeugt das Kit einen Eintrag der Quellenkritik",
-          "properties": {
-            "kurz": {
-              "$ref": "#/$defs/text"
-            },
-            "wert": {
-              "type": [
-                "number",
-                "string"
-              ]
-            }
-          }
+       "name": {
+        "$ref": "#/$defs/text"
+       },
+       "punkte": {
+        "type": "array",
+        "minItems": 2,
+        "items": {
+         "type": "array",
+         "minItems": 2,
+         "maxItems": 2,
+         "items": {
+          "type": "number"
+         }
         }
+       }
       }
+     }
+    },
+    "markierungen": {
+     "type": "array",
+     "maxItems": 4,
+     "description": "Hervorgehobene Punkte (etwa Gleichgewicht, Rechenbeispiel) mit gestrichelten Hilfslinien zu beiden Achsen.",
+     "items": {
+      "type": "object",
+      "required": [
+       "x",
+       "y",
+       "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "x": {
+        "type": "number"
+       },
+       "y": {
+        "type": "number"
+       },
+       "text": {
+        "$ref": "#/$defs/text"
+       }
+      }
+     }
+    },
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9_]+$"
+    },
+    "nachweis": {
+     "$ref": "#/$defs/text"
+    },
+    "lesehilfe": {
+     "$ref": "#/$defs/text"
+    },
+    "wichtig": {
+     "type": "boolean"
     }
+   }
+  },
+  "a_tkonto": {
+   "required": [
+    "konten"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "typ": true,
+    "variante": true,
+    "titel": {
+     "$ref": "#/$defs/text"
+    },
+    "buchungssatz": {
+     "type": "string"
+    },
+    "konten": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "soll",
+       "haben"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "name": {
+        "$ref": "#/$defs/text"
+       },
+       "soll": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/buchung"
+        }
+       },
+       "haben": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/buchung"
+        }
+       }
+      }
+     }
+    },
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9_]+$"
+    },
+    "nachweis": {
+     "$ref": "#/$defs/text"
+    },
+    "lesehilfe": {
+     "$ref": "#/$defs/text"
+    },
+    "wichtig": {
+     "type": "boolean"
+    }
+   }
+  },
+  "a_svg": {
+   "required": [
+    "svg",
+    "beschreibung"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "typ": true,
+    "variante": true,
+    "titel": {
+     "$ref": "#/$defs/text"
+    },
+    "svg": {
+     "type": "string",
+     "pattern": "^<svg[\\s>]"
+    },
+    "hoehe_mm": {
+     "type": "number",
+     "minimum": 20,
+     "maximum": 240
+    },
+    "beschreibung": {
+     "$ref": "#/$defs/text",
+     "description": "Alternativtext; Pflicht (Barrierefreiheit, Anki, Prüfung durch Lesende)"
+    },
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9_]+$"
+    },
+    "nachweis": {
+     "$ref": "#/$defs/text"
+    },
+    "lesehilfe": {
+     "$ref": "#/$defs/text"
+    },
+    "wichtig": {
+     "type": "boolean"
+    }
+   }
+  },
+  "a_baum": {
+   "description": "Organigramm oder Hierarchie (Instanzenzug, Zuständigkeiten, Gliederung eines Begriffs). Das Kit berechnet das Layout; Kanten führen stets vom Elternknoten zum Kind.",
+   "required": [
+    "knoten"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "typ": true,
+    "variante": true,
+    "titel": {
+     "$ref": "#/$defs/text"
+    },
+    "richtung": {
+     "enum": [
+      "unten",
+      "rechts"
+     ],
+     "description": "unten: Wurzel oben (Standard bis sechs Blätter); rechts: Wurzel links (Standard ab sieben Blättern)"
+    },
+    "knoten": {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 24,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*$"
+       },
+       "text": {
+        "$ref": "#/$defs/text"
+       },
+       "eltern": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*$",
+        "description": "id des übergeordneten Knotens; fehlt nur bei der Wurzel"
+       },
+       "label": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Beschriftung der Kante vom Elternknoten, etwa „Berufung“"
+       },
+       "art": {
+        "enum": [
+         "normal",
+         "betont",
+         "neben"
+        ],
+        "description": "betont: Provinzfarbe; neben: gestrichelt (etwa außerhalb der Hierarchie)"
+       }
+      }
+     }
+    },
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9_]+$"
+    },
+    "nachweis": {
+     "$ref": "#/$defs/text"
+    },
+    "lesehilfe": {
+     "$ref": "#/$defs/text"
+    },
+    "wichtig": {
+     "type": "boolean"
+    }
+   }
+  },
+  "a_bild": {
+   "description": "Rasterbild (PNG, JPEG, WebP) mit Pflichtangaben zu Quelle und Lizenz. datei: Pfad relativ zur werk.json; daten: eingebettet als data-URI (python3 bild.py werk.json --einbetten).",
+   "required": [
+    "beschreibung",
+    "quelle",
+    "lizenz"
+   ],
+   "additionalProperties": false,
+   "oneOf": [
+    {
+     "required": [
+      "datei"
+     ]
+    },
+    {
+     "required": [
+      "daten"
+     ]
+    }
+   ],
+   "properties": {
+    "typ": true,
+    "variante": true,
+    "titel": {
+     "$ref": "#/$defs/text"
+    },
+    "datei": {
+     "type": "string",
+     "pattern": "^(?!/)(?!.*\\.\\.)[^\\\\]+\\.(png|jpe?g|webp|PNG|JPE?G|WEBP)$"
+    },
+    "daten": {
+     "type": "string",
+     "pattern": "^data:image/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$"
+    },
+    "beschreibung": {
+     "$ref": "#/$defs/text",
+     "description": "Alternativtext; Pflicht"
+    },
+    "quelle": {
+     "$ref": "#/$defs/text",
+     "description": "Herkunft, etwa Kurzzitat und Seite oder „Eigene Aufnahme“"
+    },
+    "lizenz": {
+     "$ref": "#/$defs/text",
+     "description": "etwa „eigenes Werk“, „CC BY 4.0“, „gemeinfrei“, „Zitat (§ 42f UrhG)“, „freies Werk (§ 7 UrhG)“"
+    },
+    "urheber": {
+     "type": "string",
+     "minLength": 1,
+     "description": "bei fremden Werken: Urheberin oder Urheber für die Namensnennung"
+    },
+    "breite": {
+     "type": "integer",
+     "minimum": 30,
+     "maximum": 100,
+     "description": "Breite in Prozent des Satzspiegels, Standard 100"
+    },
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9_]+$"
+    },
+    "nachweis": {
+     "$ref": "#/$defs/text"
+    },
+    "lesehilfe": {
+     "$ref": "#/$defs/text"
+    },
+    "wichtig": {
+     "type": "boolean"
+    }
+   }
+  },
+  "a_zeitleiste": {
+   "required": [
+    "ereignisse"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "typ": true,
+    "variante": true,
+    "titel": {
+     "$ref": "#/$defs/text"
+    },
+    "ereignisse": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "object",
+      "required": [
+       "datum",
+       "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "datum": {
+        "$ref": "#/$defs/text"
+       },
+       "text": {
+        "$ref": "#/$defs/text"
+       }
+      }
+     }
+    },
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9_]+$"
+    },
+    "nachweis": {
+     "$ref": "#/$defs/text"
+    },
+    "lesehilfe": {
+     "$ref": "#/$defs/text"
+    },
+    "wichtig": {
+     "type": "boolean"
+    }
+   }
+  },
+  "achse": {
+   "type": "object",
+   "required": [
+    "label"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "label": {
+     "$ref": "#/$defs/text"
+    },
+    "einheit": {
+     "type": "string"
+    }
+   }
+  },
+  "buchung": {
+   "type": "object",
+   "required": [
+    "text",
+    "betrag"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "text": {
+     "$ref": "#/$defs/text"
+    },
+    "betrag": {
+     "type": "number"
+    }
+   }
+  },
+  "probe": {
+   "type": "object",
+   "required": [
+    "rechnung"
+   ],
+   "additionalProperties": false,
+   "description": "Rechenprobe (3.5): das Kit rechnet jede Zeile dezimal exakt nach; Abweichung ist ein Fehler. Steht neben dem Rechenweg, ändert seine Darstellung nicht.",
+   "properties": {
+    "werte": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+     },
+     "additionalProperties": {
+      "type": [
+       "number",
+       "string"
+      ]
+     },
+     "description": "Ausgangsgrößen; Dezimalpunkt, etwa {\"i\": \"0.05\"}"
+    },
+    "rechnung": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "ausdruck",
+       "ergebnis"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "name": {
+        "type": "string",
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+        "description": "Zwischenergebnis steht folgenden Zeilen unter diesem Namen zur Verfügung (ungerundet)"
+       },
+       "ausdruck": {
+        "$ref": "#/$defs/text"
+       },
+       "ergebnis": {
+        "type": [
+         "number",
+         "string"
+        ]
+       },
+       "stellen": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 10
+       }
+      }
+     }
+    },
+    "stellen": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 10,
+     "description": "Nachkommastellen für den Vergleich, Standard 2"
+    },
+    "quelle": {
+     "type": "object",
+     "required": [
+      "kurz",
+      "wert"
+     ],
+     "additionalProperties": false,
+     "description": "Endergebnis laut Quelle; weicht es ab, erzeugt das Kit einen Eintrag der Quellenkritik",
+     "properties": {
+      "kurz": {
+       "$ref": "#/$defs/text"
+      },
+      "wert": {
+       "type": [
+        "number",
+        "string"
+       ]
+      }
+     }
+    }
+   }
   }
+ }
 }

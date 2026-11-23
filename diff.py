@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""(c) Oliver Bedernik · Terra-Kit · Diff-Bericht für „neu setzen“
+"""(c) Oliver Bedernik · Terra-Kit 4.0 · Diff-Bericht für „neu setzen“
 
-Vergleicht zwei Fassungen eines Werks und fasst die inhaltlichen Änderungen
-zusammen: Kacheln neu, entfernt, umbenannt, geändert (je Bausteintyp), dazu
-Quellen, Lexicon, Selbsttest und Quellenkritik. Mit --eintragen wird der
+Vergleicht zwei Fassungen eines Werks (Standard 4.0) und fasst die inhaltlichen Änderungen
+zusammen: Abschnitte neu, entfernt, umbenannt, geändert (je Bausteintyp), Kapiteleinleitungen,
+Kontrollfragen, dazu Quellen, Lexicon und Quellenkritik. Mit --eintragen wird der
 Bericht als Eintrag ins Änderungsprotokoll (aenderungen) der neuen Fassung
 geschrieben; Versionsnummer und Datum kommen aus meta bzw. dem heutigen Tag.
 
@@ -14,14 +14,16 @@ import json
 import sys
 from pathlib import Path
 
-NAMEN = {"definition": "Definition", "kern": "Kern", "formel": "Formel", "rechenweg": "Rechenweg",
-         "schema": "Schema", "beispiel": "Beispiel", "merke": "Merke", "feinheit": "Feinheit",
-         "klausurfalle": "Klausurfalle", "austriacum": "Austriacum", "aktualisierung": "Aktualisierung",
-         "latinum": "Latinum", "luecke": "Lücke"}
+NAMEN = {"definition": "Definition", "absatz": "Text", "kern": "Kernliste", "kernsatz": "Kernsatz", "aufzaehlung": "Aufzählung",
+         "formel": "Formel", "rechenweg": "Rechenweg", "tabelle": "Tabelle", "abbildung": "Abbildung", "fallbeispiel": "Fallbeispiel",
+         "merkband": "Merkband", "zitat": "Zitat", "steckbrief": "Steckbrief", "glossar": "Glossar", "akteure": "Akteure",
+         "spitzmarke": "Spitzmarke", "latinum": "Latinum"}
 
 
 def kacheln(werk):
-    return {k["code"]: k for p in werk.get("provinzen", []) for k in p.get("kacheln", [])}
+    """Abschnitte nach Code (Kapitel und Repetitorium); Name aus Kit 3 beibehalten."""
+    alle = [a for k in werk.get("kapitel", []) for a in k.get("abschnitte", [])] + list((werk.get("repetitorium") or {}).get("abschnitte", []))
+    return {a["code"]: a for a in alle}
 
 
 def j(x):
@@ -32,11 +34,11 @@ def geaenderte_bausteine(a, b):
     """Typnamen der Bausteine, die hinzukamen, wegfielen oder sich änderten."""
     alt, neu = {}, {}
     for z, k in ((alt, a), (neu, b)):
-        for x in k.get("bausteine", []):
+        for x in k.get("bloecke", []):
             z.setdefault(x["typ"], []).append(j(x))
     typen = [t for t in sorted(set(alt) | set(neu), key=lambda t: list(NAMEN).index(t) if t in NAMEN else 99)
              if alt.get(t) != neu.get(t)]
-    rest = {key for key in set(a) | set(b) if key not in ("bausteine", "code", "titel") and a.get(key) != b.get(key)}
+    rest = {key for key in set(a) | set(b) if key not in ("bloecke", "code", "titel") and a.get(key) != b.get(key)}
     return [NAMEN.get(t, t) for t in typen] + sorted(rest)
 
 
@@ -51,7 +53,12 @@ def vergleiche(alt, neu):
         if teile:
             bericht["geaendert"].append((c, teile))
     bericht["teile"] = []
-    for teil, name in (("quellen", "Quellen"), ("lexicon", "Lexicon"), ("selbsttest", "Selbsttest"),
+    for k in neu.get("kapitel", []):
+        ak = next((x for x in alt.get("kapitel", []) if x["code"] == k["code"]), {})
+        for teil, name in (("einleitung", "Einleitung"), ("abschluss", "Abschluss"), ("kontrollfragen", "Kontrollfragen"), ("kompakt", "In 60 Sekunden")):
+            if j(ak.get(teil)) != j(k.get(teil)):
+                bericht["teile"].append(f"{name} Kapitel {k['code']} überarbeitet")
+    for teil, name in (("quellen", "Quellen"), ("lexicon", "Lexicon"), ("personen", "Personen"), ("rollen", "Farbschlüssel"),
                        ("quellenkritik", "Quellenkritik"), ("modul", "Domänenmodul"), ("motto", "Motto")):
         a, b = alt.get(teil), neu.get(teil)
         if j(a) != j(b):
@@ -67,7 +74,7 @@ def als_text(b):
     """Ein Satz je Änderungsart; Gedankenstriche vermieden, Satzzeichen wie im Werk."""
     teile = []
     if b["neu"]:
-        teile.append("neue Kacheln " + ", ".join(b["neu"]))
+        teile.append("neue Abschnitte " + ", ".join(b["neu"]))
     if b["entfernt"]:
         teile.append("entfernt " + ", ".join(b["entfernt"]))
     if b["umbenannt"]:

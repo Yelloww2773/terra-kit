@@ -3,9 +3,10 @@
   "private": true,
   "description": "(c) Oliver Bedernik · Terra-Kit · Schriften und Formelsatz (fest versioniert)",
   "dependencies": {
-    "katex": "0.16.11",
+    "@fontsource/alegreya-sans": "5.3.0",
     "@fontsource/cormorant-garamond": "5.3.0",
     "@fontsource/spectral": "5.3.0",
-    "@fontsource/alegreya-sans": "5.3.0"
+    "katex": "0.16.11",
+    "pagedjs": "0.4.3"
   }
 }

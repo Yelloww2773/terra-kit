@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""(c) Oliver Bedernik · Terra-Kit · karte.py (Standard 3.1)
+"""(c) Oliver Bedernik · Terra-Kit 4.0 · karte.py
 
-Erzeugt aus einer werk.json die interaktive Wissenslandkarte (Format A) als eine
+Erzeugt aus einer werk.json (Standard 4.0) die interaktive Wissenslandkarte (Format A) als eine
 selbstständige HTML-Datei zur Veröffentlichung als Artifact.
 
-Satz der Kacheln, Formeln und Diagramme kommt unverändert aus skript.py (eine Quelle).
+Jeder Abschnitt erscheint als Feld (Kachel) in verdichteter Form (sicht.py: Definition, Kernsatz, Kernliste,
+Merkhilfe, Tabelle, Abbildung, Spitzmarken, Latinum; ohne Fließtext). Satz der Felder, Formeln und
+Diagramme kommt aus satz.py und diagramm.py (eine Quelle mit dem Lernskript).
 Formeln als MathML (keine fremden Schriftdateien nötig). Schriften über Google Fonts;
 mit --lokal stattdessen aus node_modules (für Tests ohne Netz).
 
@@ -21,8 +23,9 @@ from pathlib import Path
 
 KIT = Path(__file__).resolve().parent
 sys.path.insert(0, str(KIT))
-import skript as S  # noqa: E402
+import satz as S  # noqa: E402
 from validate import validiere  # noqa: E402
+import sicht  # noqa: E402
 
 VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
 GOOGLE = ("https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400"
@@ -135,8 +138,8 @@ def startfeld(werk):
         '<dt>Springen</dt><dd>Provinzleiste unten, Register oder Suche (Taste /); Doppelklick auf eine Kachel holt sie heran.</dd>'
         '<dt>Verweise</dt><dd>Codes wie A1 im Text sind anklickbar und führen zur Kachel.</dd></dl></div>'
         f'<div><h3>Bausteine</h3>{"".join(proben)}'
-        '<p style="font-size:13px;color:var(--tinte-2);margin-top:10px">★ Kernstoff · ◆ Vertiefung · ○ laut Lehrveranstaltung auslassbar. '
-        'Die Marken sind eine Einschätzung.</p></div></div></section>')
+        '<p style="font-size:13px;color:var(--tinte-2);margin-top:10px">★ Kerninhalt (im Lernskript mit dem Schlüssel markiert) · ◆ übriger Stoff. '
+        'Die Marken sind eine Einschätzung; das Lernskript enthält zu jedem Feld den ausführlichen Text.</p></div></div></section>')
 
 
 def info_paneel(werk):
@@ -147,8 +150,8 @@ def info_paneel(werk):
         zeilen.append(("Lehrveranstaltung", S.md(m["lehrveranstaltung"])))
     zeilen += [("Primärquelle", S.md(mo["primaerquelle"])), ("Sekundärquelle", S.md(mo["sekundaerquelle"])),
                ("Quellen", "; ".join(S.zitat_voll(q, S.zitierstil(werk)) for q in werk.get("quellen", [])) or "keine"),
-               ("Zitiervorschlag", f'<i>Bedernik</i>, {esc(m["titel"])} ({m["stand"][:4]}) Kachel {erste}'),
-               ("Inhaltsgleich", "Lernskript (PDF) und Exam aus derselben Datenquelle, gleiche Kachelcodes"),
+               ("Zitiervorschlag", f'<i>Bedernik</i>, {esc(m["titel"])} ({m["stand"][:4]}) Abschnitt {erste}'),
+               ("Inhaltsgleich", "Lernskript (PDF), Exam und Anki-Deck aus derselben Datenquelle, gleiche Abschnittscodes; die Karte zeigt jeden Abschnitt verdichtet, den Fließtext enthält das Lernskript"),
                ("Tastatur", "+ und − zoomen, 0 ganze Karte, / Suche, Pfeiltasten bewegen, Esc schließt"),
                ("Urheber", "<b>(c) Oliver Bedernik</b>. Alle Rechte vorbehalten." + S.HAFTUNG.get(mo["domaene"], "").replace(" und ersetzt", " Ersetzt") + ".")]
     dl = "".join(f"<dt>{a}</dt><dd>{b}</dd>" for a, b in zeilen)
@@ -186,6 +189,8 @@ def schriften(lokal):
 
 
 def baue(werk, lokal=False, ordner=None):
+    if str(werk.get("standard")) == "4.0" and "kapitel" in werk:
+        werk = sicht.kachelsicht(werk, ordner)
     S._HYPH = None  # Browser trennt selbst (hyphens: auto, lang de-AT)
     S.farben_zuweisen(werk)
     S.vorbereiten(werk, ordner)  # 3.5: Bilder einbetten (Karte bleibt eine Datei), Quellenkritik, Abbildungsnummern
@@ -284,7 +289,7 @@ def main():
         sys.exit("Abbruch: werk.json fehlerhaft")
     aus = Path(a.aus).resolve()
     aus.mkdir(parents=True, exist_ok=True)
-    datei = aus / (S.dateiname(werk) + ("_karte_lokal.html" if a.lokal else "_karte.html"))
+    datei = aus / (S.dateiname({"meta": werk["meta"]}) + ("_karte_lokal.html" if a.lokal else "_karte.html"))
     inhalt = baue(werk, a.lokal, ordner)
     datei.write_text(inhalt, encoding="utf-8")
     striche = len(re.findall("[\u2012\u2013\u2014\u2015]", klartext(inhalt)))

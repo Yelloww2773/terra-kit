@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# (c) Oliver Bedernik · Terra-Kit · einrichten.sh
+# (c) Oliver Bedernik · Terra-Kit 4.0 · einrichten.sh
 # Richtet das Kit in einer frischen Umgebung ein und prüft es vollständig.
 # Aufruf im Kit-Ordner:  bash einrichten.sh
 set -euo pipefail
@@ -26,8 +26,17 @@ if ! pip install -q -r requirements.txt --break-system-packages 2>/tmp/terra-pip
 fi
 echo "Terra-Kit: Schriften und Formelsatz (fest versioniert)"
 npm ci --silent --no-audit --no-fund 2>/tmp/terra-npm.log || npm install --silent --no-audit --no-fund 2>>/tmp/terra-npm.log || { echo "FEHLER: npm gescheitert:"; tail -5 /tmp/terra-npm.log; exit 1; }
-echo "Terra-Kit: Testreihe"
-python3 tests/run_tests.py | tail -1
-python3 skript.py referenzwerk.json --aus /tmp/terra-pruefung | tail -1
-python3 skript.py referenz_historica.json --aus /tmp/terra-pruefung | tail -1
+echo "Terra-Kit: Browser für den Buchsatz"
+python3 -c "from playwright.sync_api import sync_playwright as s; p = s().start(); p.chromium.launch().close(); p.stop()" 2>/dev/null \
+  || python3 -m playwright install chromium >/tmp/terra-pw.log 2>&1 || { echo "FEHLER: Chromium fehlt (python3 -m playwright install chromium)"; exit 1; }
+echo "Terra-Kit: Testreihe (Validator, Umsetzer, Karte, Exam, Anki, Werkzeuge)"
+python3 tests/run_tests.py > /tmp/terra-tests.log 2>&1 || { grep "✗" /tmp/terra-tests.log; tail -1 /tmp/terra-tests.log; exit 1; }
+tail -1 /tmp/terra-tests.log
+echo "Terra-Kit: Testreihe Buchsatz (Paged.js in Chromium, einige Minuten)"
+python3 tests/buch_test.py > /tmp/terra-buch.log 2>&1 || { grep "✗" /tmp/terra-buch.log; tail -1 /tmp/terra-buch.log; exit 1; }
+tail -1 /tmp/terra-buch.log
+echo "Terra-Kit: Referenzwerk setzen"
+python3 skript.py referenzwerk.json --aus /tmp/terra-pruefung > /tmp/terra-satz.log 2>&1 || { grep "FEHLER" /tmp/terra-satz.log; exit 1; }
+tail -1 /tmp/terra-satz.log
+grep -q "Ergebnis: 0 Fehler, 0 Warnungen" /tmp/terra-satz.log || { echo "FEHLER: Referenzwerk nicht sauber gesetzt"; exit 1; }
 echo "Terra-Kit bereit."

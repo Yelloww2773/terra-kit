@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""(c) Oliver Bedernik · Terra-Kit · Prüfliste für den Advocatus diaboli
+"""(c) Oliver Bedernik · Terra-Kit 4.0 · Prüfliste für den Advocatus diaboli
 
-Zieht alle angreifbaren Angaben eines Werks in eine Tabelle: Normzitate,
-Rechtsprechung, Zahlen, Daten und Auflagen, jeweils mit Kachel und Kontext;
-seit 3.5 dazu jeder Rechenweg mit dem Stand seiner Rechenprobe und jedes
-Rasterbild mit Quelle und Lizenz (Rechte und Nachweis prüfen).
+Zieht alle angreifbaren Angaben eines Werks (Standard 4.0) in eine Tabelle: Normzitate,
+Rechtsprechung, Zahlen, Daten und Auflagen, jeweils mit Abschnitt und Kontext, einschließlich
+Fließtext, Randbelegen, Kapiteleinleitungen und Kontrollfragen; dazu jeder Rechenweg mit dem
+Stand seiner Rechenprobe, jedes Rasterbild mit Quelle und Lizenz (Rechte und Nachweis prüfen)
+und jeder Randbeleg mit Quelle und Fundstelle (Belegstelle aufschlagen).
 Die Tabelle ist die Arbeitsgrundlage des Gegenprüfungsdurchgangs (Ablauf 5).
 
     python3 pruefliste.py werk.json [--aus pruefliste.md]
@@ -14,7 +15,7 @@ import re
 import sys
 from pathlib import Path
 
-from validate import RE_GZ, alle_strings, ist_roh
+from validate import RE_GZ, alle_strings, ist_roh, abschnitte, bloecke
 
 RE_NORM = re.compile(r"(?:§§?|Art)\s?\d+[a-z]?(?:\s?(?:Abs|Z|lit|Satz)\s?[0-9a-z]+)*(?:\s?(?:und|bis|,)\s?\d+[a-z]?)*"
                      r"(?:\s(?:[A-ZÄÖÜ][A-Za-zÄÖÜäöü-]*[A-Z][A-Za-z-]*|StGG|EMRK|AEUV|EUV|GRC))?")
@@ -27,13 +28,17 @@ KONTEXT = 45
 
 
 def fundorte(werk):
-    """(Ort, Text) für alle prüfbaren Texte; Ort ist Kachelcode oder Werkteil."""
-    for p in werk.get("provinzen", []):
-        for k in p.get("kacheln", []):
-            for pfad, s in alle_strings(k):
+    """(Ort, Text) für alle prüfbaren Texte; Ort ist Abschnittscode oder Werkteil."""
+    for k in werk.get("kapitel", []):
+        for teil in ("einleitung", "abschluss", "kompakt", "kontrollfragen"):
+            for pfad, s in alle_strings(k.get(teil, [])):
                 if not ist_roh(pfad):
-                    yield k["code"], s
-    for teil in ("lexicon", "selbsttest", "quellenkritik"):
+                    yield f'{k["code"]} {teil.capitalize()}', s
+    for _, a in abschnitte(werk):
+        for pfad, s in alle_strings(a):
+            if not ist_roh(pfad) and not pfad.endswith(".code"):
+                yield a["code"], s
+    for teil in ("lexicon", "quellenkritik", "personen"):
         for pfad, s in alle_strings(werk.get(teil, [])):
             yield teil, s
 
@@ -65,10 +70,11 @@ def eintraege(werk):
                 neu("Zahl", ort, m.group(), s, m)
         for m in RE_HOCHZAHL.finditer(s):
             neu("Auflage", ort, m.group(), s, m)
-    import rechenprobe as R  # 3.5: Rechnungen und Bildrechte
-    for p in werk.get("provinzen", []):
-        for k in p.get("kacheln", []):
-            for b in k.get("bausteine", []):
+    import rechenprobe as R  # Rechnungen, Bildrechte und Randbelege
+    for ort, b in bloecke(werk):
+        k = {"code": ort.split()[0]}
+        if True:
+            if True:
                 if b.get("typ") == "rechenweg":
                     if not b.get("probe"):
                         stand = "ungeprüft: keine Rechenprobe, jeden Schritt von Hand nachrechnen"
@@ -83,11 +89,26 @@ def eintraege(werk):
                 if b.get("variante") == "bild":
                     zeilen.append({"kategorie": "Bildrecht", "ort": k["code"], "wert": b.get("lizenz", ""),
                                    "kontext": f"{b.get('titel', '')}: {b.get('quelle', '')}" + (f", {b['urheber']}" if b.get("urheber") else "")})
+    import skript
+    namen = {x: q["kurz"] for q in werk.get("quellen", []) for x in skript.quell_schluessel(q)}
+    for ort, t in skript.texte(werk):
+        try:
+            _, fns = skript.fussnoten_zerlegen(t)
+        except ValueError:
+            continue
+        for fn in fns:
+            for m in re.finditer(r"@([A-Za-z0-9ÄÖÜäöü]+)(?:\s*\(([^)]*)\))?([^;@]*)", fn):
+                stelle = (m.group(2) or m.group(3) or "").strip(" .;")
+                schl = ("Beleg", ort.split()[0], m.group(1), stelle)
+                if schl not in gesehen:
+                    gesehen.add(schl)
+                    zeilen.append({"kategorie": "Beleg", "ort": ort.split()[0], "wert": f'{namen.get(m.group(1), m.group(1))} {stelle}'.strip(),
+                                   "kontext": "Belegstelle aufschlagen: trägt sie die Aussage des Satzes?"})
     for q in werk.get("quellen", []):
         if q.get("auflage"):
             wert = f"{q['kurz']}: {q['auflage']}. Auflage {q.get('jahr', '')}".strip()
             zeilen.append({"kategorie": "Auflage", "ort": "Quellen", "wert": wert, "kontext": q.get("titel", "")})
-    reihe = ["Norm", "Rechtsprechung", "Datum", "Zahl", "Rechnung", "Bildrecht", "Auflage"]
+    reihe = ["Norm", "Rechtsprechung", "Datum", "Zahl", "Rechnung", "Bildrecht", "Beleg", "Auflage"]
     zeilen.sort(key=lambda z: reihe.index(z["kategorie"]))
     return zeilen
 
@@ -95,7 +116,7 @@ def eintraege(werk):
 def als_markdown(werk, zeilen):
     m = werk["meta"]
     kopf = [f"# Prüfliste {m['titel']} · Version {m['version']}", "",
-            "(c) Oliver Bedernik · Terra-Kit · Arbeitsgrundlage für den Advocatus diaboli", "",
+            "(c) Oliver Bedernik · Terra-Kit 4.0 · Arbeitsgrundlage für den Advocatus diaboli", "",
             "| Nr | Kategorie | Ort | Angabe | Kontext | geprüft |", "|---|---|---|---|---|---|"]
     esc = lambda t: t.replace("|", "\\|")
     return "\n".join(kopf + [f"| {i} | {z['kategorie']} | {z['ort']} | {esc(z['wert'])} | {esc(z['kontext'])} | ☐ |"

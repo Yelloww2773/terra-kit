@@ -146,13 +146,13 @@
 
   /* ── Auswertung ────────────────────────────────────────────────── */
   const gleich = (a, b) => a.length === b.length && a.every(x => b.includes(x));
-  /* Brücke Exam → Anki (3.4): Suchbegriff für die Kacheln aller falsch beantworteten Fragen */
+  /* Brücke Exam → Anki (3.4): Suchbegriff für die Abschnitte aller falsch beantworteten Fragen */
   function ankiSuche() {
     const istRichtig = f => gleich(Z.antworten[f.id] || [], f.optionen.filter(o => o.richtig).map(o => o.id));
     const codes = [];
     D.fragen.forEach(f => { if (!istRichtig(f)) f.kacheln.forEach(c => { if (!codes.includes(c)) codes.push(c); }); });
     if (!codes.length || !D.anki_tag) return '';
-    return 'tag:' + D.anki_tag + ' (' + codes.map(c => 'tag:Kachel::' + c).join(' or ') + ')';
+    return 'tag:' + D.anki_tag + ' (' + codes.map(c => 'tag:Abschnitt::' + c).join(' or ') + ')';
   }
   function ankiBruecke() {
     const s = ankiSuche();

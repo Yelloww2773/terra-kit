@@ -158,9 +158,10 @@ def pruefe(probe):
 def kritik(werk):
     """Automatische Einträge der Quellenkritik: Quelle nennt ein anderes Endergebnis als die Probe."""
     out = []
-    for p in werk.get("provinzen", []):
-        for k in p.get("kacheln", []):
-            for b in k.get("bausteine", []):
+    alle = [a for k in werk.get("kapitel", []) for a in k.get("abschnitte", [])] + list((werk.get("repetitorium") or {}).get("abschnitte", []))
+    for k in alle:  # Standard 4.0: Abschnitte mit Bausteinen
+        if True:
+            for b in k.get("bloecke", []):
                 pr = b.get("probe") if b.get("typ") == "rechenweg" else None
                 if not pr or not pr.get("quelle"):
                     continue
@@ -173,5 +174,5 @@ def kritik(werk):
                     out.append({"quelle": pr["quelle"]["kurz"],
                                 "befund": f"nennt als Ergebnis {at(q, st)}.",
                                 "richtig": f"{at(ist, st)} (Rechenprobe des Terra-Kits, kaufmännisch gerundet).",
-                                "kachel": k["code"]})
+                                "abschnitt": k["code"]})
     return out

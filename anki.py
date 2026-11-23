@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""(c) Oliver Bedernik · Terra-Kit · anki.py (Standard 3.1)
+"""(c) Oliver Bedernik · Terra-Kit 4.0 · anki.py
 
-Erzeugt aus einer werk.json ein importierbares Anki-Deck (.apkg, auch für AnkiDroid).
+Erzeugt aus einer werk.json (Standard 4.0) ein importierbares Anki-Deck (.apkg, auch für AnkiDroid).
+Grundlage ist die Kachelsicht (sicht.py): Kernsätze als Lückenkarten (Lücke = Fett), Definition mit Normwortlaut,
+Kernliste, Spitzmarken (Merke, Feinheit, Cave), Latinum, Merkband als Merkhilfe, Kontrollfragen, Lexicon.
 
 Kartenlogik: je Baustein eine oder mehrere Karten (siehe README). Fallbeispiele nur zur
 Veranschaulichung auf der Rückseite der Definitionskarte. Abbildungen (Kurve, Fluss, SVG,
 T-Konto, Organigramm) als Bilder, Rasterbilder in Originalqualität mit Bildnachweis.
-Unterdecks je Provinz, Schlagwörter je Kachel und Relevanz.
+Unterdecks je Kapitel (Provinz), Schlagwörter je Abschnitt und Relevanz.
 
 Wasserzeichen (3.5): Vom Kit gesetzte Grafiken tragen es im Bild; eigene Rasterbilder
 (Lizenz „eigenes Werk“) erhalten es eingebrannt. Fremde Bilder bleiben unverändert: Ein
@@ -29,8 +31,9 @@ import genanki
 
 KIT = Path(__file__).resolve().parent
 sys.path.insert(0, str(KIT))
-import skript as S  # noqa: E402
+import satz as S  # noqa: E402
 from validate import validiere  # noqa: E402
+import sicht  # noqa: E402
 
 VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
 esc = S.esc
@@ -224,7 +227,7 @@ def karten(werk, ordner, quelle=None):
                        "Fundstelle": S.typo(esc(fundstelle if fundstelle is not None else ((k["anker"] + (" · " + k["seite"] if k.get("seite") else "")) if k else ""))),
                        "Farbe": S.PALETTE[p["farbe"]][0], "FarbeDunkel": dunkel[p["farbe"]], "Werk": esc(w["titel"]), "Schlüssel": schluessel},
             "guid": genanki.guid_for(kurz, schluessel),
-            "tags": [f'Terra::{w["titel"].replace(" ", "_")}', f'Provinz::{p["code"]}', f'Kachel::{(k or {}).get("code", p["code"])}', f"Relevanz::{rel}", f"Art::{art.replace(' ', '_')}"],
+            "tags": [f'Terra::{w["titel"].replace(" ", "_")}', f'Provinz::{p["code"]}', f'Abschnitt::{(k or {}).get("code", p["code"])}', f"Relevanz::{rel}", f"Art::{art.replace(' ', '_')}"],
             "deck": f'{p["nr"]} {p["name_lat"]}'})
 
     for p in werk["provinzen"]:
@@ -376,6 +379,7 @@ def main():
     if v.fehler:
         print("\n".join(v.fehler))
         sys.exit("Abbruch: werk.json fehlerhaft")
+    werk = sicht.kachelsicht(werk, ordner)  # 4.0: Abschnitte in verdichteter Form
     datei, notizen, zaehler, bilder = baue(werk, Path(a.aus).resolve(), ordner)
     b = pruefe(datei, notizen)
     print(f"Deck: {datei.name} · {datei.stat().st_size // 1024} KB · {b['notizen']} Notizen, {b['karten']} Karten, {len(bilder)} Abbildungen, {b['medien']} Mediendateien")

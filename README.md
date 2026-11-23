@@ -2,210 +2,136 @@
 
 (c) Oliver Bedernik · Alle Rechte vorbehalten.
 
-Werkzeugsatz für Lernmaterial nach dem **Terra-Standard 3.1**. Inhalt wird ausschließlich als `werk.json` geschrieben; Karte, Lernskript, Exam und Anki-Deck werden daraus automatisch und einheitlich erzeugt.
+Werkzeugsatz für Lernmaterial nach dem **Terra-Standard 4.0**. Inhalt wird ausschließlich als `werk.json` geschrieben; Lernskript (Buchsatz), Wissenslandkarte, Exam und Anki-Deck entstehen daraus automatisch und einheitlich.
 
 ## Prinzip
 
-Daten statt Nachbau: Gestaltung, Seitenmontage und Prüfungen liegen im Code, nicht in der Interpretation des Schreibenden. Jedes Werk sieht gleich aus; Karte, Skript und Exam bleiben inhaltsgleich.
+Daten statt Nachbau: Gestaltung, Satz, Register und Prüfungen liegen im Code, nicht in der Interpretation des Schreibenden. Seit 4.0 ist das Lernskript ein Buch: **Kapitel mit Abschnitten und Bausteinen** in Fließtext, mit Randbelegen, Spitzmarken, Einbettungen und einem Umbruch mit Korrekturläufen. Die Karte zeigt dieselben Abschnitte verdichtet; Exam und Deck verweisen auf dieselben Abschnittscodes.
 
 ## Bestandteile
 
-| Datei | Zweck | Status |
-|---|---|---|
-| `schema.json` | Datenmodell eines Terra-Werks | fertig |
-| `validate.py` | Prüfung in vier Stufen (Struktur, Typografie, Logik samt Rechenprobe und Bildprüfung, Formeln) | fertig, 3.5.0 |
-| `rechenprobe.py` | rechnet Rechenwege dezimal exakt nach (ohne `eval`), erzeugt Quellenkritik bei abweichender Quelle | neu, 3.5.0 |
-| `bild.py` | bettet verknüpfte Rasterbilder in werk.json oder exam.json ein, verkleinert, entfernt EXIF | neu, 3.5.0 |
-| `referenzwerk.json` | „Terra Exemplaris“: enthält jeden Baustein, jede Schemavariante, jeden Sonderfall | fertig, 0.4 |
-| `referenz_historica.json` | „Terra Historica Constitutionalis“: zweites Prüfwerk mit acht Provinzen (Höchstzahl), 39 Kacheln, zweiseitigem Verzeichnis, Strukturdiagramm; zugleich erste Überführung einer Bestandskarte mit Quellenkritik | fertig, 1.0 |
-| `tests/run_tests.py` | 123 Tests: Prüfwerke, Referenzexam, beide Decks, Quellen und Zitierformen, Grafik, Rechenprobe, Bildrechte, Satz und Umbruch, Tabellen und Gewichtung; jeder eingeschleuste Fehler erkannt | fertig, 3.7.1 |
-| `tests/umbruch_messung.py` | misst Seiten, Fortsetzungen, Kleinreste, Anrisse, Füllstand und Grafikschrift eines gesetzten Werks, unabhängig von der Kit-Version (Vorher und Nachher gleich gemessen) | neu, 3.6.0 |
-| `tests/umbruch_kern_test.js` | Rechenkern des Umbruchs ohne Browser (Node) | neu, 3.6.0 |
-| `skript.py` | Lernskript A4 mit Seitenmontage, Umbruch- und PDF-Prüfung | fertig, 3.1.0 |
-| `vorlage/skript.css` | Satzspiegel, Bausteinoptik, Druckregeln | fertig |
-| `vorlage/montage.js` | Seitenmontage (Messsäule, Satz nach Plan, Korrektur, Rückfallebene), Tabellenteilung, Silbentrennung, Prüfung im Browser | fertig, 3.6.0 |
-| `vorlage/umbruch.js` | globaler Seitenumbruch: reine Rechnung, Gewichte fest im Code | neu, 3.6.0 |
-| `karte.py` | interaktive Wissenslandkarte als eine selbstständige HTML-Datei zur Veröffentlichung | fertig, 3.1.0 |
-| `vorlage/karte.css`, `vorlage/karte.js` | Arbeitsfläche, Gebiete, Kamera, Minikarte, Register, Dunkelmodus | fertig |
-| `tests/karte_test.py` | Browsertest der Karte (Funktion, Überlappung, Mobil, Dunkelmodus) | fertig |
-| `exam.py` | Prüfung: interaktiv (HTML) und mit `--pdf` als A4-Prüfungsbogen mit Lösungsteil | fertig, 3.1.0 |
-| `schema_exam.json` | Datenmodell eines Exams (verweist auf die Kacheln genau eines Werks) | fertig |
-| `exam_historica.json` | Referenzexam „Examen Historicum Constitutionale“: 28 Fragen, 20 Fallbeispiele, 16 Mehrfachauswahl, ein Organigramm zum Sachverhalt (q11) | fertig, 1.1 |
-| `vorlage/exam.css`, `vorlage/exam.js`, `vorlage/exam_druck.css` | Oberfläche, Ablauf und Druckbild der Prüfung | fertig |
-| `vorlage/farben.css` | gemeinsame Farb- und Dunkelmodusregeln für Karte und Exam | fertig |
-| `tests/exam_test.py` | Browsertest des gesamten Prüfungsablaufs | fertig |
-| `anki.py` | importierbares Anki-Deck (.apkg, auch AnkiDroid) mit Unterdecks je Provinz, Abbildungen und eingebetteten Schriften | fertig, 3.1.0 |
+| Datei | Zweck |
+|---|---|
+| `schema.json` | Datenmodell 4.0: Kapitel → Abschnitte → Bausteine; Repetitorium (L) mit eigenen Abschnitten |
+| `schema_3.json` | altes Datenmodell (Provinzen, Kacheln); nur noch für `umsetzen.py` |
+| `validate.py` | Prüfung in fünf Stufen: Schema, Typografie, Kapitel und Bausteine samt Rechenprobe und Bildprüfung, Satzregeln des Buchsatzes, Formeln; Abdeckung beim Referenzwerk; Exam gegen sein Werk |
+| `skript.py` | Lernskript im Buchsatz (Paged.js 0.4.3 in Chromium): Titelseite, Titelei, Kapitel, Repetitorium, Anhang, Randbelege, Register, Lesezeichen, Satzprüfung, Kontaktabzug |
+| `satz.py` | Hilfsbibliothek: Markup, Typografie, Trennung, KaTeX, Kurve, Organigramm, T-Konto, Zeitleiste, Bild, Quellenverzeichnis, Kontaktabzug |
+| `diagramm.py` | Flussdiagramme und BPMN mit Bahnen, Farbschlüssel der Rollen |
+| `relief.py` | Höhenlinien der Titelseite (aus dem Titel abgeleitet, ohne Stoffbezug) |
+| `sicht.py` | Kachelsicht: verdichtet jeden Abschnitt für Karte, Exam und Anki |
+| `karte.py` | interaktive Wissenslandkarte als eine selbstständige HTML-Datei |
+| `exam.py` | Prüfung interaktiv (HTML) und mit `--pdf` als A4-Bogen mit Lösungsteil |
+| `anki.py` | importierbares Anki-Deck (.apkg, auch AnkiDroid) |
+| `umsetzen.py` | Werk oder Exam 3.x → Standard 4.0, mit Nacharbeitsliste |
+| `pruefliste.py` | Prüfliste für den Advocatus diaboli (Normen, Rechtsprechung, Daten, Zahlen, Rechnungen, Bildrechte, Randbelege, Auflagen) |
+| `diff.py` | Diff-Bericht zweier Fassungen, trägt ins Änderungsprotokoll ein |
+| `rechenprobe.py` | rechnet Rechenwege dezimal exakt nach (ohne `eval`), erzeugt Quellenkritik bei abweichender Quelle |
+| `bild.py` | bettet verknüpfte Rasterbilder ein, verkleinert, entfernt EXIF |
+| `referenzwerk.json` | „Terra Exemplaris“ 4.0: jeder Baustein, jede Abbildungsart, jeder Sonderfall des Satzes (Abdeckungsprüfung) |
+| `referenz_historica.json` | „Terra Historica Constitutionalis“ 2.0: ganzes Werk, sieben Kapitel und Repetitorium, 39 Abschnitte, 52 Randbelege; Muster für Werke |
+| `exam_historica.json` | Referenzexam zur Historica: 28 Fragen, 20 mit Sachverhalt, 16 Mehrfachauswahl |
+| `tests/run_tests.py` | 97 Tests: Referenzwerke und Referenzexam sauber, Validator (66 eingeschleuste Fehler), Exam (10), Exam, Umsetzer, Kachelsicht, Karte, Anki, Prüfliste, Diff, Rechenprobe, Version, Workflow |
+| `tests/buch_test.py` | Testreihe Buchsatz: Prüfregeln, Gleiten, Nahtliste, Satz in Chromium (Vermerk auf jeder Seite, Metadaten, Lesezeichen, Randbelege, Anriss), Titelseiten, Relief |
+| `tests/karte_test.py`, `tests/exam_test.py` | Browsertests von Karte und Exam (Funktion, Überlappung, Mobil, Dunkelmodus) |
+| `vorlage/buch.css` | Satzvorlage des Buchsatzes (auf `skript.css` der Terrae aufbauend) |
+| `vorlage/karte.*`, `vorlage/exam.*`, `vorlage/farben.css` | Oberflächen von Karte und Exam |
+| `vorlage/montage.js`, `vorlage/umbruch.js` | Seitenmontage des A4-Prüfungsbogens (Exam); das Lernskript setzt seit 4.0 Paged.js |
 
 ## Verwendung
 
 ```bash
-pip install -r requirements.txt --break-system-packages
-npm install                        # Schriften und KaTeX, fest versioniert (package.json)
-python3 validate.py werk.json      # Exitcode 0 = keine Fehler
-python3 validate.py werk.json --streng   # Warnungen zählen als Fehler
+bash einrichten.sh                       # Abhängigkeiten, beide Testreihen, Referenzwerk; endet mit „Terra-Kit bereit.“
+python3 validate.py werk.json            # Exitcode 0 = keine Fehler; --streng: Warnungen zählen als Fehler
 python3 pruefliste.py werk.json          # Prüfliste für den Advocatus diaboli (pruefliste.md)
-python3 diff.py alt.json neu.json --eintragen   # Diff-Bericht, trägt ins Änderungsprotokoll ein
-python3 versionspruefung.py              # neuere freigegebene Kit-Version verfügbar?
-python3 tests/run_tests.py         # vor jeder Freigabe einer Kit-Version
-python3 skript.py werk.json --aus ausgabe/   # Lernskript A4 (Format B)
-python3 skript.py werk.json --aus ausgabe/ --umbruch gierig   # Umbruch wie bis 3.5, nur zur Fehlersuche
-python3 tests/umbruch_messung.py werk.json [--kit ORDNER]     # Umbruch messen (Vorher und Nachher)
-python3 karte.py werk.json --aus ausgabe/    # Wissenslandkarte (Format A), zur Veröffentlichung
-python3 validate.py exam.json werk.json      # Exam prüfen, mit Prüfungsmatrix
+python3 skript.py werk.json --aus ausgabe/            # Lernskript (PDF, Bericht, Kontaktabzug, Nahtliste)
+python3 karte.py werk.json --aus ausgabe/             # Wissenslandkarte zur Veröffentlichung
+python3 validate.py exam.json werk.json               # Exam prüfen, mit Prüfungsmatrix
 python3 exam.py exam.json werk.json --aus ausgabe/ --pdf   # Prüfung interaktiv und als A4-Bogen
-python3 anki.py werk.json --aus ausgabe/     # Anki-Deck (.apkg)
-python3 bild.py werk.json --einbetten        # verknüpfte Bilder einbetten (werk.json bleibt selbsttragend)
-python3 karte.py werk.json --aus /tmp/k --lokal && python3 tests/karte_test.py /tmp/k/<datei>_karte_lokal.html
+python3 anki.py werk.json --aus ausgabe/              # Anki-Deck (.apkg)
+python3 diff.py alt.json neu.json --eintragen         # Diff-Bericht ins Änderungsprotokoll
+python3 umsetzen.py alt.json neu.json --liste nacharbeit.md   # Werk 3.x → 4.0
+python3 umsetzen.py --exam exam_alt.json exam_neu.json        # Exam 3.x → 4.0
+python3 bild.py werk.json --einbetten                 # verknüpfte Bilder einbetten
+python3 tests/run_tests.py && python3 tests/buch_test.py   # vor jeder Freigabe
 ```
 
-Freigabe einer Kit-Version nur, wenn die Testreihe vollständig besteht **und** `skript.py` für beide Prüfwerke (`referenzwerk.json`, `referenz_historica.json`) mit 0 Fehlern und 0 Warnungen endet.
+Freigabe einer Kit-Version nur, wenn beide Testreihen vollständig bestehen **und** `skript.py` für beide Referenzwerke mit 0 Fehlern und 0 Warnungen endet.
 
-**Die zwei Prüfwerke im Vergleich:** „Terra Exemplaris“ deckt die *Breite* ab (jeder Baustein, jede Schemavariante, Formeln, Querformat, überhohe Tabelle). „Terra Historica Constitutionalis“ deckt die *Größe* ab (acht Provinzen, volles Farbspektrum, mehrseitiges Inhaltsverzeichnis, Daumenregister mit acht Reitern, 38 Seiten) und dient als Muster für die Überführung bestehender Karten.
+## Datenstandard 4.0
 
-## Lernskript: Aufbau
+```
+werk.json
+├─ meta        Titel, Untertitel, Reihe, Lehrveranstaltung, Version, Stand, Urheber, Provinzregister, Titelseite
+├─ modul       Domäne, Primär- und Sekundärquelle, Zitierstil (AZR oder APA7), Prüfdimensionen
+├─ quellen     Kurzzitat, Sigle für Randbelege (@Sigle), Randsigle (rand), Gattung und Felder oder Vollangabe
+├─ rollen      Farbschlüssel (Rolle → Name, Farbe) für Diagramme, Zeitstrahl, Merkband, Tabellenköpfe
+├─ kapitel[]   Code A bis G, Nummer, Namen, Leitfrage, In 60 Sekunden, Einleitung, Abschnitte, Abschluss, Kontrollfragen
+│  └─ abschnitte[]  Code (A1 …, stabil), Titel, Anker, Fundstelle, wichtig, Bausteine
+├─ repetitorium Code L; eigene Abschnitte (L1 …), danach die generierten Teile Klausurfallen, Quellenkritik,
+│               Lexicon, Selbsttest, Änderungsprotokoll
+└─ personen, abkuerzungen, lexicon, quellenkritik, motto, aenderungen
+```
 
-Titelseite (Reihe, Autor, Titel, Ausgabe, Ort und Jahr, Registerübersicht) · Impressum mit Motto, Zitiervorschlag und Quellen · Inhalt (zweispaltig, Provinzblöcke in Provinzfarbe) · Zum Gebrauch (Aufbau, Anatomie einer Kachel, Bausteine des Werks) · Abkürzungen und Zitierweise (automatisch aus dem Text, ab fünf Treffern) · Provinzen · Repetitorium mit generierten Abschnitten.
+**Bausteine:** `absatz` (Fließtext) · `definition` · `kernsatz` (atomar, Fachbegriff fett: wird Anki-Lücke) · `kern` (Kernliste „**Begriff:** Erklärung“, Punkte einzeln `wichtig`) · `aufzaehlung` · `spitzmarke` (`merke`, `feinheit`, `klausurhinweis` als „Cave!“, `austriacum`, `aktualisierung`, `luecke`) · `zitat` (Normwortlaut mit Fundstelle) · `latinum` · `merkband` (Reihenfolge in zwei bis sechs Schritten) · `steckbrief` · `glossar` · `akteure` (Personen des Werks) · `tabelle` (Arten `uebersicht` und `vergleich`, Spaltenrollen, Aussage, Lesehilfe) · `abbildung` (`zeitstrahl` maßstabgetreu, `zeitleiste`, `diagramm` als Fluss oder BPMN, `baum`, `kurve`, `tkonto`, `svg`, `bild`) · `fallbeispiel` (Sachverhalt und Lösungsskizze) · `formel` · `rechenweg` (mit Rechenprobe).
 
-**Provinzfarben** kommen aus einer festen Palette mit gleicher Helligkeit und Sättigung (OKLCH L 0,47, C ≈ 0,085); nur der Farbton wandert entlang des Farbkreises. Ohne Angabe im Werk gilt die Folge A indigo, B petrol, C moos, D bronze, E terrakotta, F wein, G pflaume, L tinte. Flächentöne: gleicher Farbton bei L 0,94, C 0,02. Alle Farben erreichen mit weißer Schrift mindestens Kontrast 6,6:1; der kleinste Farbabstand zweier Provinzen beträgt ΔE 20. Die Palette steht nur in `skript.py` (`PALETTE`), nirgends sonst.
+**Inline:** `**fett**` (Fachbegriff, ins Sachregister) · `*kursiv*` · `[[D7]]`, `[[ADM:D7]]` (Verweis mit Seitenzahl) · `{{abb:id}}`, `{{tab:id}}` (Ankündigung einer Einbettung, Pflicht vor ihr) · `^[@Sigle (Fundstelle); @Sigle2]` (Randbeleg).
 
-Farbschema für Titelseite und Inhaltsverzeichnis über `meta.farbschema`: `nacht` (Standard), `bordeaux`, `tanne`, `graphit`. Die Provinzfarben bleiben davon unberührt. Reihentitel über `meta.reihe` (Standard „Lernskripten zur Prüfungsvorbereitung“), Lehrveranstaltung erscheint als Zusatzzeile unter dem Untertitel. Haftungshinweis und Zitierweise richten sich nach der Domäne.
+**Regeln (Validator):** Abschnitt beginnt mit Überleitung oder Definition; höchstens drei Kernsätze und eine Abbildung je Abschnitt; jede Einbettung vorher angekündigt; Kerninhalte (`wichtig`) höchstens ein Drittel der Abschnitte und ein Viertel der Bausteine; Normzitate mit Gesetzesangabe; Fundstellen nach AZR (Jahr/Nummer: `RGBl 1867/142`); Lesehilfe nur bei anspruchsvollen Grafiken und Tabellen (BPMN mit Bahnen, Fluss mit zwei Entscheidungen, große Vergleiche); jede Quelle belegt.
 
-Jede Inhaltsseite trägt einen lebenden Kolumnentitel (aktuelle Provinz) und ein **Daumenregister**: farbiger Reiter mit römischer Ziffer am rechten Rand, Position nach Provinzreihenfolge.
+## Lernskript im Buchsatz
 
-## Lernskript: wie die Seitenmontage arbeitet
+Titelseite (Standard „band-relief“ mit Relief im Papier und Provinzregister; weitere Arten über `meta.titelseite`, Abwandlungen über `meta.titel_stil`) · Impressum mit Motto und Zitiervorschlag · Inhalt zweispaltig · Zum Gebrauch · Abkürzungen und Zitierweise (nach Zitierstil) · Kapitel mit Provinzkopf, Einleitung, Abschnitten, „Auf einen Blick“, Kernsätzen und Kontrollfragen · Repetitorium · Abbildungsverzeichnis · Quellenverzeichnis nach Gattungen mit Abschnittschips (ab zwölf Belegen kapitelweise) · Sachregister (Begriffe, Latein, Personen, Normen, Gesetzblätter; überlange Gruppen werden geteilt).
 
-1. `validate.py` prüft das Werk; bei Fehlern bricht der Satz ab.
-2. Jede Kachel wird in atomare Einheiten zerlegt: Kachelkopf mit erstem Baustein, danach jeder weitere Baustein. Die generierten Abschnitte des Repetitoriums sind teilbare Tabellen (seit 3.6 auch Klausurfallen und Selbsttest).
-3. **Globaler Umbruch (3.6)** für Inhaltsseiten, je Strecke zwischen zwei festen Umbrüchen (Provinzanfang, Repetitorium, Seitenartwechsel): `montage.js` stellt die Strecke in einer Messsäule in Satzspiegelbreite auf und misst jede Einheit, jede Tabellenzeile, Fortsetzungskopf, Hinweiszeile und Abstände exakt; Tabellenspalten werden dabei nach dem Gesamtsatz eingefroren, damit alle Teile gleiche Spalten haben. `umbruch.js` bestimmt daraus die Umbruchfolge mit den geringsten Gesamtkosten (dynamische Programmierung, Muster Knuth-Plass). Kosten: Leerraum quadratisch, Zuschlag für Seiten unter 50 %; geteilte Kachel; Kleinrest (Fortsetzung aus einem Baustein unter 20 % der Seite) und Anriss (Kachelanfang aus einem Baustein unter 20 % am Seitenende) praktisch verboten; Provinzkopf allein praktisch verboten; Verkleinern von Abbildungen gering. Die letzte Seite vor einem festen Umbruch ist frei. Kopf ohne Inhalt am Seitenende ist schon durch den Zuschnitt der Einheiten ausgeschlossen. Seit 3.7 sind die Regeln zugunsten des Seitenbilds weicher: Seiten unter 75 % kosten einen Zuschlag, und eine Teilung kostet je nach Naht unterschiedlich (vor Kästen und Fallbeispielen die Hälfte, zwischen Definition und Kern, Formel und Rechenweg, Rechenweg und Abbildung das Doppelte). Bleibt eine Seite unter 75 %, nennt der Bericht den Verursacher („E3 fehlen 15 mm“), damit der Autor gezielt kürzen kann. Am Ende jeder Provinz setzt das Kit die Kernfakten der Provinz in den Rest der letzten Seite, wenn sie ganz passen.
-4. **Abbildungen atmen (3.6, 3.7)** zwischen 75 % und 100 %, Kurven seit 3.7 bis 115 %, wenn auf der fertigen Seite Platz bleibt: Kurven über die Plothöhe (100, 90, 80 %) bei unveränderter Schrift; alle übrigen über die Skala, höchstens so weit, dass die kleinste Grafikschrift 6,5 pt nicht unterschreitet (Wasserzeichen ausgenommen). Unter 75 % nur als Notverkleinerung einer Einheit, die sonst auf keine Seite passt, mit Warnung.
-5. **Setzen, prüfen, korrigieren:** Jede geplante Seite wird gesetzt und auf Überlauf geprüft. Weicht der Satz vom Modell ab, wird die Seite zurückgenommen, ausgeschlossen und der Rest neu geplant (Zahl der Korrekturen im Bericht). Scheitert die Planung oder überschreitet sie die Zeitgrenze, setzt das Kit gierig wie bis 3.5 und warnt. Gleiche Eingabe ergibt gleiche Seiten.
-6. Übrige Seitenarten (Titelei, Verzeichnisse, Anhang) gierig: ganze Einheit auf die nächste Seite; Tabellen zwischen Zeilen geteilt (Kopf wiederholt, Vermerk „Fortsetzung“, mindestens drei Zeilen je Teil).
-7. Breite Tabellen (`breit: true`) erhalten eine Querformatseite.
-8. Silbentrennung: Trennstellen nach österreichischem Wörterbuch (pyphen, de_AT) werden als Möglichkeit gesetzt. Nach der Montage werden zuerst die Tabellenspalten eingefroren, dann alle Trennstellen auf dem endgültigen Satz gemessen (Kriterium: Zeichen davor und danach auf verschiedenen Zeilen; die Glyphenbreite täuscht bei Ligaturen wie ft, ff, fl), dann alle ungenutzten auf einmal entfernt. An echten Umbrüchen bleibt das weiche Trennzeichen stehen, wie es ISO 32000 vorsieht; PDF-Leser fügen das Wort bei Suche und Kopieren zusammen. Höhen aller Einheiten werden vorher und nachher verglichen; jede Verschiebung ist ein Fehler.
-9. Danach geprüft: Überlauf je Seite, Einheiten über Seitengrenzen, Überstand über den rechten Seitenrand (Chromium verkleinerte sonst alle Seiten), Randspalt an der Blattkante, Kleinreste und Anrisse, Seitenzahl und Ausrichtung im PDF, Wasserzeichen auf jeder Seite, Gedankenstriche, weiche Trennzeichen im Textlayer, Schrifteinbettung, Ersatzschriften. Ergebnis in `_bericht.json`, Kontaktabzug aller Seiten in `_kontakt.png`.
+**Satz:** Paged.js umbricht; das Kit prüft den Satz im Browser und korrigiert in bis zu 24 Läufen: Einbettungen gleiten hinter den folgenden Text (nie in den Kapitelabschluss, höchstens in den nächsten Abschnitt), Einzelzeilen werden über die Laufweite ausgeglichen, ein Abschnitt beginnt nie am Seitenfuß (je Lauf der erste je Kapitel), Spitzmarken bleiben bei ihrem Inhalt. Ein Rückbau prüft jeden erzwungenen Seitenwechsel erneut. Tabellen mit mehr als 14 Zeilen laufen über die Seite und wiederholen ihren Kopf; kleinere bleiben ganz.
 
-Symbolschrift: Zeichen, die in den Hausschriften fehlen (▸ ◆ ★ ○ ⚠ → ✓, seit 3.5 auch ∞ ≈ ≠ ≤ ≥), kommen bewusst aus genau einer Schrift (DejaVu Sans, `/usr/share/fonts/truetype/dejavu`), nicht aus zufälligen Ersatzschriften.
+**Randbelege:** `^[@Sigle (Fundstelle)]` setzt rechts neben der Zeile die Randsigle mit Fundstelle, verlinkt ins Quellenverzeichnis. Hindernisse (Köpfe, Abbildungen, Tabellen) werden umgangen; vor einem Hindernis weicht ein Beleg nach oben aus, wenn das näher liegt. Der Bericht nennt den größten Versatz.
 
-## Gewichtung und Tabellen (3.7)
+**Prüfungen im Satz:** Blocksatz, geteilte Absätze und Einzelzeilen, Überschrift oder Tabellenkopf am Seitenfuß, Anriss, geteilte Einbettung, Verweisziele, Randbelege (Überlappung, Satzspiegel, Versatz), Titelseite (Überschneidung, Seitengrenze), Vermerk „(c) Oliver Bedernik“ auf jeder Seite und in den Metadaten, Lesezeichen. Ergebnis in `_bericht.json`, Kontaktabzug in `_kontakt.png` (Seiten mit Abbildung markiert), Nahtliste der Übergänge in `nahtliste.md`.
 
-**Kernfakten** (`kachel.kernfakten`, ein bis drei): atomare, prüfbare Aussagen. Sie erscheinen als Kernsatz direkt unter dem Kachelkopf, werden in Anki zu Lückenkarten (fett gesetzte Wörter sind die Lücken), stehen gesammelt im Repetitorium (L·K) und am Provinzende, wo Platz ist. Der Validator nennt Kacheln mit Kernfakten, die kein Selbsttest abfragt. **Merkhilfe** (`kachel.merkhilfe`) für Dreiheiten, Reihenfolgen und Gegensatzpaare, im Kernsatz gesetzt.
+**Zeitstrahl:** maßstabgetreu; die Achse teilt sich nach der Spanne in Monate (bis 18 Monate), Jahre (bis 15 Jahre) oder Jahrzehnte.
 
-**Auszeichnung:** Fett bleibt den Fachbegriffen. Ein Gerüstwort am Stichpunktanfang („**Ziel:**“, „**Einordnung:**“ und ähnliche) wird leise in Kapitälchen gesetzt. Kästen tragen ihr Gewicht nach Relevanz: Kernsatz und Klausurfalle kräftig, Merke mittel, Feinheit ohne Fläche, Latinum als einzeilige Leiste.
+## Karte, Exam und Anki
 
-**Tabellen:** mehr Luft, feinere Linien, leisere Kopfzeile. Spaltenrollen (`spalten`): `begriff` (halbfett, nie getrennt; ohne Angabe die erste Spalte), `text`, `stichworte` (kleiner, ohne Trennung), `zahl` (Tabellenziffern). Zweck (`art`): `uebersicht` setzt Begriff und Erklärung als Begriffsliste; `vergleich` stürzt eine Tabelle mit höchstens vier Zeilen, sodass die Begriffe nebeneinander stehen (Spaltenrollen gelten dann je Zeile). Eine `aussage` steht als Lesehilfe unter der Tabelle, bei geteilten Tabellen nur unter dem letzten Teil.
+**Karte:** jeder Abschnitt ein Feld in verdichteter Form (`sicht.py`): Definition samt Normwortlaut, Kernsätze und Merkband als Kernblock, Kernliste, Tabellen, Abbildungen (Diagramm als Grafik, Zeitstrahl als Zeitleiste), Spitzmarken, Latinum; ohne Fließtext und Randbelege. Kerninhalte (`wichtig`) erscheinen als ★. Bedienung wie bisher (Ziehen, Zoomen, Register mit Suche, Minikarte, Dunkelmodus).
 
-## Inline-Auszeichnung in Texten
+**Exam:** eigene `exam.json` (Standard 4.0) mit `abschnitte` je Frage; Grafik zum Sachverhalt als Abbildung wie im Werk (ohne `typ` und `id`). Regeln wie bisher: 24 bis 30 Fragen, zwei Drittel mit Sachverhalt, etwa die Hälfte Mehrfachauswahl, jede Dimension mindestens dreimal und höchstens doppelt so oft wie die seltenste.
 
-| Syntax | Wirkung |
-|---|---|
-| `**Text**` | fett |
-| `*Text*` | kursiv |
-| `==Text==` | ohne Wirkung: Textmarker seit Oktober 2026 entfernt, der Validator warnt |
-| `[[D7]]` | Verweis auf Kachel im selben Werk |
-| `[[ADM:D7]]` | Verweis auf Kachel einer anderen Terra (Sigle aus `meta.kurz`) |
+**Anki:** Kernsätze als Lückenkarten (Fett = Lücke), Definition, Normwortlaut, Kernliste, Merke, Feinheit, Cave, Latinum, Lexicon, Kontrollfragen, Tabellen, Abbildungen; Unterdecks je Kapitel, Schlagwörter `Provinz::`, `Abschnitt::`, `Relevanz::`, `Art::`. Die Exam-Auswertung erzeugt den Suchbegriff für die Abschnitte falsch beantworteter Fragen.
+
+## Umsetzung von Werken 3.x
+
+`umsetzen.py` überführt Provinz → Kapitel, Kachel → Abschnitt (Codes bleiben), Bausteine in ihre 4.0-Form (Normwortlaut → Zitat, Kernfakten → Kernsätze, Merkhilfe → Merke, Beispiel → Fallbeispiel, Schemata → Tabelle oder Abbildung, Fluss → Diagramm), Kachelquellen → Randbeleg am ersten Textbaustein (Quellen erhalten bei Bedarf eine Sigle), Selbsttest → Kontrollfragen, Provinz L → Repetitorium mit eigenen Abschnitten. Was ein Mensch entscheiden muss (Einleitungen, Kerninhalte, Lösungen der Fallbeispiele, Überleitungen), steht in der Nacharbeitsliste. Ein umgesetztes Werk ist schemagültig, aber erst nach der Redaktion ein Buch.
 
 ## Freie SVG-Diagramme
 
-Keine festen Farben. Nur diese Klassen verwenden; der Renderer färbt sie für Hell- und Dunkelmodus:
+Keine festen Farben; nur die Klassen `t-flaeche`, `t-akzent`, `t-linie`, `t-text`, `t-klein`. Pflicht: `viewBox` und `beschreibung`. Skripte und Event-Handler sind verboten.
 
-| Klasse | Element |
-|---|---|
-| `t-flaeche` | Standardfläche |
-| `t-akzent` | hervorgehobene Fläche (Provinzfarbe) |
-| `t-linie` | Linien, Pfeile, Rahmen |
-| `t-text` | Beschriftung |
-| `t-klein` | Nebenbeschriftung |
+## Rechenprobe
 
-Pflicht: `viewBox` und `beschreibung` (Alternativtext). Skripte und Event-Handler sind verboten.
+Ein Rechenweg kann eine `probe` tragen; das Kit rechnet jede Zeile dezimal exakt nach (34 Stellen, kaufmännische Rundung) und meldet jede Abweichung als Fehler. Erlaubt sind `+ − · / ** ^`, Klammern und `wurzel`, `ln`, `exp`, `log10`, `abs`, `min`, `max`, `runden(x, n)`. Nennt die `quelle` ein anderes Endergebnis, ergänzt das Kit die Quellenkritik automatisch. **Grenze:** Die Probe prüft die Rechnung, nicht ob die Ausgangswerte zur Aufgabe passen.
 
-## Grafik (3.5): Organigramm, Rasterbild, Markierungen
+## Quellen
 
-**Organigramm** (`variante: "baum"`): Knoten mit `id`, `text` und `eltern` (fehlt nur bei der Wurzel); optional `label` (Beschriftung der Kante vom Elternknoten) und `art` (`normal`, `betont` in Provinzfarbe, `neben` gestrichelt). Das Layout berechnet das Kit: Blätter in Lesereihenfolge, Eltern mittig, rechtwinklige Verbinder. Richtung `unten` (Wurzel oben, bis sechs Blätter, bis fünf Ebenen) oder `rechts` (Wurzel links, bis 14 Blätter, bis vier Ebenen); ohne Angabe wählt das Kit nach der Zahl der Blätter. Lange Wörter werden am Bindestrich, sonst nach Silben getrennt, kein Wort ragt aus dem Kasten. In der Karte erhalten Kacheln mit Organigramm doppelte Breite. Für Instanzenzüge, Zuständigkeiten, Gliederungen eines Begriffs; Entscheidungswege bleiben beim Flussdiagramm.
-
-**Rasterbild** (`variante: "bild"`): PNG, JPEG oder WebP, entweder verknüpft (`datei`, relativ zur werk.json) oder eingebettet (`daten`, data-URI). Pflicht: `beschreibung` (Alternativtext), `quelle`, `lizenz`; bei CC-BY-Lizenzen zusätzlich `urheber`. Optional `breite` in Prozent (30 bis 100). Geprüft werden Format, MIME-Typ, Größe (Warnung ab 1,5 MB, Fehler ab 4 MB), Auflösung auf der gesetzten Breite (Warnung unter 150 dpi, Fehler unter 96 dpi) und die Lizenz (eigenes Werk, gemeinfrei, CC, Zitat nach § 42f UrhG, freies Werk nach § 7 UrhG). Verknüpfte Bilder erzeugen eine Warnung: `python3 bild.py werk.json --einbetten` bettet sie ein, verkleinert auf höchstens 2.400 px und entfernt Metadaten (auch GPS-Ortsangaben). Unter jedem Bild steht der Bildnachweis.
-
-**Kurvenmarkierung** (`markierungen` der Kurve, bis vier): Punkt mit gestrichelten Hilfslinien zu beiden Achsen und Beschriftung, etwa Gleichgewicht oder Rechenbeispiel.
-
-**Abbildungen** (Kurve, Flussdiagramm, freies SVG, Organigramm, Bild) sind in Skript und Karte fortlaufend nummeriert („Abb 3“). Ab drei Abbildungen erhält das Lernskript im Anhang ein **Abbildungsverzeichnis** mit Nachweis, Kachel und Seite; die Lesezeichenleiste führt jede Abbildung einzeln. Im Kontaktabzug tragen Seiten mit Abbildungen die Marke „Abb“. Mehr als eine Abbildung je Kachel löst eine Warnung aus (Grafikdichte).
-
-**Wasserzeichen:** Jede vom Kit gesetzte Grafik trägt „(c) Oliver Bedernik“ im Bild, unten rechts. Eigene Rasterbilder (Lizenz „eigenes Werk“) erhalten es im Anki-Deck eingebrannt. **Fremde Bilder bleiben unverändert:** Ein Urhebervermerk auf fremdem Werk wiese die Urheberschaft falsch zu und kann Lizenzbedingungen verletzen; Seite, Karte und Kartenfuß tragen das Wasserzeichen ohnehin.
-
-**Exam:** Eine Frage mit Sachverhalt kann eine `grafik` tragen (jede Schemavariante); sie erscheint im Sachverhalt, interaktiv und im Prüfungsbogen, ohne Abbildungsnummer.
-
-## Rechenprobe (3.5)
-
-Ein Rechenweg kann eine `probe` tragen; das Kit rechnet jede Zeile dezimal exakt nach (34 Stellen, kaufmännische Rundung) und meldet jede Abweichung als Fehler.
-
-```json
-"probe": {
-  "werte":    {"C": 10000, "i": "0.05", "n": 3},
-  "rechnung": [{"name": "q",  "ausdruck": "1 + i",      "ergebnis": "1.05"},
-               {"name": "PV", "ausdruck": "C / q ** n", "ergebnis": "8638.38"}],
-  "stellen": 2,
-  "quelle":   {"kurz": "Online-Zinsrechner (Stand 2026)", "wert": "8638.37"}
-}
-```
-
-Zahlen mit Dezimalpunkt; erlaubt sind `+ − · / ** ^`, Klammern und `wurzel`, `ln`, `exp`, `log10`, `abs`, `min`, `max`, `runden(x, n)`. Benannte Zeilen stehen den folgenden ungerundet zur Verfügung. Der Ergebnistext muss den nachgerechneten Wert nennen (Warnung). Nennt die `quelle` ein anderes Endergebnis, ergänzt das Kit die Quellenkritik automatisch. Bestandene Proben tragen im Skript, in der Karte und im Deck den Vermerk „✓ nachgerechnet“. In Werken ohne Probe warnt der Validator; `pruefliste.py` führt jeden Rechenweg samt Ausgangswerten. **Grenze:** Die Probe prüft die Rechnung, nicht ob die Ausgangswerte zur Aufgabe passen; das bleibt Aufgabe des Advocatus diaboli.
-
-## Was der Validator durchsetzt
-
-**Fehler:** Gedankenstriche · unpaarige Auszeichnung · fehlerhafte oder tote Verweise · Rechenprobe falsch oder nicht berechenbar · Organigramm ohne genau eine Wurzel, mit Kreis, fehlendem Elternknoten oder zu breit bzw. zu tief · Bild unlesbar, im falschen Format, zu groß oder zu gering aufgelöst, CC BY ohne Urheber · Kurvenmarkierung außerhalb der Achse · Provinzcodes nicht lückenlos ab A oder L nicht zuletzt · Kachelcodes falsch, doppelt oder ungeordnet · Bausteinreihenfolge · mehr als vier gerahmte Bausteine oder fünf Textmarker je Kachel · Austriacum in der Rechtsdomäne · „auslassbar“ ohne Beleg · unvollständige Tabellenzeilen, mehr als neun Spalten · T-Konto unausgeglichen · Kurve unsortiert · Flussdiagramm mit Aufwärtskanten, unerreichbaren Knoten, unbeschrifteten Antworten · SVG mit festen Farben oder Skript · nicht setzbare Formeln · im Referenzwerk jede fehlende Abdeckung.
-
-Seit 3.7 auch: Spaltenrollen passen nicht zur Spaltenzahl · mehr als drei Kernfakten · im Referenzwerk fehlende Kernfakten, Merkhilfe, Tabellenarten, Spaltenrollen oder Aussage.
-
-**Hinweise (3.7):** Tabelle ab drei Zeilen ohne Aussage · Vergleich mit mehr als vier Zeilen (wird nicht gestürzt) · Kernfakten ohne Selbsttestfrage.
-
-**Warnungen:** Rechenweg ohne Probe · Ergebnistext ohne nachgerechneten Wert · Bild verknüpft statt eingebettet, groß, unscharf oder mit unbekannter Lizenz · mehr als eine Abbildung je Kachel · Bindestrich als Gedankenstrich · gerade Anführungszeichen · „§7“ ohne Abstand · „Art.“ und „Abs.“ mit Punkt · Rechtsprechung ohne Geschäftszahl · fehlende Seitenangabe · überlange Titel · mehr als drei Viertel Kernstoff · doppelte Latinismen · zu wenige Selbsttestfragen.
+Jede Quelle hat ein **Kurzzitat** (`kurz`) und eine **Gattung** (literatur, beitrag, kommentar, aufsatz, lv, daten, online, norm, entscheidung, materialien) mit Pflichtangaben, oder eine Vollangabe (`voll`). Randbelege nennen die Quelle über ihre **Sigle** (`sigle`, sonst `kurz`, wenn es nur aus Buchstaben und Ziffern besteht); am Rand steht `rand` (höchstens 14 Zeichen), sonst `kurz`. Der Validator prüft: Kurzzitate und Siglen eindeutig, Pflichtangaben, jede Quelle belegt (Randbeleg, Abschnittsquelle oder Quellenkritik).
 
 ## Versionierung
 
-Jede freigegebene Fassung erhält einen Git-Tag (`v3.1`, `v3.2` …). Die Projektanweisungen verweisen auf genau einen Tag. Freigabe nur, wenn `tests/run_tests.py` vollständig besteht.
-
-## Wissenslandkarte: wie sie arbeitet
-
-Satz der Kacheln, Diagramme und Tabellen kommt unverändert aus `skript.py`; Karte und Skript sind dadurch nicht nur inhalts-, sondern auch satzgleich. Formeln erscheinen als MathML (veröffentlichte Seiten dürfen keine fremden Schriftdateien laden); Schriften über Google Fonts. Die Silbentrennung übernimmt der Browser (`hyphens: auto`, `lang="de-AT"`).
-
-Jede Provinz ist ein Gebiet; ihre Kacheln werden als Mauerwerk gesetzt, breite Tabellen erhalten doppelte Breite. Die Gebiete werden in gleichmäßig gefüllten Reihen angeordnet, und zwar so, dass die ganze Karte beim Einpassen den größten Maßstab erreicht. Aus der Ferne erscheinen die Provinznamen als Landesnamen in fester Bildschirmgröße.
-
-Bedienung: Ziehen, Mausrad, Trackpad, Zwei-Finger-Geste, Tastatur (+, −, 0, /, Pfeile, Esc); Provinzleiste; Minikarte; Register mit Volltextsuche; Filter „Kernstoff“; anklickbare Querverweise mit Adresse (`#k-D7`); Darstellung Automatisch, Hell, Dunkel; letzte Ansicht wird im Browser gespeichert. Wasserzeichen als Signet (seit 3.7.1 kein diagonales Hintergrundmuster).
-
-## Exam: wie es arbeitet
-
-Fragen werden nicht gesetzt, sondern geschrieben: Jedes Exam ist eine eigene `exam.json`, die auf die Kacheln genau eines Werks verweist. Der Validator setzt den Exam-Standard durch: 24 bis 30 Fragen, mindestens zwei Drittel mit Sachverhalt, etwa die Hälfte Mehrfachauswahl, je vier Optionen mit eigener Begründung, jede Provinz (außer L) mindestens zweimal, jede Prüfdimension des Domänenmoduls mindestens dreimal; er gibt die Prüfungsmatrix aus.
-
-Interaktiv: Startseite mit Eckdaten, Regeln, Zeitlimit (abschaltbar, automatische Abgabe) und Modus Durum; Fortschrittsbalken, Uhr, Navigation, Markieren, Übersichtsraster, Abgabe mit Hinweis auf Offenes; Fortschritt im Browser gespeichert. Auswertung mit lateinischem Urteil (Summa cum laude ab 90 %, Magna cum laude ab 80 %, Cum laude ab 70 %, Rite ab 60 %, sonst Non sufficit), Ergebnis je Provinz und Durchsicht mit Filter „nur falsche“; jede Option als richtig gewählt, falsch gewählt oder richtig, aber nicht gewählt gekennzeichnet, mit Begründung, Fundstelle und Verweis auf die Kachel der Karte.
-
-A4-Bogen: Deckblatt mit Namensfeld, Fragen in Seitenmontage (nie geteilt), Lösungsteil auf neuer Seite.
-
-## Anki: wie es arbeitet
-
-Je Baustein eine oder mehrere Karten: Definition (Fallbeispiel nur zur Veranschaulichung auf der Rückseite), Kernpunkte als Stichpunktliste, Merke, Feinheit, Klausurfalle, Österreichbezug, Aktualisierung, Normwortlaut, Latinum und Lexicon, Formel (MathJax) und Rechenweg, Zeitleiste (Datum → Ereignis), Tabelle (je Zeile), Abgrenzung (je Kriterium), Abbildungen als Bild, Provinz (Leitfrage → In 60 Sekunden), Selbsttest und Quellenkritik.
-
-Unterdecks je Provinz unter `Terra::<Werk>`; Schlagwörter `Provinz::`, `Kachel::`, `Relevanz::`, `Art::` (etwa nur Kernstoff lernen: Suche `tag:Relevanz::kern`). Die Kennung jeder Notiz ergibt sich aus Werk-Sigle und Baustein; ein erneuter Import nach einer Korrektur aktualisiert die Karten und erhält den Lernfortschritt. Hausschriften sind eingebettet; Dunkelmodus von Anki und AnkiDroid wird unterstützt. Kartenfuß mit „(c) Oliver Bedernik“, Werk und Fundstelle.
-
-## Quellen: wie sie erfasst werden
-
-Jede Quelle hat ein **Kurzzitat** (`kurz`), unter dem sie im Werk angeführt wird, und eine **Gattung**. Das Kit setzt daraus die Vollangabe im Zitierstil des Moduls: **AZR** (österreichische Rechtssprache) in den Domänen recht und gemischt, sonst **APA 7** (Autor-Jahr); abweichend über `modul.zitierstil`. Jede Kachel nennt in `quellen` die Kurzzitate, auf die sie sich stützt; daraus entsteht die Spalte „Verwendet in“.
-
-| Gattung | Pflichtangaben | weitere Felder |
-|---|---|---|
-| literatur | titel, jahr; autoren oder hrsg oder institution | untertitel, auflage, ort, verlag, zusatz |
-| beitrag | autoren, titel, in (Sammelwerk), jahr | hrsg, auflage, seiten |
-| kommentar | autoren, hrsg, in (Werk), fundstelle (§§), jahr | auflage |
-| aufsatz | autoren, titel, in (Zeitschrift), jahr | band, heft, seiten |
-| lv | titel, jahr; autoren oder institution | art (etwa Foliensatz) |
-| daten | titel, jahr, abruf; autoren oder institution | art, url |
-| online | titel, abruf; url oder institution | jahr |
-| norm | abk, titel, fundstelle | zusatz |
-| entscheidung | gericht, datum (JJJJ-MM-TT), gz | name, slg, ecli |
-| materialien | titel, fundstelle | zusatz |
-
-Namen als „Nachname, Vorname“; Körperschaften ohne Komma. Für AZR mit Initiale (etwa „F. Bydlinski“) „Bydlinski, F.“ angeben. Hochzahlen wie „ABGB⁴“ dürfen als Unicode-Zeichen geschrieben werden; das Kit setzt sie als echte Hochstellung. Das alte Format (`kurz` und `voll`) bleibt gültig, erscheint unter „Weitere Quellen“ und erzeugt einen Hinweis.
-
-Der Validator prüft: Kurzzitate eindeutig, Pflichtangaben je Gattung, jede zitierte Quelle verzeichnet, jede strukturierte Quelle von mindestens einer Kachel zitiert.
+Jede freigegebene Fassung erhält einen Git-Tag (`v4.0.0` …), ein Release mit ZIP als Rückfallebene und den Abschnitt der Version aus diesem Änderungsprotokoll. `versionspruefung.py` meldet neuere Fassungen.
 
 ## Änderungen
+
+**4.0.0** (November 2026) „Buchsatz“
+
+- **Datenstandard 4.0:** Kapitel mit Abschnitten und Bausteinen statt Provinzen mit Kacheln; Fließtext, Randbelege, Einleitungen, Kapitelabschluss, Kontrollfragen, Farbschlüssel (Rollen), Personen; Kerninhalte über `wichtig` statt Relevanzmarken. Codes bleiben stabil (A1 …).
+- **Lernskript im Buchsatz** (`skript.py`, bisher Entwurf `buch.py`): Paged.js mit Korrekturläufen, Randbelege statt Fußnoten, Titelseite „band-relief“ (Relief im Papier, Provinzregister ohne Überschneidung), Register, Lesezeichen; Kachelsatz (Seitenmontage) für das Lernskript abgelöst.
+- **Neu im Buchsatz:** Formel, Rechenweg mit Rechenprobe, Kurve, T-Konto, Organigramm, freies SVG, Rasterbild, Zeitleiste; Zeitstrahl mit Achse in Monaten, Jahren oder Jahrzehnten; lange Tabellen über die Seite mit wiederholtem Kopf; Akteure mit eigenem Tabellenkopf; Zitierweise nach Zitierstil; Fundstellen nach AZR (Jahr/Nummer) im Register der Gesetzblätter.
+- **Satz:** Anriss-Korrektur je Kapitel im selben Lauf (bis 24 Läufe); Randbelege weichen vor Hindernissen auch nach oben aus; kleine Quellengruppen bleiben mit ihrer Überschrift beisammen; viel belegte Quellen kapitelweise; Registergruppen über Spaltenhöhe werden geteilt; Rechenwege von der Blocksatzprüfung ausgenommen.
+- **validate.py 4.0:** Schema, Typografie, Kapitel und Codes, Bausteine, Quellen mit Siglen, Satzregeln des Buchsatzes, Formeln, Abdeckung des Referenzwerks; Probesatz (Auszug) zulässig; Exam mit `abschnitte`.
+- **Kachelsicht** (`sicht.py`) für Karte, Exam und Anki; Anki-Schlagwort `Abschnitt::` (Exam-Brücke angepasst).
+- **Umsetzer** `umsetzen.py` für Werke und Exams 3.x; Prüfliste mit Randbelegen und Kapiteleinleitungen; Diff mit Einleitungen und Kontrollfragen.
+- **Referenzwerke:** Terra Exemplaris 4.0 (Abdeckung aller Bausteine und Sonderfälle) und Terra Historica Constitutionalis 2.0 als ganzes Werk; Referenzexam angepasst (Silvesterpatent, Pillersdorfsche Verfassung, Auflösung des Reichstages nach der Quellenkritik).
+- **Testreihen neu:** `tests/run_tests.py` für 4.0, `tests/buch_test.py` am Auszug der Historica; Workflow führt beide aus.
 
 **3.7.1** (November 2026) „Ohne Diagonale“
 

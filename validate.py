@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""(c) Oliver Bedernik · Terra-Kit · validate.py (Standard 3.1)
+"""(c) Oliver Bedernik · Terra-Kit 4.0 · validate.py (Standard 4.0)
 
-Prüft eine werk.json in vier Stufen:
-  1. Struktur gegen schema.json
-  2. Typografie und Zitierweise
-  3. Codes, Verweise, Bausteinlogik, Rechnungen (Rechenprobe), Diagramme, Bilder
-  4. Formelsyntax (KaTeX über Node, falls verfügbar)
+Prüft eine werk.json in fünf Stufen:
+  1. Struktur gegen schema.json (Standard 4.0; Werke 3.x vorher mit umsetzen.py umsetzen)
+  2. Typografie und Zitierweise (alle Textfelder)
+  3. Kapitel, Codes, Verweise, Bausteine (Tabellen, Kurven, T-Konten, Bäume, Bilder, SVG, Rechenproben), Quellen
+  4. Satzregeln des Buchsatzes (skript.regeln: Einbettungen, Kernsätze, Randbelege, Normzitate, Kontrollfragen)
+  5. Formelsyntax (KaTeX über Node)
+Beim Referenzwerk (meta.typ „referenz“) zusätzlich die Abdeckung aller Bausteine und Varianten.
 
-Aufruf:   python3 validate.py werk.json [--streng]
+Aufruf:   python3 validate.py werk.json [--streng]          Werk
+          python3 validate.py exam.json werk.json [--streng] Exam gegen sein Werk
           --streng: Warnungen zählen als Fehler
 Import:   from validate import validiere; bericht = validiere(werk, ordner)
-          ordner: Verzeichnis der werk.json (für verknüpfte Bilddateien)
 Exitcode: 0 = keine Fehler, 1 = Fehler.
 """
 import json
@@ -26,18 +28,20 @@ except ImportError:
     sys.exit("jsonschema fehlt: pip install jsonschema --break-system-packages")
 
 HIER = Path(__file__).resolve().parent
-VERSION = (Path(__file__).resolve().parent / "VERSION").read_text(encoding="utf-8").strip()
+sys.path.insert(0, str(HIER))
+VERSION = (HIER / "VERSION").read_text(encoding="utf-8").strip()
+STANDARD = "4.0"
 
-REIHENFOLGE = ["definition", "kern", "formel", "rechenweg", "schema", "beispiel",
-               "merke", "feinheit", "klausurfalle", "austriacum", "aktualisierung",
-               "latinum", "luecke"]
-GERAHMT = {"merke", "feinheit", "klausurfalle", "austriacum", "aktualisierung", "latinum", "luecke"}
-VARIANTEN = ["tabelle", "abgrenzung", "kurve", "tkonto", "zeitleiste", "fluss", "svg", "baum", "bild"]
-ABBILDUNG = {"kurve", "fluss", "svg", "baum", "bild"}  # zählen im Abbildungsverzeichnis
-MAX_GERAHMT, MAX_MARKER, MAX_TITEL = 4, 5, 60
-UEBERHOEHE_ZEILEN = 30
+BLOCKTYPEN = ["absatz", "kernsatz", "spitzmarke", "aufzaehlung", "tabelle", "abbildung", "fallbeispiel", "merkband", "zitat",
+              "steckbrief", "glossar", "akteure", "latinum", "definition", "kern", "formel", "rechenweg"]
+VARIANTEN = ["zeitstrahl", "zeitleiste", "diagramm", "baum", "kurve", "tkonto", "svg", "bild"]
+SPITZMARKEN = ["klausurhinweis", "austriacum", "aktualisierung", "luecke", "merke", "feinheit"]
+ABBILDUNG = {"kurve", "fluss", "svg", "baum", "bild", "diagramm", "zeitstrahl", "zeitleiste", "tkonto"}  # Abbildungsverzeichnis
+MAX_TITEL = 70
+LANGE_TABELLE = 14  # wie skript.LANGE_TABELLE: ab hier darf eine Tabelle über die Seite laufen
+ROEMISCH = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
 
-STRICHE = {"\u2012": "Figure Dash", "\u2013": "Halbgeviertstrich", "\u2014": "Geviertstrich", "\u2015": "Horizontal Bar"}
+STRICHE = {"‒": "Figure Dash", "–": "Halbgeviertstrich", "—": "Geviertstrich", "―": "Horizontal Bar"}
 ROH = (".tex", ".svg", ".ausdruck", ".daten")  # Felder ohne Typografie- und Markup-Prüfung
 
 RE_VERWEIS_ROH = re.compile(r"\[\[([^\]]*)\]\]")
@@ -61,6 +65,7 @@ ABKUERZUNGEN = ["z. B.", "d. h.", "u. a.", "o. Ä.", "bzw.", "vgl.", "Gl.", "Nr.
 class Bericht:
     def __init__(self):
         self.fehler, self.warnungen, self.hinweise = [], [], []
+        self.codes = {}
 
     def f(self, ort, msg):
         self.fehler.append(f"FEHLER   {ort}: {msg}")
@@ -91,8 +96,42 @@ def ist_roh(pfad):
     return pfad.endswith(ROH)
 
 
+def abschnitte(werk):
+    """Alle Abschnitte in Lesefolge, mit Kapitelcode: Kapitel A bis G, danach die Abschnitte des Repetitoriums (L1 …)."""
+    for k in werk.get("kapitel", []):
+        for a in k.get("abschnitte", []):
+            yield k.get("code"), a
+    for a in (werk.get("repetitorium") or {}).get("abschnitte", []):
+        yield "L", a
+
+
+def bloecke(werk):
+    """(Ort, Block) aller Bausteine: Einleitung, Abschnitte, Abschluss, Repetitorium."""
+    for k in werk.get("kapitel", []):
+        for i, x in enumerate(k.get("einleitung", [])):
+            if isinstance(x, dict):
+                yield f'{k["code"]} Einleitung {i + 1}', x
+        for a in k.get("abschnitte", []):
+            for i, x in enumerate(a.get("bloecke", [])):
+                yield f'{a["code"]} Block {i + 1}', x
+        for i, x in enumerate(k.get("abschluss", [])):
+            yield f'{k["code"]} Abschluss {i + 1}', x
+    for a in (werk.get("repetitorium") or {}).get("abschnitte", []):
+        for i, x in enumerate(a.get("bloecke", [])):
+            yield f'{a["code"]} Block {i + 1}', x
+
+
 # 1 · Struktur ──────────────────────────────────────────────────────────────
 def pruefe_struktur(werk, b):
+    std = str(werk.get("standard", ""))
+    if std != STANDARD:
+        b.f("standard", f"Standard „{std}“; das Kit {VERSION} setzt Werke des Standards {STANDARD}"
+                        + (" (Werk 3.x umsetzen: python3 umsetzen.py alt.json neu.json --liste nacharbeit.md)" if std.startswith("3") else ""))
+        return
+    for k in werk.get("kapitel", []):
+        for a in k.get("abschnitte", []):
+            if "relevanz" in a:
+                b.f(a.get("code", "?"), "„relevanz“ gibt es im Standard 4.0 nicht; Kerninhalte mit „wichtig“: true kennzeichnen")
     schema = json.loads((HIER / "schema.json").read_text(encoding="utf-8"))
     v = jsonschema.Draft202012Validator(schema)
     for err in sorted(v.iter_errors(werk), key=lambda e: list(e.absolute_path)):
@@ -115,15 +154,15 @@ def pruefe_typografie(werk, b):
         if ist_roh(pfad):
             continue
         if re.search(r"\s-\s|--", s):
-            b.w(pfad, "Bindestrich als Gedankenstrich verwendet")
+            b.f(pfad, "Bindestrich als Gedankenstrich verwendet")
         if '"' in s:
-            b.w(pfad, 'gerades Anführungszeichen ("), typografisch „…“ verwenden')
+            b.f(pfad, 'gerades Anführungszeichen ("), typografisch „…“ verwenden')
         if s.count("**") % 2:
             b.f(pfad, "unpaariges ** (Fettung nicht geschlossen)")
-        if s.count("==") % 2:
-            b.f(pfad, "unpaariges == (Textmarker nicht geschlossen)")
         if s.replace("**", "").count("*") % 2:
             b.f(pfad, "unpaariges * (Kursivierung nicht geschlossen)")
+        if RE_MARKER.search(s):
+            b.w(pfad, "Textmarker ==…== ohne Wirkung (seit Oktober 2026 entfernt); Syntax streichen")
         if RE_PARA_OHNE_LEER.search(s):
             b.w(pfad, "§ ohne Leerzeichen vor der Zahl (Renderer setzt geschütztes Leerzeichen nur bei vorhandenem Abstand)")
         if RE_GERICHT.search(s) and RE_RSP_ZITAT.search(s) and not RE_GZ.search(s):
@@ -132,43 +171,67 @@ def pruefe_typografie(werk, b):
             b.w(pfad, "Art./Abs./lit. mit Punkt; österreichische Zitierweise ohne Punkt (Art 7, Abs 1, lit a)")
 
 
-# 3 · Codes und Verweise ────────────────────────────────────────────────────
-def pruefe_codes_und_verweise(werk, b):
-    provinzen = werk.get("provinzen", [])
-    typ = werk.get("meta", {}).get("typ")
-    codes = {}
-    nicht_l = [p for p in provinzen if p.get("code") != "L"]
-    for i, p in enumerate(nicht_l):
+# 3 · Kapitel, Codes und Verweise ───────────────────────────────────────────
+def pruefe_kapitel(werk, b):
+    typ = werk.get("meta", {}).get("typ", "werk")
+    probe = bool(werk.get("meta", {}).get("probesatz"))  # Probesatz: Auszug eines Werks, Codes und Nummern aus meta.provinzen
+    register = {p["code"]: p["nr"] for p in werk.get("meta", {}).get("provinzen", [])}
+    if probe:
+        typ = "probe"
+    kapitel = werk.get("kapitel", [])
+    for i, k in enumerate(kapitel):
         soll = "ABCDEFG"[i] if i < 7 else "?"
-        if p.get("code") != soll:
-            b.f(f"Provinz {p.get('nr')}", f"Code {p.get('code')} statt {soll} (lückenlos ab A)")
-    if not provinzen or provinzen[-1].get("code") != "L":
-        b.f("Provinzen", "letzte Provinz muss Code L (Repetitorium) tragen")
-    if sum(p.get("code") == "L" for p in provinzen) > 1:
-        b.f("Provinzen", "Code L mehrfach vergeben")
-    for i, p in enumerate(provinzen):
-        soll = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"][i] if i < 8 else "?"
-        if p.get("nr") != soll:
-            b.f(f"Provinz {p.get('code')}", f"römische Nummer {p.get('nr')} statt {soll}")
-    if typ == "werk" and not 5 <= len(provinzen) <= 8:
-        b.w("Provinzen", f"{len(provinzen)} Provinzen; Standard sind 5 bis 8")
+        if probe:
+            if register.get(k.get("code")) != k.get("nr"):
+                b.f(f"Kapitel {k.get('code')}", f"Code und Nummer {k.get('code')} {k.get('nr')} nicht im Provinzregister (meta.provinzen)")
+            continue
+        if k.get("code") != soll:
+            b.f(f"Kapitel {k.get('nr')}", f"Code {k.get('code')} statt {soll} (lückenlos ab A)")
+        if k.get("nr") != (ROEMISCH[i] if i < 8 else "?"):
+            b.f(f"Kapitel {k.get('code')}", f"römische Nummer {k.get('nr')} statt {ROEMISCH[i] if i < 8 else '?'}")
+        n = len(k.get("abschnitte", []))
+        if typ == "werk" and not 3 <= n <= 10:
+            b.w(f"Kapitel {k.get('code')}", f"{n} Abschnitte; Standard sind 3 bis 10")
+        for j, satz in enumerate(k.get("kompakt", [])):
+            rest = satz
+            for a in ABKUERZUNGEN:
+                rest = rest.replace(a, "")
+            rest = re.sub(r"\b\d+\.(?=\s)", "", rest)  # Ordinalzahlen („19. Jahrhundert“) sind kein Satzende
+            if re.findall(r"[.!?](?=\s+[A-ZÄÖÜ])", rest):
+                b.w(f"Kapitel {k.get('code')} kompakt[{j}]", "mehrere Sätze in einem Eintrag; je Eintrag ein Satz")
+    rep = werk.get("repetitorium")
+    if typ == "werk" and not 4 <= len(kapitel) + bool(rep) <= 8:
+        b.w("Kapitel", f"{len(kapitel)} Kapitel und Repetitorium; Standard sind 5 bis 8 Provinzen")
+    if rep is not None:
+        if rep.get("code") != "L":
+            b.f("repetitorium", "Code L verlangt")
+        if not probe and rep.get("nr") != ROEMISCH[min(len(kapitel), 7)]:
+            b.f("repetitorium", f"römische Nummer {rep.get('nr')} statt {ROEMISCH[min(len(kapitel), 7)]} (folgt dem letzten Kapitel)")
+    elif typ == "werk":
+        b.w("repetitorium", "fehlt; die letzte Provinz ist immer L „Repetitorium“")
+    prov = werk.get("meta", {}).get("provinzen")
+    if prov and not werk.get("meta", {}).get("probesatz"):
+        soll = [(k["code"], k["name_de"]) for k in kapitel] + ([("L", rep["name_de"])] if rep else [])
+        ist = [(p["code"], p["name_de"]) for p in prov]
+        if ist != soll:
+            b.f("meta.provinzen", f"Register weicht von Kapiteln ab: {ist} statt {soll}")
 
-    for p in provinzen:
-        kach = p.get("kacheln", [])
-        if typ == "werk" and p.get("code") != "L" and not 4 <= len(kach) <= 9:
-            b.w(f"Provinz {p.get('code')}", f"{len(kach)} Kacheln; Standard sind 4 bis 9")
-        nummern = []
-        for k in kach:
-            c = k.get("code", "")
-            if c[:1] != p.get("code"):
-                b.f(c, f"Kachelcode passt nicht zu Provinz {p.get('code')}")
-            if c in codes:
-                b.f(c, "Kachelcode doppelt vergeben")
-            codes[c] = k
-            if c[1:].isdigit():
-                nummern.append(int(c[1:]))
-        if nummern and nummern != sorted(nummern):
-            b.f(f"Provinz {p.get('code')}", "Kacheln nicht aufsteigend nach Code geordnet")
+    codes = {}
+    for kc, a in abschnitte(werk):
+        c = a.get("code", "")
+        if c[:1] != kc:
+            b.f(c, f"Abschnittscode passt nicht zu Kapitel {kc}")
+        if c in codes:
+            b.f(c, "Abschnittscode doppelt vergeben")
+        codes[c] = a
+        if len(a.get("titel", "")) > MAX_TITEL:
+            b.w(c, f"Titel über {MAX_TITEL} Zeichen; bricht im Abschnittskopf um")
+        if typ == "werk" and not a.get("fundstelle") and kc != "L":
+            b.w(c, "keine Seiten-, Rz- oder Folienangabe (fundstelle)")
+    for kc in {x for x, _ in abschnitte(werk)}:
+        nummern = [int(a["code"][1:]) for x, a in abschnitte(werk) if x == kc and a.get("code", "")[1:].isdigit()]
+        if nummern != sorted(nummern):
+            b.f(f"Kapitel {kc}", "Abschnitte nicht aufsteigend nach Code geordnet (Codes nie umnummerieren)")
 
     sigle = werk.get("meta", {}).get("kurz")
     for pfad, s in alle_strings(werk):
@@ -183,92 +246,83 @@ def pruefe_codes_und_verweise(werk, b):
             if fremd and fremd != sigle:
                 b.h(pfad, f"terraübergreifender Verweis {fremd}:{ziel}, Ziel extern")
             elif ziel not in codes:
-                b.f(pfad, f"Verweis [[{ziel}]] zeigt auf keine Kachel")
-
-    for feld in ("selbsttest", "quellenkritik", "lexicon"):
+                if probe and ziel[0] in register:
+                    b.h(pfad, f"Verweis [[{ziel}]] auf ein Kapitel außerhalb des Probesatzes")
+                else:
+                    b.f(pfad, f"Verweis [[{ziel}]] zeigt auf keinen Abschnitt")
+    for feld in ("quellenkritik", "lexicon"):
         for i, e in enumerate(werk.get(feld, [])):
-            if e.get("kachel") not in codes:
-                b.f(f"{feld}[{i}]", f"Kachel {e.get('kachel')} existiert nicht")
+            if e.get("abschnitt") and e["abschnitt"] not in codes:
+                b.f(f"{feld}[{i}]", f"Abschnitt {e['abschnitt']} existiert nicht")
+    n_kf = sum(len(k.get("kontrollfragen", [])) for k in kapitel)
+    if typ == "werk" and n_kf < 5:
+        b.w("Kontrollfragen", f"{n_kf} im ganzen Werk; Standard sind mindestens 5")
+    prot = werk.get("aenderungen") or []
+    if typ == "werk" and not prot:
+        b.w("Änderungsprotokoll", "leer; mindestens Erstfassung eintragen")
+    if prot and prot[-1].get("version") != werk.get("meta", {}).get("version"):
+        b.w("Änderungsprotokoll", f"letzter Eintrag gilt Version {prot[-1].get('version')}, Werk ist "
+                                  f"{werk.get('meta', {}).get('version')}; Eintrag ergänzen (python3 diff.py alt.json neu.json --eintragen)")
+    b.codes = codes
     return codes
 
 
-# 3 · Kacheln und Bausteine ─────────────────────────────────────────────────
-def pruefe_kacheln(werk, codes, b, ordner=None):
+# 3 · Bausteine ─────────────────────────────────────────────────────────────
+def pruefe_bloecke(werk, b, ordner=None):
     domaene = werk.get("modul", {}).get("domaene")
-    typ = werk.get("meta", {}).get("typ")
-    for c, k in codes.items():
-        bausteine = k.get("bausteine", [])
-        typen = [x.get("typ") for x in bausteine]
-        idx = [REIHENFOLGE.index(t) for t in typen if t in REIHENFOLGE]
-        if idx != sorted(idx):
-            b.f(c, f"Bausteinreihenfolge verletzt: {typen}")
-        if typen and typen[0] not in ("definition", "kern") and not c.startswith("L"):
-            b.w(c, f"Kachel beginnt mit „{typen[0]}“ statt mit Definition oder Kern")
-        # 3.7: Tabellenfelder und Kernfakten
-        for x in bausteine:
-            if x.get("variante") == "tabelle":
-                n_sp = len(x.get("kopf", []))
-                if x.get("spalten") and len(x["spalten"]) != n_sp:
-                    b.f(c, f"Tabelle „{x.get('titel', '')}“: {len(x['spalten'])} Spaltenrollen für {n_sp} Spalten")
-                if len(x.get("zeilen", [])) >= 3 and not x.get("aussage"):
-                    b.h(c, f"Tabelle „{x.get('titel', '')}“ ohne Aussage (ein Satz, was sie zeigt)")
-                if x.get("art") == "vergleich" and len(x.get("zeilen", [])) > 4:
-                    b.h(c, f"Vergleichstabelle „{x.get('titel', '')}“ mit mehr als vier Zeilen wird nicht gestürzt")
-        gerahmt = [t for t in typen if t in GERAHMT]
-        if len(gerahmt) > MAX_GERAHMT:
-            b.f(c, f"{len(gerahmt)} gerahmte Bausteine (max. {MAX_GERAHMT}); Kachel teilen")
-        if domaene == "recht" and "austriacum" in typen:
-            b.f(c, "Austriacum in der Rechtsdomäne unzulässig (Anker ist bereits Österreichbezug)")
-        if len(k.get("titel", "")) > MAX_TITEL:
-            b.w(c, f"Titel über {MAX_TITEL} Zeichen; bricht im Kachelkopf um")
-        if typ == "werk":
-            if not k.get("seite"):
-                b.w(c, "keine Seiten- oder Folienangabe")
-            if k.get("test"):
-                b.w(c, "Feld „test“ ist dem Referenzwerk vorbehalten")
-        if "luecke" in typen:
-            b.h(c, "enthält Lücke (sinngemäß ergänzt); in Abschlussmeldung nennen")
-        marker = sum(len(RE_MARKER.findall(s)) for p, s in alle_strings(bausteine) if not ist_roh(p))
-        if marker:
-            b.w(c, f"{marker} Textmarker ==…== ohne Wirkung (Textmarker seit Oktober 2026 entfernt); Syntax streichen")
-        for x in bausteine:
-            if x.get("typ") == "schema":
-                pruefe_schema(c, x, b, ordner)
-            if x.get("typ") == "rechenweg":
-                pruefe_rechenweg(c, x, b, typ)
-        abb = [x for x in bausteine if x.get("typ") == "schema" and x.get("variante") in ABBILDUNG]
-        if len(abb) > 1:
-            b.w(c, f"{len(abb)} Abbildungen in einer Kachel (Grafikdichte); Kachel teilen oder eine Abbildung streichen")
-
-    relevanzen = [k.get("relevanz") for k in codes.values()]
-    if typ == "werk" and relevanzen and relevanzen.count("kern") / len(relevanzen) > 0.75:
-        b.w("Relevanz", f"{relevanzen.count('kern')} von {len(relevanzen)} Kacheln als Kernstoff markiert; Marke verliert Aussagekraft")
-
+    typ = werk.get("meta", {}).get("typ", "werk")
     lat = {}
-    for c, k in codes.items():
-        for x in k.get("bausteine", []):
-            if x.get("typ") == "latinum":
-                key = x.get("lat", "").strip().lower()
-                if key in lat:
-                    b.w(c, f"Latinum „{x.get('lat')}“ bereits in {lat[key]}")
-                lat[key] = c
+    for ort, x in bloecke(werk):
+        t = x.get("typ")
+        if t == "tabelle":
+            pruefe_tabelle(ort, x, b)
+        elif t == "abbildung":
+            pruefe_abbildung(ort, x, b, ordner)
+        elif t == "rechenweg":
+            pruefe_rechenweg(ort, x, b, typ)
+        elif t == "spitzmarke":
+            if x["art"] == "austriacum" and domaene == "recht":
+                b.f(ort, "Austriacum in der Rechtsdomäne unzulässig (Anker ist bereits Österreichbezug)")
+            if x["art"] == "luecke":
+                b.h(ort, "Lücke (sinngemäß ergänzt); in der Abschlussmeldung nennen")
+            if x["art"] == "aktualisierung" and not x.get("datum"):
+                b.w(ort, "Aktualisierung ohne Datum (gilt seit)")
+        elif t == "latinum":
+            key = x.get("lat", "").strip().lower()
+            if key in lat:
+                b.w(ort, f"Latinum „{x.get('lat')}“ bereits in {lat[key]}")
+            lat[key] = ort
+        elif t == "formel":
+            for v in x.get("variablen", []):
+                if not v.get("bedeutung"):
+                    b.f(ort, f"Variable {v.get('symbol')} ohne Bedeutung")
 
 
-def pruefe_schema(c, x, b, ordner=None):
+def pruefe_tabelle(ort, x, b):
+    ort = f"{ort} Tabelle „{x.get('titel')}“"
+    n = len(x.get("kopf", []))
+    for i, z in enumerate(x.get("zeilen", [])):
+        if len(z) != n:
+            b.f(ort, f"Zeile {i+1} hat {len(z)} Zellen, Kopf hat {n}")
+        if any(not str(zelle).strip() for zelle in z):
+            b.w(ort, f"Zeile {i+1} enthält leere Zelle (für „nicht anwendbar“ ausdrücklich „entfällt“ schreiben)")
+    for feld in ("spalten", "unterkopf", "spaltenrollen"):
+        if x.get(feld) and len(x[feld]) != n:
+            b.f(ort, f"{len(x[feld])} Einträge in „{feld}“ für {n} Spalten")
+    if n > 7:
+        b.f(ort, f"{n} Spalten; im Satzspiegel nicht lesbar, Tabelle teilen")
+    elif n > 5:
+        b.h(ort, f"{n} Spalten; im Satzspiegel eng, Satz ansehen (Kontaktabzug)")
+    if len(x.get("zeilen", [])) >= 3 and not x.get("aussage"):
+        b.h(ort, "ohne Aussage (ein Satz, was sie zeigt)")
+    if x.get("art") == "vergleich" and n - 1 > 4:
+        b.w(ort, "Vergleichstabelle mit mehr als vier Begriffen; teilen")
+
+
+def pruefe_abbildung(ort, x, b, ordner=None):
     v = x.get("variante")
-    ort = f"{c} Schema „{x.get('titel')}“"
-    if v == "tabelle":
-        n = len(x.get("kopf", []))
-        for i, z in enumerate(x.get("zeilen", [])):
-            if len(z) != n:
-                b.f(ort, f"Zeile {i+1} hat {len(z)} Zellen, Kopf hat {n}")
-            if any(not str(zelle).strip() for zelle in z):
-                b.w(ort, f"Zeile {i+1} enthält leere Zelle (für „nicht anwendbar“ ausdrücklich „entfällt“ schreiben)")
-        if n > 5 and not x.get("breit"):
-            b.w(ort, f"{n} Spalten ohne breit=true; im Skript droht Enge")
-        if n > 9:
-            b.f(ort, f"{n} Spalten; auch im Querformat nicht lesbar, Tabelle teilen")
-    elif v == "kurve":
+    ort = f"{ort} Abbildung „{x.get('titel')}“"
+    if v == "kurve":
         for r in x.get("reihen", []):
             xs = [p[0] for p in r.get("punkte", [])]
             if xs != sorted(xs) or len(xs) != len(set(xs)):
@@ -276,14 +330,12 @@ def pruefe_schema(c, x, b, ordner=None):
         alle_x = [p[0] for r in x.get("reihen", []) for p in r.get("punkte", [])]
         for mk in x.get("markierungen", []):
             if alle_x and not min(alle_x) <= mk["x"] <= max(alle_x):
-                b.f(ort, f"Markierung „{mk['text']}“ liegt mit x = {mk['x']} außerhalb der x-Achse ({min(alle_x)} bis {max(alle_x)})")
+                b.f(ort, f"Markierung „{mk.get('text')}“ liegt mit x = {mk['x']} außerhalb der x-Achse ({min(alle_x)} bis {max(alle_x)})")
     elif v == "tkonto":
         soll = sum(e["betrag"] for k in x.get("konten", []) for e in k.get("soll", []))
         haben = sum(e["betrag"] for k in x.get("konten", []) for e in k.get("haben", []))
         if abs(soll - haben) > 0.005:
             b.f(ort, f"Soll {soll:,.2f} ≠ Haben {haben:,.2f}")
-    elif v == "fluss":
-        pruefe_fluss(ort, x, b)
     elif v == "baum":
         pruefe_baum(ort, x, b)
     elif v == "bild":
@@ -296,46 +348,8 @@ def pruefe_schema(c, x, b, ordner=None):
             b.f(ort, "SVG mit fester Farbe; nur Klassen t-flaeche, t-akzent, t-linie, t-text, t-klein verwenden (Dark Mode)")
         if re.search(r"<script|on[a-z]+=", svg, re.I):
             b.f(ort, "SVG enthält Skript oder Event-Handler")
-
-
-def pruefe_fluss(ort, x, b):
-    knoten = {k["id"]: k for k in x.get("knoten", [])}
-    if len(knoten) != len(x.get("knoten", [])):
-        b.f(ort, "doppelte Knoten-ID")
-    pos = [(k["zeile"], k["spalte"]) for k in x.get("knoten", [])]
-    if len(pos) != len(set(pos)):
-        b.f(ort, "zwei Knoten auf derselben Rasterposition")
-    starts = [k for k in knoten.values() if k["art"] == "start"]
-    if len(starts) != 1:
-        b.f(ort, f"{len(starts)} Startknoten (genau einer verlangt)")
-    aus = {i: [] for i in knoten}
-    for e in x.get("kanten", []):
-        if e["von"] not in knoten or e["nach"] not in knoten:
-            b.f(ort, f"Kante {e['von']} → {e['nach']}: unbekannter Knoten")
-            continue
-        aus[e["von"]].append(e)
-        if knoten[e["nach"]]["zeile"] <= knoten[e["von"]]["zeile"]:
-            b.f(ort, f"Kante {e['von']} → {e['nach']} führt nicht abwärts (Layout erlaubt nur Abwärtskanten)")
-    for i, k in knoten.items():
-        n = len(aus[i])
-        if k["art"] in ("ergebnis", "sperre") and n:
-            b.f(ort, f"Endknoten „{i}“ hat ausgehende Kanten")
-        if k["art"] == "frage" and n < 2:
-            b.f(ort, f"Frageknoten „{i}“ hat {n} Ausgang (mindestens zwei)")
-        if k["art"] == "frage" and any(not e.get("label") for e in aus[i]):
-            b.f(ort, f"Frageknoten „{i}“: Ausgang ohne Beschriftung (ja/nein)")
-        if k["art"] in ("start", "station") and n < 1 and k["art"] == "start":
-            b.f(ort, "Startknoten ohne Ausgang")
-    if starts:
-        gesehen, offen = set(), [starts[0]["id"]]
-        while offen:
-            i = offen.pop()
-            if i not in gesehen:
-                gesehen.add(i)
-                offen += [e["nach"] for e in aus.get(i, [])]
-        tot = set(knoten) - gesehen
-        if tot:
-            b.f(ort, f"vom Start nicht erreichbar: {sorted(tot)}")
+    if not x.get("nachweis", "").strip():
+        b.f(ort, "ohne Nachweis (Quelle oder „Eigene Darstellung“)")
 
 
 # 3 · Bäume (3.5) ───────────────────────────────────────────────────────────
@@ -401,7 +415,7 @@ def pruefe_baum(ort, x, b):
 
 
 # 3 · Bilder (3.5) ─────────────────────────────────────────────────────────
-SATZSPIEGEL_MM = 165          # nutzbare Breite einer Kachel im Lernskript
+SATZSPIEGEL_MM = 165          # Breite des Satzspiegels im Lernskript
 DPI_MIN, DPI_GUT = 96, 150    # darunter Fehler bzw. Warnung (Bildschirmnutzung mit Zoom)
 BILD_MAX, BILD_GROSS = 4_000_000, 1_500_000
 RE_LIZENZ = re.compile(r"^(eigenes werk|gemeinfrei|cc0 1\.0|cc by(-nc)?(-sa|-nd)? [234]\.0( [a-z]{2})?"
@@ -498,31 +512,6 @@ def pruefe_rechenweg(c, x, b, typ=None):
             b.h(c, f"Quelle „{pr['quelle']['kurz']}“ nennt {R.at(q, st)}, richtig {R.at(ist, st)}: Eintrag der Quellenkritik wird automatisch erzeugt")
 
 
-def pruefe_provinzen(werk, b):
-    for p in werk.get("provinzen", []):
-        for i, satz in enumerate(p.get("kompakt", [])):
-            rest = satz
-            for a in ABKUERZUNGEN:
-                rest = rest.replace(a, "")
-            rest = re.sub(r"\b\d+\.(?=\s)", "", rest)  # Ordinalzahlen („19. Jahrhundert“) sind kein Satzende
-            if len(re.findall(r"[.!?](?=\s+[A-ZÄÖÜ])", rest)) > 0:
-                b.w(f"Provinz {p.get('code')} kompakt[{i}]", "mehrere Sätze in einem Eintrag; je Eintrag ein Satz")
-    # 3.7: Prüfpflicht der Kernfakten (Selbsttest oder Exam)
-    abgefragt = {s.get("kachel") for s in werk.get("selbsttest", [])}
-    ohne = [k["code"] for p in werk.get("provinzen", []) for k in p.get("kacheln", []) if k.get("kernfakten") and k["code"] not in abgefragt]
-    if ohne:
-        b.h("Kernfakten", "nicht im Selbsttest abgefragt: " + ", ".join(ohne) + " (im Exam abdecken oder Selbsttestfrage ergänzen)")
-    if werk.get("meta", {}).get("typ") == "werk":
-        n = len(werk.get("selbsttest", []))
-        if n < 5:
-            b.w("Selbsttest", f"{n} Fragen; Standard sind 5 bis 10")
-        if not werk.get("aenderungen"):
-            b.w("Änderungsprotokoll", "leer; mindestens Erstfassung eintragen")
-    prot = werk.get("aenderungen") or []
-    if prot and prot[-1].get("version") != werk.get("meta", {}).get("version"):
-        b.w("Änderungsprotokoll", f"letzter Eintrag gilt Version {prot[-1].get('version')}, Werk ist "
-                                  f"{werk.get('meta', {}).get('version')}; Eintrag ergänzen (python3 diff.py alt.json neu.json --eintragen)")
-
 
 # 4 · Formeln ───────────────────────────────────────────────────────────────
 KATEX_JS = r"""
@@ -562,66 +551,6 @@ def pruefe_formeln(werk, b):
         b.f(ort, f"Formel nicht setzbar: {msg}")
 
 
-# Referenzwerk: Abdeckung ───────────────────────────────────────────────────
-def pruefe_abdeckung(werk, codes, b):
-    if werk.get("meta", {}).get("typ") != "referenz":
-        return
-    alle = [x for k in codes.values() for x in k.get("bausteine", [])]
-    typen = {x.get("typ") for x in alle}
-    varianten = {x.get("variante") for x in alle if x.get("typ") == "schema"}
-    for t in REIHENFOLGE:
-        if t not in typen:
-            b.f("Abdeckung", f"Baustein „{t}“ fehlt im Referenzwerk")
-    for v in VARIANTEN:
-        if v not in varianten:
-            b.f("Abdeckung", f"Schemavariante „{v}“ fehlt im Referenzwerk")
-    tabellen = [x for x in alle if x.get("variante") == "tabelle"]
-    if not any(x.get("breit") for x in tabellen):
-        b.f("Abdeckung", "keine breite Tabelle (Querformattest)")
-    if not any(len(x.get("zeilen", [])) >= UEBERHOEHE_ZEILEN for x in tabellen):
-        b.f("Abdeckung", f"keine Tabelle mit mindestens {UEBERHOEHE_ZEILEN} Zeilen (Überhöhentest)")
-    rel = {k.get("relevanz") for k in codes.values()}
-    for r in ("kern", "vertiefung", "auslassbar"):
-        if r not in rel:
-            b.f("Abdeckung", f"Relevanz „{r}“ fehlt")
-    texte = " ".join(s for _, s in alle_strings(werk))
-    if not re.search(r"\[\[[A-Z]{2,5}:", texte):
-        b.f("Abdeckung", "kein terraübergreifender Verweis")
-    if not any(k.get("bausteine", [{}])[0].get("zitat") for k in codes.values()):
-        b.f("Abdeckung", "kein Normwortlaut (zitat)")
-    # 3.5: Grafik und Rechenprobe
-    baeume = [x for x in alle if x.get("variante") == "baum"]
-    richtungen = {baum_struktur(x)[4] for x in baeume}
-    for r in ("unten", "rechts"):
-        if r not in richtungen:
-            b.f("Abdeckung", f"kein Baum in Richtung „{r}“")
-    if not any(k.get("art") == "neben" for x in baeume for k in x.get("knoten", [])):
-        b.f("Abdeckung", "kein Baumknoten der Art „neben“")
-    if not any(k.get("label") for x in baeume for k in x.get("knoten", [])):
-        b.f("Abdeckung", "kein Baum mit Kantenlabel")
-    if not any(x.get("markierungen") for x in alle if x.get("variante") == "kurve"):
-        b.f("Abdeckung", "keine Kurve mit Markierung")
-    # 3.7: Kernfakten, Merkhilfe, Tabellenarten und -rollen
-    if not any(k.get("kernfakten") for k in codes.values()):
-        b.f("Abdeckung", "keine Kachel mit Kernfakten")
-    if not any(k.get("merkhilfe") for k in codes.values()):
-        b.f("Abdeckung", "keine Kachel mit Merkhilfe")
-    for art in ("uebersicht", "vergleich"):
-        if not any(x.get("art") == art for x in tabellen):
-            b.f("Abdeckung", f"keine Tabelle der Art „{art}“")
-    rollen = {r for x in tabellen for r in x.get("spalten", [])}
-    for r in ("begriff", "text", "stichworte", "zahl"):
-        if r not in rollen:
-            b.f("Abdeckung", f"keine Tabellenspalte mit Rolle „{r}“")
-    if not any(x.get("aussage") for x in tabellen):
-        b.f("Abdeckung", "keine Tabelle mit Aussage")
-    proben = [x["probe"] for x in alle if x.get("typ") == "rechenweg" and x.get("probe")]
-    if not proben:
-        b.f("Abdeckung", "kein Rechenweg mit Rechenprobe")
-    if not any(p.get("quelle") for p in proben):
-        b.f("Abdeckung", "keine Rechenprobe mit abweichender Quelle (automatische Quellenkritik)")
-
-
 # 3a · Quellen ──────────────────────────────────────────────────────────────
 PFLICHT = {  # je Gattung: alle Felder der Liste; Tupel heißt „eines davon“
     "literatur": ["titel", "jahr", ("autoren", "hrsg", "institution")],
@@ -637,52 +566,161 @@ PFLICHT = {  # je Gattung: alle Felder der Liste; Tupel heißt „eines davon“
 }
 
 
+
 def pruefe_quellen(werk, codes, b):
+    import skript
     quellen = werk.get("quellen", [])
     kurz = [q.get("kurz") for q in quellen]
     for k in sorted({x for x in kurz if kurz.count(x) > 1}):
         b.f("quellen", f"Kurzzitat „{k}“ doppelt vergeben")
+    schluessel = {}
     for i, q in enumerate(quellen):
+        for s in skript.quell_schluessel(q):
+            if s in schluessel and schluessel[s] != q["kurz"]:
+                b.f(f"quellen[{i}]", f"Schlüssel „{s}“ gehört schon zu „{schluessel[s]}“")
+            schluessel[s] = q["kurz"]
         g = q.get("gattung")
         if not g:
             b.h(f"quellen[{i}]", f"„{q.get('kurz')}“ im alten Format (nur voll); bei der nächsten Überarbeitung strukturiert erfassen")
             continue
         for feld in PFLICHT.get(g, []):
             felder = feld if isinstance(feld, tuple) else (feld,)
-            if not any(q.get(f) for f in felder):
+            if not any(q.get(f) for f in felder) and not q.get("voll"):
                 b.f(f"quellen[{i}]", f"„{q.get('kurz')}“ ({g}): Pflichtangabe {' oder '.join(felder)} fehlt")
-    bekannt = set(kurz)
     benutzt = set()
-    for c, k in codes.items():
-        for z in k.get("quellen", []):
-            if z not in bekannt:
+    for c, a in codes.items():
+        for z in a.get("quellen", []):
+            if z not in kurz:
                 b.f(c, f"zitiert „{z}“, das im Quellenverzeichnis fehlt")
             benutzt.add(z)
-    if benutzt:  # Verwendungsnachweis geführt: jede strukturierte Quelle muss verwendet sein
+    for _, t in skript.texte(werk):
+        try:
+            _, fns = skript.fussnoten_zerlegen(t)
+        except ValueError:
+            continue  # meldet skript.regeln
+        for fn in fns:
+            for s in re.findall(r"@([A-Za-z0-9ÄÖÜäöü]+)", fn):
+                if s in schluessel:
+                    benutzt.add(schluessel[s])
+    for e in werk.get("quellenkritik", []):  # „THC (Vorlage)“, „THC, Rz 18“: die Kritik belegt die kritisierte Quelle
         for q in quellen:
-            if q.get("gattung") and q["kurz"] not in benutzt:
-                b.w("quellen", f"„{q['kurz']}“ wird von keiner Kachel zitiert")
+            if re.match(re.escape(q["kurz"]) + r"\b", e.get("quelle", "")):
+                benutzt.add(q["kurz"])
+    for q in quellen:
+        if q["kurz"] not in benutzt and q.get("gattung") != "online":
+            b.w("quellen", f"„{q['kurz']}“ wird nirgends belegt (Randbeleg ^[@…] oder Abschnittsquelle)")
+    if werk.get("meta", {}).get("typ", "werk") == "werk" and not benutzt:
+        b.f("quellen", "kein einziger Beleg im Werk; jeder Abschnitt nennt seine Quellen als Randbeleg ^[@Sigle Fundstelle]")
+
+
+# 4 · Satzregeln des Buchsatzes ─────────────────────────────────────────────
+def pruefe_satzregeln(werk, b):
+    import skript
+    fehler, warn, hinweis = skript.regeln(werk)
+    for z in fehler:
+        b.fehler.append("FEHLER   " + z)
+    for z in warn:
+        b.warnungen.append("WARNUNG  " + z)
+    for z in hinweis:
+        b.hinweise.append("HINWEIS  " + z)
+
+
+# Referenzwerk: Abdeckung ───────────────────────────────────────────────────
+def pruefe_abdeckung(werk, codes, b):
+    """Das Referenzwerk (meta.typ „referenz“) muss jeden Baustein, jede Variante und jeden Sonderfall des Satzes zeigen."""
+    if werk.get("meta", {}).get("typ") != "referenz":
+        return
+    alle = [x for _, x in bloecke(werk)]
+    typen = {x.get("typ") for x in alle}
+    for t in BLOCKTYPEN:
+        if t not in typen:
+            b.f("Abdeckung", f"Baustein „{t}“ fehlt im Referenzwerk")
+    abb = [x for x in alle if x.get("typ") == "abbildung"]
+    for v in VARIANTEN:
+        if v not in {x.get("variante") for x in abb}:
+            b.f("Abdeckung", f"Abbildung der Variante „{v}“ fehlt")
+    for st in ("fluss", "bpmn"):
+        if not any(x.get("variante") == "diagramm" and x.get("stil", "fluss") == st for x in abb):
+            b.f("Abdeckung", f"kein Diagramm im Stil „{st}“")
+    arten = {x.get("art") for x in alle if x.get("typ") == "spitzmarke"}
+    for a in SPITZMARKEN:
+        if a not in arten:
+            b.f("Abdeckung", f"keine Spitzmarke der Art „{a}“")
+    tabellen = [x for x in alle if x.get("typ") == "tabelle"]
+    for art in ("uebersicht", "vergleich"):
+        if not any(x.get("art", "uebersicht") == art for x in tabellen):
+            b.f("Abdeckung", f"keine Tabelle der Art „{art}“")
+    rollen = {r for x in tabellen for r in x.get("spalten", [])}
+    for r in ("begriff", "text", "stichworte", "zahl"):
+        if r not in rollen:
+            b.f("Abdeckung", f"keine Tabellenspalte mit Rolle „{r}“")
+    if not any(len(x.get("zeilen", [])) > LANGE_TABELLE for x in tabellen):
+        b.f("Abdeckung", f"keine Tabelle mit mehr als {LANGE_TABELLE} Zeilen (Seitenlauf mit wiederholtem Kopf)")
+    if not any(x.get("lesehilfe") for x in alle):
+        b.f("Abdeckung", "keine Einbettung mit Lesehilfe")
+    baeume = [x for x in abb if x.get("variante") == "baum"]
+    for r in ("unten", "rechts"):
+        if r not in {baum_struktur(x)[4] for x in baeume}:
+            b.f("Abdeckung", f"kein Baum in Richtung „{r}“")
+    if not any(k.get("art") == "neben" for x in baeume for k in x.get("knoten", [])):
+        b.f("Abdeckung", "kein Baumknoten der Art „neben“")
+    if not any(k.get("label") for x in baeume for k in x.get("knoten", [])):
+        b.f("Abdeckung", "kein Baum mit Kantenlabel")
+    if not any(x.get("markierungen") for x in abb if x.get("variante") == "kurve"):
+        b.f("Abdeckung", "keine Kurve mit Markierung")
+    proben = [x["probe"] for x in alle if x.get("typ") == "rechenweg" and x.get("probe")]
+    if not proben:
+        b.f("Abdeckung", "kein Rechenweg mit Rechenprobe")
+    if not any(p.get("quelle") for p in proben):
+        b.f("Abdeckung", "keine Rechenprobe mit abweichender Quelle (automatische Quellenkritik)")
+    if not any(x.get("variablen") for x in alle if x.get("typ") == "formel"):
+        b.f("Abdeckung", "keine Formel mit Variablenliste")
+    if not any(x.get("typ") == "kern" and any(isinstance(p, dict) and p.get("wichtig") for p in x["punkte"]) for x in alle):
+        b.f("Abdeckung", "kein Kernlistenpunkt mit „wichtig“")
+    if not any(a.get("wichtig") for a in codes.values()):
+        b.f("Abdeckung", "kein Abschnitt mit „wichtig“ (Schlüssel am Abschnittskopf)")
+    texte = " ".join(s for _, s in alle_strings(werk))
+    if not re.search(r"\[\[[A-Z]{2,5}:", texte):
+        b.f("Abdeckung", "kein terraübergreifender Verweis")
+    if not re.search(r"\^\[[^\]]*@[A-Za-z0-9ÄÖÜäöü]+\s*\(", texte):
+        b.f("Abdeckung", "kein Randbeleg mit Fundstelle (^[@Sigle (Seite)])")
+    for k in ("kontrollfragen",):
+        if not any(kap.get(k) for kap in werk.get("kapitel", [])):
+            b.f("Abdeckung", "keine Kontrollfragen")
+    if not any(isinstance(x, dict) for kap in werk.get("kapitel", []) for x in kap.get("einleitung", [])):
+        b.f("Abdeckung", "keine Kapiteleinleitung mit Baustein (Übersichtsgrafik)")
+    if not any(kap.get("abschluss") for kap in werk.get("kapitel", [])):
+        b.f("Abdeckung", "kein Kapitelabschluss („Auf einen Blick“)")
+    for feld in ("lexicon", "quellenkritik", "aenderungen", "abkuerzungen", "personen", "rollen"):
+        if not werk.get(feld):
+            b.f("Abdeckung", f"„{feld}“ fehlt oder ist leer")
+    if not (werk.get("repetitorium") or {}).get("abschnitte"):
+        b.f("Abdeckung", "Repetitorium ohne eigene Abschnitte (L1 …)")
 
 
 def validiere(werk, ordner=None):
     b = Bericht()
     pruefe_struktur(werk, b)
+    if b.fehler:  # ohne gültige Struktur sind die weiteren Stufen nicht verlässlich
+        return b
     pruefe_typografie(werk, b)
-    codes = pruefe_codes_und_verweise(werk, b)
-    pruefe_kacheln(werk, codes, b, ordner)
+    codes = pruefe_kapitel(werk, b)
+    pruefe_bloecke(werk, b, ordner)
     pruefe_quellen(werk, codes, b)
-    pruefe_provinzen(werk, b)
+    pruefe_satzregeln(werk, b)
     pruefe_formeln(werk, b)
     pruefe_abdeckung(werk, codes, b)
-    b.codes = codes
     return b
 
 
 # ── Exam ──────────────────────────────────────────────────────────────────
 def validiere_exam(exam, werk, ordner=None):
-    """Prüft ein Exam gegen schema_exam.json, die Regeln des Exam-Standards und das zugehörige Werk.
+    """Prüft ein Exam gegen schema_exam.json, die Regeln des Exam-Standards und das zugehörige Werk (Standard 4.0).
     ordner: Verzeichnis der exam.json (verknüpfte Bilddateien einer Grafik)."""
     b = Bericht()
+    if str(exam.get("standard")) != STANDARD:
+        b.f("standard", f"Exam im Standard „{exam.get('standard')}“; verlangt {STANDARD} (python3 umsetzen.py --exam alt.json neu.json)")
+        return b
     schema = json.loads((HIER / "schema_exam.json").read_text(encoding="utf-8"))
     for err in sorted(jsonschema.Draft202012Validator(schema).iter_errors(exam), key=lambda e: list(e.absolute_path)):
         ort = "$" + "".join(f"[{p}]" if isinstance(p, int) else f".{p}" for p in err.absolute_path)
@@ -694,8 +732,8 @@ def validiere_exam(exam, werk, ordner=None):
         b.f("meta.werk", f"Exam gehört zu „{m['werk']}“, übergeben wurde „{werk['meta']['titel']}“")
     if m["werk_version"] != werk["meta"]["version"]:
         b.w("meta.werk_version", f"Exam für Version {m['werk_version']}, Werk ist {werk['meta']['version']}; Fragen gegen das Werk prüfen")
-    codes = {k["code"]: p["code"] for p in werk["provinzen"] for k in p["kacheln"]}
-    provinzen = [p["code"] for p in werk["provinzen"]]
+    codes = {a["code"]: kc for kc, a in abschnitte(werk)}
+    provinzen = [k["code"] for k in werk["kapitel"]] + (["L"] if werk.get("repetitorium") else [])
     dims = werk["modul"]["pruefdimensionen"]
     n = len(fragen)
     if not 24 <= n <= 30:
@@ -703,6 +741,8 @@ def validiere_exam(exam, werk, ordner=None):
     ids = [f["id"] for f in fragen]
     if ids != [f"q{i}" for i in range(1, n + 1)]:
         b.f("Fragen", "IDs nicht fortlaufend q1, q2, …")
+    ws = json.loads((HIER / "schema.json").read_text(encoding="utf-8"))
+    gv = jsonschema.Draft202012Validator({"$ref": "#/$defs/block", "$defs": ws["$defs"]})
     for f in fragen:
         ort = f["id"]
         if [o["id"] for o in f["optionen"]] != ["a", "b", "c", "d"]:
@@ -716,28 +756,26 @@ def validiere_exam(exam, werk, ordner=None):
             b.w(ort, "alle vier Optionen richtig; als Prüfungsfrage schwach")
         if f["provinz"] not in provinzen:
             b.f(ort, f"Provinz {f['provinz']} existiert im Werk nicht")
-        for k in f["kacheln"]:
+        for k in f["abschnitte"]:
             if k not in codes:
-                b.f(ort, f"Kachel {k} existiert im Werk nicht")
-        if f["kacheln"] and all(codes.get(k) != f["provinz"] for k in f["kacheln"]):
-            b.w(ort, f"keine der Kacheln {f['kacheln']} liegt in Provinz {f['provinz']}")
+                b.f(ort, f"Abschnitt {k} existiert im Werk nicht")
+        if f["abschnitte"] and all(codes.get(k) != f["provinz"] for k in f["abschnitte"]):
+            b.w(ort, f"keiner der Abschnitte {f['abschnitte']} liegt in Kapitel {f['provinz']}")
         if f["dimension"] not in dims:
             b.f(ort, f"Prüfdimension „{f['dimension']}“ nicht im Domänenmodul ({', '.join(dims)})")
         if werk["modul"]["domaene"] in ("recht", "gemischt"):
             for o in f["optionen"]:
                 if not o.get("norm"):
                     b.h(ort + o["id"], "Begründung ohne Normzitat")
-        if f.get("grafik"):  # 3.5: Grafik zum Sachverhalt, gleiche Regeln wie im Werk
-            g = f["grafik"]
+        if f.get("grafik"):  # Grafik zum Sachverhalt: eine Abbildung wie im Werk, gleiche Regeln
+            g = {"typ": "abbildung", "id": f"grafik_{ort}", **f["grafik"]}
             if not f.get("sachverhalt"):
                 b.f(ort, "Grafik ohne Sachverhalt; die Grafik veranschaulicht stets einen Sachverhalt")
-            ws = json.loads((HIER / "schema.json").read_text(encoding="utf-8"))
-            gv = jsonschema.Draft202012Validator({"$ref": "#/$defs/b_schema", "$defs": ws["$defs"]})
             fehler = [e for e in gv.iter_errors(g) if e.validator not in ("allOf", "if")]
             for e in fehler:
                 b.f(ort + " Grafik", e.message[:200])
             if not fehler:
-                pruefe_schema(ort, g, b, ordner)
+                pruefe_abbildung(ort, g, b, ordner)
     fall = sum(1 for f in fragen if f.get("sachverhalt"))
     if fall * 3 < n * 2:
         b.f("Fallquote", f"{fall} von {n} Fragen mit Sachverhalt; verlangt sind mindestens zwei Drittel")
@@ -747,23 +785,24 @@ def validiere_exam(exam, werk, ordner=None):
     for p in provinzen:
         z = sum(1 for f in fragen if f["provinz"] == p)
         if p != "L" and z < 2:
-            b.f("Abdeckung", f"Provinz {p} nur {z}-mal geprüft (mindestens zweimal)")
+            b.f("Abdeckung", f"Kapitel {p} nur {z}-mal geprüft (mindestens zweimal)")
     for d in dims:
         z = sum(1 for f in fragen if f["dimension"] == d)
         if z < 3:
             b.f("Abdeckung", f"Prüfdimension „{d}“ nur {z}-mal (mindestens dreimal)")
-    # Ausgewogenheit (3.3): keine Dimension mehr als doppelt so oft wie die seltenste
     zahl = {d: sum(1 for f in fragen if f["dimension"] == d) for d in dims}
     if zahl and min(zahl.values()) > 0 and max(zahl.values()) > 2 * min(zahl.values()):
         hoch, tief = max(zahl, key=zahl.get), min(zahl, key=zahl.get)
         b.w("Ausgewogenheit", f"Prüfdimension „{hoch}“ {zahl[hoch]}-mal, „{tief}“ nur {zahl[tief]}-mal "
                               "(höchstens das Doppelte der seltensten Dimension)")
     for pfad, s in alle_strings(exam):
+        if ist_roh(pfad):
+            continue
         for zeichen, name in STRICHE.items():
             if zeichen in s:
                 b.f(pfad, f"{name} (Gedankenstrich verboten)")
         if '"' in s:
-            b.w(pfad, 'gerades Anführungszeichen ("), typografisch „…“ verwenden')
+            b.f(pfad, 'gerades Anführungszeichen ("), typografisch „…“ verwenden')
         if RE_ABK_MIT_PUNKT.search(s):
             b.w(pfad, "Art./Abs. mit Punkt; österreichische Zitierweise ohne Punkt")
     b.matrix = {p: {d: sum(1 for f in fragen if f["provinz"] == p and f["dimension"] == d) for d in dims} for p in provinzen}
@@ -783,11 +822,11 @@ def main():
             k = b.kennzahlen
             print(f"{k['fragen']} Fragen, {k['fallbeispiele']} mit Sachverhalt, {k['mehrfach']} Mehrfachauswahl")
             dims = werk["modul"]["pruefdimensionen"]
-            print("Prüfungsmatrix (Provinz × Dimension):")
+            print("Prüfungsmatrix (Kapitel × Dimension):")
             print("      " + " ".join(f"{d[:10]:>11}" for d in dims))
             for p, z in b.matrix.items():
                 print(f"  {p}   " + " ".join(f"{z[d]:>11}" for d in dims))
-        for z in b.fehler + b.warnungen:
+        for z in b.fehler + b.warnungen + b.hinweise:
             print(z)
         print(f"Ergebnis: {len(b.fehler)} Fehler, {len(b.warnungen)} Warnungen, {len(b.hinweise)} Hinweise")
         sys.exit(1 if b.fehler or (streng and b.warnungen) else 0)
@@ -795,10 +834,11 @@ def main():
         sys.exit("Aufruf: python3 validate.py werk.json [--streng]  oder  validate.py exam.json werk.json")
     werk = json.loads(Path(args[0]).read_text(encoding="utf-8"))
     b = validiere(werk, Path(args[0]).resolve().parent)
-    typen = sorted({x.get("typ") for k in b.codes.values() for x in k.get("bausteine", [])})
+    typen = sorted({x.get("typ") for _, x in bloecke(werk)}) if not b.fehler or b.codes else []
     print(f"Terra-Validator {VERSION} · {werk.get('meta', {}).get('titel')} · "
-          f"{len(werk.get('provinzen', []))} Provinzen, {len(b.codes)} Kacheln")
-    print(f"Bausteintypen: {', '.join(typen)}")
+          f"{len(werk.get('kapitel', []))} Kapitel{' und Repetitorium' if werk.get('repetitorium') else ''}, {len(b.codes)} Abschnitte")
+    if typen:
+        print(f"Bausteintypen: {', '.join(typen)}")
     for z in b.fehler + b.warnungen + b.hinweise:
         print(z)
     print(f"Ergebnis: {len(b.fehler)} Fehler, {len(b.warnungen)} Warnungen, {len(b.hinweise)} Hinweise")

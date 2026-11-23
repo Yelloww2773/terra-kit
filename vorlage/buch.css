@@ -1,0 +1,496 @@
+/* (c) Oliver Bedernik · Terra-Kit 4.0 (Entwurf 13) · buch.css · Lernskript im Buchsatz
+   Grundlage ist die Satzvorlage skript.css des Kits 3.7.1; buch.py lädt sie (ohne @page, @font-face und @media)
+   samt Provinzpalette vor dieser Datei. Hier steht nur, was der Buchsatz anders braucht als die Seitenmontage:
+   Seitenrahmen für Paged.js, Fließtext mit Randspalten, Abschnittskopf ohne Kachelrahmen, Einbettungen im
+   Kachelrahmen, Merkband, Steckbrief, Belege, zweispaltige Titelei- und Registerseiten, Seitenzahlen im Verweis. */
+
+:root { --spalte: 14mm; --p: #19666E; --p-hell: #DDEFF1; }
+/* Farbschemata der Titelseite (meta.farbschema); zuvor überschrieb eine Regel ohne Schema jede Wahl mit „nacht“ */
+.titelseite, .titelseite.schema-nacht { --tp-band: #1F2A44; --tp-text: #FBF7EE; --tp-reihe: #CDBF9F; --tp-akzent: #A8742A; --tp-papier: #F1E9DA; --tp-titel: #1F2A44; }
+.titelseite.schema-bordeaux { --tp-band: #5B1D27; --tp-text: #FBF1E6; --tp-reihe: #DEC08E; --tp-akzent: #B08A3E; --tp-papier: #F4ECDF; --tp-titel: #3D141B; }
+.titelseite.schema-tanne { --tp-band: #1E3A32; --tp-text: #F3EFE3; --tp-reihe: #D2BF86; --tp-akzent: #A98C45; --tp-papier: #F0ECE0; --tp-titel: #1E3A32; }
+.titelseite.schema-graphit { --tp-band: #2A2C31; --tp-text: #F5F2EC; --tp-reihe: #D3A57C; --tp-akzent: #B4673A; --tp-papier: #F7F4EF; --tp-titel: #2A2C31; }
+
+/* ── Seite: Rahmen 17 mm wie bisher; Kopf- und Fußzeile setzt der Renderer nach dem Umbruch ein ── */
+@page { size: A4; margin: 17mm 17mm 19mm 17mm; background: var(--papier); }
+@page titel { margin: 0; background: #F1E9DA; }
+body { font: 400 9.6pt/1.46 var(--f-text); hyphens: manual; }
+p { margin: 0; text-align: justify; widows: 2; orphans: 2; }
+p.sp + p.sp { text-indent: 1.2em; }
+em { font-style: italic; }
+a { color: inherit; text-decoration: none; }
+.sp, ul.auf, ol.auf, .t-aussage.sp { margin-left: var(--spalte) !important; margin-right: var(--spalte) !important; }
+.pagedjs_sheet { position: relative; }
+.terra-rahmen { position: absolute; inset: 0; pointer-events: none; }
+
+/* ── Titelseite (Markup und Klassen wie skript.titelseite) ── */
+.titelseite { page: titel; position: relative; width: 210mm; height: 297mm; background: var(--tp-papier); break-after: page; overflow: hidden; }
+.tp-band { box-sizing: border-box; }
+.tp-fuss .tp-probe { float: right; color: var(--tp-akzent); }
+
+/* ── Entwurf 13: Vorschläge für die Titelseite (meta.titelseite); „band“ bleibt der Standard ── */
+.tp-leiste, .tc-leiste { display: flex; gap: 1.2mm; }
+.tp-leiste span, .tc-leiste span { flex: 1; background: var(--d); }
+.tp-leiste span.aus, .tc-leiste span.aus { opacity: 0.32; }
+.tp-leiste b { display: block; padding: 1.1mm 0 1mm; text-align: center; font: 700 6.8pt/1 var(--f-ui); color: #fff; letter-spacing: 0.04em; }
+.tc-leiste b { display: none; }
+/* Einband: Leinen in der Schemafarbe, doppelter Goldrahmen, alles mittig */
+.tv-einband { background: var(--tp-band); color: var(--tp-text); text-align: center; }
+.te-rahmen { position: absolute; inset: 12mm; border: 0.9pt solid var(--tp-akzent); }
+.te-rahmen.innen { inset: 14mm; border-width: 0.35pt; }
+.te-reihe { position: absolute; left: 0; right: 0; top: 30mm; font: 600 8pt/1.3 var(--f-ui); letter-spacing: 0.24em; text-transform: uppercase; color: var(--tp-reihe); }
+.te-mitte { position: absolute; left: 28mm; right: 28mm; top: 84mm; }
+.tv-einband .tp-titel { color: var(--tp-text); font-size: 50pt; line-height: 1; }
+.tv-einband .tp-unter { color: var(--tp-reihe); font-size: 17pt; margin-top: 0; }
+.tv-einband .tp-lv { color: var(--tp-text); opacity: 0.7; margin-top: 4mm; }
+.te-zier { display: flex; align-items: center; justify-content: center; gap: 2.4mm; margin: 7mm auto; }
+.te-zier i { width: 22mm; border-top: 0.6pt solid var(--tp-akzent); }
+.te-zier b { width: 2.2mm; height: 2.2mm; background: var(--tp-akzent); transform: rotate(45deg); }
+.te-autor { position: absolute; left: 0; right: 0; top: 196mm; font: 500 17pt/1.2 var(--f-titel); letter-spacing: 0.06em; color: var(--tp-text); }
+.te-fuss { position: absolute; left: 30mm; right: 30mm; bottom: 27mm; }
+.te-fuss .tp-leiste { margin-bottom: 6mm; }
+.te-ort { font: 600 8.4pt var(--f-ui); letter-spacing: 0.22em; text-transform: uppercase; color: var(--tp-reihe); }
+.te-ausgabe { margin-top: 1.6mm; font: 400 8pt var(--f-ui); color: inherit; opacity: 0.72; letter-spacing: 0.02em; }
+.tv-einband .tp-probe { color: var(--tp-reihe); }
+.tv-einband .tp-leiste span.aus { background: rgba(255,255,255,0.07); opacity: 1; }
+.tv-einband .tp-leiste span.aus b { color: rgba(255,255,255,0.38); }
+.tv-einband .deckvermerk { color: var(--tp-text); right: 0; left: 0; text-align: center; bottom: 5mm; }
+/* Karte: die Provinzen als Kacheln der Wissenslandkarte; Provinzen des Bandes farbig, mit Abschnittscodes */
+.tk-kopf { position: absolute; left: 22mm; right: 22mm; top: 18mm; display: flex; justify-content: space-between; padding-bottom: 2.4mm;
+  border-bottom: 1.2pt solid var(--tp-titel); font: 600 8pt var(--f-ui); letter-spacing: 0.16em; text-transform: uppercase; color: var(--tp-titel); }
+.tk-titel { position: absolute; left: 22mm; right: 22mm; top: 40mm; }
+.tv-karte .tp-titel { font-size: 52pt; }
+.tk-karte { position: absolute; left: 22mm; right: 22mm; top: 116mm; }
+.tk-legende { font: 600 7.4pt var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--tinte-2); margin-bottom: 2.6mm; }
+.tk-raster { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 54mm; gap: 2.4mm; }
+.tk-prov { position: relative; box-sizing: border-box; padding: 3mm 3.2mm; background: var(--d); color: #fff; border-radius: 1.4mm; overflow: hidden; }
+.tk-prov.aus { background: transparent; color: var(--d); border: 0.8pt solid var(--d); opacity: 0.55; }
+.tk-nr { font: 600 26pt/1 var(--f-titel); }
+.tk-name { margin-top: 2mm; font: 500 8.4pt/1.28 var(--f-ui); hyphens: auto; }
+.tk-chips { position: absolute; left: 3.2mm; right: 3.2mm; bottom: 3mm; display: flex; flex-wrap: wrap; gap: 1mm; }
+.tk-chips i { font: 700 6.6pt/1 var(--f-ui); font-style: normal; padding: 0.8mm 1.2mm; border-radius: 1pt; background: rgba(255,255,255,0.2); }
+.tv-karte .tp-fuss { left: 22mm; right: 22mm; display: flex; gap: 6mm; align-items: baseline; }
+.tv-karte .tk-ausgabe { font-weight: 400; letter-spacing: 0.02em; text-transform: none; }
+.tv-karte .tp-probe { margin-left: auto; }
+/* Klassisch: Titelblatt mittig, Doppellinie unter der Reihe, Provinzfarben als Leiste am Fuß */
+.tv-klassisch { text-align: center; }
+.tc-reihe { position: absolute; left: 0; right: 0; top: 28mm; font: 600 8.2pt var(--f-ui); letter-spacing: 0.26em; text-transform: uppercase; color: var(--tinte-2); }
+.tc-doppellinie { position: absolute; left: 30mm; right: 30mm; top: 36mm; height: 1.4mm; border-top: 1.2pt solid var(--tp-titel); border-bottom: 0.4pt solid var(--tp-titel); }
+.tc-mitte { position: absolute; left: 24mm; right: 24mm; top: 94mm; }
+.tv-klassisch .tp-titel { font-size: 50pt; line-height: 1.02; }
+.tv-klassisch .tp-unter { margin-top: 6mm; }
+.tc-von { font: italic 400 12pt var(--f-titel); color: var(--tinte-2); }
+.tc-autor { margin-top: 1.5mm; font: 600 18pt/1.2 var(--f-titel); letter-spacing: 0.05em; color: var(--tp-titel); }
+.tv-klassisch .tp-lv { margin-top: 9mm; }
+.tc-fuss { position: absolute; left: 30mm; right: 30mm; bottom: 26mm; border-top: 0.4pt solid var(--tinte-3); padding-top: 4mm; }
+.tc-ort { font: 600 9pt var(--f-ui); letter-spacing: 0.26em; text-transform: uppercase; color: var(--tp-titel); }
+.tv-klassisch .te-ausgabe, .tc-fuss .tp-probe { display: block; color: var(--tinte-2); opacity: 1; }
+.tc-fuss .tp-probe { margin-top: 1mm; font: 400 7.6pt var(--f-ui); color: var(--tp-akzent); }
+.tc-leiste { position: absolute; left: 0; right: 0; bottom: 0; height: 3.2mm; gap: 0; }
+.tv-klassisch .deckvermerk { left: 0; right: 0; text-align: center; bottom: 7mm; }
+/* Studienbuch: Autor über dem Titel, kräftige Grotesk, Reihenband, Störer mit dem Rechtsstand */
+.tv-studienbuch { background: #FBFAF6; }
+.ts-autor { position: absolute; left: 24mm; top: 26mm; font: 700 10.5pt var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--tp-titel); }
+.ts-titel { margin: 0; font: 800 40pt/1.02 var(--f-ui); letter-spacing: -0.012em; color: var(--tp-titel); }
+.tv-studienbuch .ts-titel { position: absolute; left: 24mm; right: 30mm; top: 36mm; }
+.ts-bild { position: absolute; left: 24mm; right: 24mm; top: 94mm; height: 102mm; overflow: hidden; border-top: 1.4pt solid var(--tp-titel); }
+.ts-bild svg { display: block; width: 100%; height: auto; margin-top: -4mm; filter: grayscale(1) contrast(0.9); opacity: 0.42; }
+.ts-bild::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30mm; background: linear-gradient(rgba(251,250,246,0), #FBFAF6); }
+.ts-unter { position: absolute; left: 24mm; right: 40mm; top: 74mm; font: 400 14pt/1.35 var(--f-text); color: var(--tinte-2); }
+.ts-reihe { position: absolute; left: 0; right: 0; top: 204mm; height: 24mm; box-sizing: border-box; padding: 6.2mm 24mm 0; background: var(--tp-band); color: var(--tp-text); }
+.ts-reihe span { display: block; font: 700 8.4pt var(--f-ui); letter-spacing: 0.18em; text-transform: uppercase; color: var(--tp-reihe); }
+.ts-reihe .ts-lv { margin-top: 1.6mm; font: 400 8.6pt var(--f-ui); letter-spacing: 0.01em; text-transform: none; color: var(--tp-text); opacity: 0.85; }
+.ts-stoerer { position: absolute; right: 22mm; top: 190mm; width: 34mm; height: 34mm; border-radius: 50%; background: var(--tp-akzent); color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; transform: rotate(-8deg); box-shadow: 0 0 0 1.2mm #FBFAF6; }
+.ts-stoerer small { font: 600 6.8pt var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; }
+.ts-stoerer b { margin-top: 1mm; font: 800 11pt/1.1 var(--f-ui); }
+.ts-mit { position: absolute; left: 24mm; top: 238mm; margin: 0; padding: 0; list-style: none; display: flex; gap: 6mm; }
+.ts-mit li { font: 700 9pt var(--f-ui); color: var(--tp-titel); padding-left: 4mm; position: relative; }
+.ts-mit li::before { content: ""; position: absolute; left: 0; top: 1.3mm; width: 2mm; height: 2mm; background: var(--tp-akzent); }
+.ts-fuss { position: absolute; left: 24mm; right: 24mm; bottom: 22mm; display: flex; gap: 8mm; padding-top: 3mm; border-top: 0.5pt solid var(--tinte-3);
+  font: 600 8.2pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tinte-2); }
+.ts-fuss .tp-probe { margin-left: auto; color: var(--tp-akzent); }
+/* Grundriss: Rücken mit senkrechtem Reihentitel, große Provinzziffer, Raster am Fuß */
+.tv-grundriss { background: #F6F2EA; }
+.tg-ruecken { position: absolute; left: 0; top: 0; bottom: 0; width: 26mm; background: var(--tp-band); }
+.tg-ruecken span { position: absolute; left: 50%; bottom: 30mm; transform: translateX(-50%) rotate(-90deg); transform-origin: center; white-space: nowrap;
+  font: 700 8pt var(--f-ui); letter-spacing: 0.24em; text-transform: uppercase; color: var(--tp-reihe); width: 0; text-indent: 0; display: block; }
+.tg-satz { position: absolute; left: 44mm; right: 22mm; top: 30mm; }
+.tg-ziffer { font: 500 120pt/0.8 var(--f-titel); margin-bottom: 14mm; }
+.tv-grundriss .tp-titel { font-size: 44pt; line-height: 1; }
+.tv-grundriss .tp-unter { font-size: 16pt; margin-top: 4mm; }
+.tg-autor { margin-top: 16mm; padding-top: 3mm; border-top: 1.4pt solid var(--tp-titel); display: inline-block; font: 600 15pt var(--f-titel); letter-spacing: 0.04em; color: var(--tp-titel); }
+.tg-raster { position: absolute; left: 44mm; right: 22mm; bottom: 26mm; display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 6mm; }
+.tg-raster div { border-top: 0.6pt solid var(--tinte-3); padding-top: 2mm; font: 400 8.2pt/1.35 var(--f-ui); color: var(--tinte-2); }
+.tg-raster small { display: block; margin-bottom: 1mm; font: 700 6.8pt var(--f-ui); letter-spacing: 0.16em; text-transform: uppercase; color: var(--tp-titel); }
+.tg-probe { position: absolute; left: 44mm; bottom: 16mm; font: 600 7.4pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tp-akzent); }
+/* Handbuch: Leinen mit feiner Struktur, aufgesetztes Titelschild */
+.tv-handbuch { background-color: var(--tp-band);
+  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 0.35mm, transparent 0.35mm 0.7mm), repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 0.35mm, transparent 0.35mm 0.7mm); }
+.th-schild { position: absolute; left: 34mm; right: 34mm; top: 52mm; padding: 14mm 12mm 12mm; background: var(--tp-papier); text-align: center;
+  outline: 0.8pt solid var(--tp-akzent); outline-offset: -3mm; box-shadow: inset 0 0 0 4mm var(--tp-papier), inset 0 0 0 4.3mm var(--tp-akzent); }
+.th-autor { font: 600 9pt var(--f-ui); letter-spacing: 0.22em; text-transform: uppercase; color: var(--tinte-2); margin-bottom: 7mm; }
+.tv-handbuch .tp-titel { font-size: 38pt; line-height: 1.02; }
+.tv-handbuch .te-zier { margin: 6mm auto; }
+.tv-handbuch .tp-unter { font-size: 15pt; margin: 0; }
+.th-ausgabe { margin-top: 8mm; font: 400 8.4pt var(--f-ui); color: var(--tinte-2); }
+.th-fuss { position: absolute; left: 0; right: 0; bottom: 26mm; text-align: center; }
+.th-reihe { font: 600 8.2pt var(--f-ui); letter-spacing: 0.24em; text-transform: uppercase; color: var(--tp-reihe); }
+.th-ort { margin-top: 2.4mm; font: 600 9pt var(--f-titel); letter-spacing: 0.2em; text-transform: uppercase; color: var(--tp-text); }
+.tv-handbuch .tp-probe { display: block; margin-top: 2mm; font: 400 7.4pt var(--f-ui); color: var(--tp-reihe); }
+.tv-handbuch .deckvermerk { color: var(--tp-text); left: 0; right: 0; text-align: center; bottom: 7mm; }
+/* Kurzlehrbuch: Farbfeld mit Titel, darunter „Aus dem Inhalt“ */
+.tv-kurzlehrbuch { background: #FBFAF6; }
+.tl-feld { position: absolute; left: 0; right: 0; top: 0; height: 168mm; box-sizing: border-box; padding: 24mm 24mm 0; color: #fff; }
+.tl-reihe { font: 700 8.2pt var(--f-ui); letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.8; }
+.tl-ziffer { position: absolute; right: 18mm; top: 14mm; font: 500 190pt/1 var(--f-titel); color: rgba(255,255,255,0.13); }
+.tl-autor { position: absolute; left: 24mm; bottom: 66mm; font: 700 10.5pt var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.9; }
+.tv-kurzlehrbuch .ts-titel { position: absolute; left: 24mm; right: 24mm; bottom: 24mm; color: #fff; font-size: 44pt; }
+.tl-unter { position: absolute; left: 24mm; right: 24mm; bottom: 12mm; font: italic 400 13.5pt var(--f-text); opacity: 0.88; }
+.tv-kurzlehrbuch .tl-unter { bottom: 11mm; }
+.tl-inhalt { position: absolute; left: 24mm; right: 24mm; top: 180mm; }
+.tl-lbl { font: 700 7.6pt var(--f-ui); letter-spacing: 0.18em; text-transform: uppercase; color: var(--d); margin-bottom: 3mm; padding-bottom: 1.6mm; border-bottom: 0.8pt solid var(--d); }
+.tl-inhalt ul { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 8mm; }
+.tl-inhalt li { break-inside: avoid; display: flex; gap: 2.4mm; margin-bottom: 2.2mm; font: 400 9pt/1.3 var(--f-ui); color: var(--tinte); }
+.tl-inhalt li b { flex: none; min-width: 7mm; font: 800 8.4pt/1.45 var(--f-ui); color: var(--d); }
+.tl-fuss { position: absolute; left: 24mm; right: 24mm; bottom: 20mm; display: flex; gap: 8mm; padding-top: 3mm; border-top: 0.5pt solid var(--tinte-3);
+  font: 600 8pt var(--f-ui); letter-spacing: 0.06em; color: var(--tinte-2); }
+.tl-fuss span:first-child { letter-spacing: 0.18em; text-transform: uppercase; }
+.tl-fuss .tp-probe { margin-left: auto; color: var(--tp-akzent); }
+
+/* ── Titelei und Anhang: je eine neue Seite, Titelzeile wie bisher ── */
+.titelei-seite { break-before: page; }
+.impressum-seite { display: flex; flex-direction: column; height: 252mm; }
+.impressum-seite .impressum { position: static; margin-top: auto; }
+.impressum-seite .impressum p { text-align: left; }
+.spalten-satz { display: grid; grid-template-columns: 1fr 1fr; column-gap: 9mm; align-items: start; }
+.spalten-satz .tocp, .spalten-satz .register { break-inside: avoid; }
+.spalten-satz[data-folgeseite] { break-before: page; }
+a.sz::after { content: target-counter(attr(href url), page); }
+.teil-unter, .gebrauch p, .gebrauch li { text-align: left; }
+.gebrauch .kernblock, .gebrauch .box, .gebrauch .steckbrief, .gebrauch .fallbeispiel { margin: 0 0 2.6mm; }
+.gebrauch .kernsatz { font-size: 9.6pt; }
+.gebrauch .dim { margin: 0 1mm 1mm 0; }
+.zg-p { line-height: 2; }
+.vw-ext { color: var(--tinte-2); font: 600 0.9em var(--f-ui); white-space: nowrap; }
+.vw-ext::before { content: "→\00a0"; }
+.titelei-seite .gebrauch a.vw::after { content: ""; }
+table.zit td { vertical-align: top; }
+
+/* ── Provinzkopf (skript.css) mit Seitenzahlen im Abschnittsverzeichnis und Farbschlüssel ── */
+.kapitel { break-before: page; }
+h1.ptitel { string-set: kapitel content(text); }
+.kindex .kis { float: right; margin-left: 2mm; }
+.kindex .kis::after { content: "S\00A0" target-counter(attr(href url), page); font: 600 7.4pt var(--f-ui); color: var(--tinte-3); }
+.kindex .rel { font: 400 7.6pt var(--f-ui); color: var(--p); }
+.kindex a.ki { color: var(--tinte); }
+.leitfrage, .kompakt li { text-align: justify; }
+.schluessel { margin: 0 0 5mm; line-height: 2; }
+.schluessel b { display: inline; margin-right: 2.4mm; font: 700 7pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tinte-2); }
+.rpill { display: inline-block; margin-right: 1.6mm; padding: 0.2mm 2.2mm 0.2mm 1.8mm; border-radius: 1.5pt; background: var(--h); color: var(--d);
+  font: 700 7.4pt var(--f-ui); border-left: 2.4mm solid var(--d); line-height: 1.5; }
+
+/* ── Abschnitt: Kachelkopf des Kits (großer Code in Provinzfarbe), oben die Provinzfarbe wie am Kachelrand ── */
+.abschnitt { margin-top: 7mm; }
+/* Entwurf 8: oben auf einer Seite keine Trennlinie (der Seitenwechsel trennt schon); gesetzt nach dem Umbruch */
+.abschnitt.seitenanfang { margin-top: 0; }
+.abschnitt.seitenanfang .abkopf { border-top: 0; padding-top: 0; }
+.abkopf { border-top: 2.2pt solid var(--p); padding-top: 2.2mm; margin-bottom: 2.6mm; break-after: avoid; }
+.abkopf .kkopf { margin-bottom: 0; }
+.dim { display: inline-block; white-space: nowrap; padding: 0.2mm 1.8mm; border-radius: 1.5pt; background: var(--p-hell);
+  font: 700 6.6pt var(--f-ui); letter-spacing: 0.08em; text-transform: uppercase; color: var(--p); }
+.kopfgruppe { break-inside: avoid; }
+.lbl { font: 700 6.8pt/1.2 var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--p); margin-bottom: 0.8mm; }
+
+/* ── Kerninhalt (Entwurf 12, ersetzt ☉): Schlüssel als Zeichnung; am Rand begleitet eine Leiste die ganze Stelle ── */
+.ziel { display: inline-block; width: 1.55em; height: 0.72em; margin: 0 0.16em; vertical-align: -0.02em; color: var(--p); line-height: 0; text-indent: 0; }
+.ziel svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.wichtig { position: relative; }
+.ziel.rand { position: absolute; left: calc(-1 * var(--spalte) + 2mm); top: 0.42em; width: 6mm; height: 2.8mm; margin: 0; }
+.wichtig::after { content: ""; position: absolute; left: -3.2mm; top: 0.3em; bottom: 0.3em; width: 1.6pt; border-radius: 1pt; background: var(--p); }
+.box.wichtig > .ziel.rand { left: calc(-1 * var(--spalte) - 0.8mm); top: 2.4mm; }
+.box.wichtig::after { left: -4mm; top: 0; bottom: 0; }
+.kkopf .ziel { width: 7mm; height: 3.2mm; margin-left: 2.2mm; vertical-align: 0.3mm; }
+.schema-titel .ziel, .fb-kopf .ziel { width: 5.6mm; height: 2.6mm; margin: 0 1.6mm 0 0; vertical-align: -0.1mm; }
+.fb-kopf .ziel { color: currentColor; }
+.tocp .rs .ziel, .kindex .rel .ziel { width: 5mm; height: 2.3mm; margin-left: 1.4mm; }
+
+/* ── Absatzstruktur der Terrae: Spitzmarke „Definition“, Kernliste mit Fachbegriff als Vorspann, Kästen ── */
+.definition, .kernliste { margin-top: 5.6mm; margin-bottom: 1.6mm; }
+.definition + .kernliste { margin-top: 5.2mm; }
+.label { break-after: avoid; }
+/* Entwurf 10: Teile im Abschnitt deutlich getrennt; Zwischenüberschrift mit kräftiger Linie und mehr Luft davor */
+.definition > .label, .formel-block > .label, .rechenweg-block > .label, .kernliste > .label, .sp-probe > .label { display: flex; align-items: center; gap: 2.2mm; margin-bottom: 1.8mm;
+  font: 800 9pt/1.2 var(--f-ui); letter-spacing: 0.1em; color: var(--p); }
+.definition > .label::after, .kernliste > .label::after, .sp-probe > .label::after { content: ""; flex: 1; border-bottom: 1pt solid color-mix(in srgb, var(--p) 45%, transparent); }
+.kernliste + p.sp, .kernliste + .kopfgruppe { margin-top: 4.4mm; }
+.definition p.def { text-align: justify; text-indent: 0; }
+.kernliste ul.kern li { text-align: justify; margin-bottom: 1.1mm; }
+.kernliste ul.kern li .geruest { margin-right: 1.2mm; }
+.sp-probe { margin: 0 0 2.6mm; }
+.sp-probe .label + p + .label { margin-top: 1.6mm; }
+.zg-paar { display: grid; grid-template-columns: 1fr 1fr; column-gap: 2.4mm; margin: 0 0 2.6mm; }
+.gebrauch .zg-paar .box { margin: 0; }
+.sp-probe p, .sp-probe li { font-size: 9pt; }
+
+/* ── Bausteine im Fließtext: Formen aus skript.css, hier nur Abstände und Blocksatz ── */
+.kernblock { break-inside: avoid; margin-top: 4.2mm; margin-bottom: 3mm; }
+.kernsatz { text-align: justify; text-indent: 0 !important; }
+.kernsatz strong { font-weight: 700; }
+.box { break-inside: avoid; margin-top: 4.2mm; margin-bottom: 1.6mm; }
+.box p { text-align: justify; text-indent: 0; margin: 0; }
+/* Entwurf 8: Latinum und Zitat sichtbar, aber ruhiger als Kernsatz und Cave */
+.box.latinum { margin-top: 2.8mm; margin-bottom: 2mm; padding: 2mm 3.6mm 2.2mm 3.8mm; text-align: left; background: var(--lat-bg);
+  border: 0; border-left: 2.4pt solid var(--lat-rand); border-radius: 0 2pt 2pt 0; }
+.box.latinum .lbl { color: #8A6A22; }
+.box.latinum .lat { display: block; margin: 0.2mm 0 0.5mm; font: italic 500 12.5pt/1.25 var(--f-titel); color: #5E4313; }
+.box.latinum .de { display: inline; font-size: 9.6pt; color: var(--tinte); }
+.box.latinum .stelle { display: inline; margin: 0 0 0 2.2mm; font: 400 7.4pt var(--f-ui); color: var(--tinte-2); }
+.box.latinum + .box.latinum { margin-top: 1.6mm; }
+.kapitel p em, .kapitel li em { color: #7A5418; }
+ul.auf { list-style: none; padding: 0; margin-top: 1.6mm; margin-bottom: 2mm; }
+ul.auf li { position: relative; padding-left: 4.2mm; margin-bottom: 0.8mm; text-align: justify; }
+ul.auf li::before { content: "▸"; position: absolute; left: 0; top: 0; color: var(--p); }
+ol.auf { margin-top: 1.6mm; margin-bottom: 2mm; padding-left: 5.4mm; }
+ol.auf li { margin-bottom: 1mm; padding-left: 0.8mm; text-align: justify; }
+ol.auf li::marker { font: 700 8.6pt var(--f-ui); color: var(--p); }
+.zitat { display: block; margin-top: 2.8mm; margin-bottom: 3mm; break-inside: avoid; padding: 2.4mm 4mm 2.4mm 4.4mm; border: 0;
+  border-left: 2.4pt solid var(--p); border-radius: 0 2pt 2pt 0; background: color-mix(in srgb, var(--p-hell) 55%, #FFFFFF); }
+.zitat .w { font: italic 500 13.5pt/1.28 var(--f-titel); color: var(--tinte); }
+.zitat .q { margin-top: 1.2mm; }
+
+/* Merkhilfe als Pfeilkette in den Rollenfarben; Kopf wie .merkhilfe des Kits */
+.merkband { margin-top: 3mm; margin-bottom: 2mm; break-inside: avoid; font: inherit; }
+.mh-kopf { margin-bottom: 1.2mm; }
+.mh-kopf .lbl { display: inline; margin-right: 2mm; font-size: 6.6pt; letter-spacing: 0.1em; }
+.mh-kopf .mb-titel { font: 600 9.4pt/1.3 var(--f-ui); color: var(--tinte); }
+.mb-reihe { display: flex; }
+.mb-schritt { flex: 1 1 0; display: flex; flex-direction: column; justify-content: center; min-height: 11mm; padding: 1.2mm 5mm 1.2mm 6.4mm; margin-right: -2.6mm;
+  background: var(--d); color: #fff; clip-path: polygon(0 0, calc(100% - 3.4mm) 0, 100% 50%, calc(100% - 3.4mm) 100%, 0 100%, 3.4mm 50%); }
+.mb-schritt.erst { padding-left: 3.4mm; clip-path: polygon(0 0, calc(100% - 3.4mm) 0, 100% 50%, calc(100% - 3.4mm) 100%, 0 100%); border-radius: 2pt 0 0 2pt; }
+.mb-kopf { font: 600 7.2pt/1.15 var(--f-ui); opacity: .88; }
+.mb-text { font: 700 9.4pt/1.15 var(--f-ui); }
+
+/* Steckbrief: Kasten in der Rollenfarbe */
+.steckbrief { break-inside: avoid; margin-top: 3mm; margin-bottom: 3mm; padding: 2.2mm 3.4mm 2.4mm 3.6mm; background: color-mix(in srgb, var(--h) 70%, #FFFFFF);
+  border-left: 2.8pt solid var(--d); border-radius: 0 2pt 2pt 0; }
+.steckbrief .lbl { color: var(--d); }
+.steckbrief .sb-titel { letter-spacing: 0.02em; text-transform: none; font: 600 9.6pt var(--f-titel); color: var(--tinte); margin-left: 1.4mm; }
+.steckbrief dl { display: grid; grid-template-columns: 30mm 1fr; column-gap: 3mm; row-gap: 0.9mm; margin: 1mm 0 0; }
+.steckbrief dt { font: 700 6.8pt/1.5 var(--f-ui); letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinte-2); }
+.steckbrief dd { margin: 0; font-size: 9pt; line-height: 1.38; text-align: justify; }
+
+/* Verweise: Pfeil und Code wie bisher, dazu die Seitenzahl */
+a.vw::after { content: ",\00A0S\00A0" target-counter(attr(href url), page); font-weight: 400; }
+a.abbv { color: var(--p); font: 600 0.9em var(--f-ui); white-space: nowrap; }
+
+/* Randbelege (Entwurf 13): rechts neben dem Satzspiegel auf Höhe ihrer Zeile; Lage setzt RAHMEN_JS */
+.rb-anker { display: inline; }
+.randbeleg { box-sizing: border-box; font: 400 6.7pt/1.28 var(--f-ui); color: var(--tinte-2); text-align: left; hyphens: manual; overflow-wrap: normal; }
+.randbeleg a.rb-q, .rb-muster b { color: var(--p); font-weight: 700; text-decoration: none; letter-spacing: 0.01em; }
+.rb-muster { font: 400 0.82em var(--f-ui); color: var(--tinte-2); white-space: nowrap; }
+
+/* ── Einbettungen: Abbildungen und Tabellen im Kachelrahmen der bisherigen Terrae, volle Satzbreite, unteilbar ── */
+.einbettung { break-inside: avoid; margin: 4.6mm 0; }
+figure.abb, .tab { background: var(--kachel); border: 0.6pt solid var(--linie); border-top: 2.2pt solid var(--p); border-radius: 2.5pt; padding: 3mm 4mm 2.6mm; }
+figure.abb .fig { margin-top: 1.2mm; }
+/* Entwurf 8: Lesehilfe als eigenes Feld, unten an die Grafik gekoppelt (gehört zur unteilbaren Abbildung) */
+figure.abb.mit-lesehilfe, .tab.mit-lesehilfe { padding-bottom: 0; }
+.tab .t-aussage + .abb-lesehilfe { margin-top: 2mm; }
+.abb-lesehilfe { margin: 2.4mm -4mm 0; padding: 2.2mm 4mm 2mm; background: color-mix(in srgb, var(--p-hell) 55%, #FFFFFF);
+  border-top: 1pt solid var(--p); border-radius: 0 0 2.5pt 2.5pt; }
+.abb-lesehilfe .lbl { margin-bottom: 0.6mm; }
+.abb-lesehilfe p { font-size: 9.2pt; line-height: 1.42; text-align: justify; text-indent: 0; }
+.abb-lesehilfe .bildnachweis { margin-top: 1.4mm; text-align: right; }
+.bildnachweis { margin-top: 1.4mm; }
+.t-wz { fill: var(--tinte-3); font: 400 9px var(--f-ui); letter-spacing: .03em; opacity: 1; }
+.tab table.t { margin-top: 0.6mm; }
+table.t td { text-align: left; }
+table.gestuerzt th.rolle { color: var(--d); border-top: 2.2pt solid var(--d); padding-top: 1.4mm; }
+table.gestuerzt th .uk { display: block; margin-top: 0.6mm; font: 600 6.8pt var(--f-ui); letter-spacing: 0.04em; color: var(--tinte-2); }
+table.gestuerzt th.ecke { border-top: 2.2pt solid transparent; }
+table.t .nein { color: #A33B32; font-weight: 700; margin-right: 1.2mm; }
+.tab .t-aussage { text-align: justify; }
+table.akteure col.c0 { width: 46mm; } table.akteure col.c2 { width: 30mm; }
+table.akteure td.begriff { font-weight: 600; }
+table.akteure .rpunkt { display: inline-block; width: 2.2mm; height: 2.2mm; margin-right: 1.8mm; border-radius: 0.5pt; background: var(--d); vertical-align: 0.1mm; }
+table.akteure td.stichworte { font-weight: 700; color: var(--d); }
+.tab.teilbar { break-inside: auto; }
+.qv-ganz { break-inside: avoid; }
+/* 4.0: Glossar als Begriffsliste mit Haarlinien, Begriff halbfett */
+.glossar { margin-top: 4.2mm; margin-bottom: 3mm; break-inside: avoid; }
+.glossar > .lbl { margin-bottom: 1.4mm; }
+.glossar table { width: 100%; border-collapse: collapse; }
+.glossar td { padding: 1.2mm 2.4mm 1.2mm 0; border-top: 0.4pt solid var(--linie); vertical-align: top; font-size: 9.4pt; line-height: 1.4; }
+.glossar tr:last-child td { border-bottom: 0.4pt solid var(--linie); }
+.glossar td.gb { width: 31%; font-weight: 600; color: var(--tinte); hyphens: manual; }
+.glossar td.ge { text-align: left; }
+.kc-n { display: block; margin-top: 0.6mm; font: 400 6.6pt/1.2 var(--f-ui); color: var(--tinte-2, #4A5468); text-align: right; }
+.tab.teilbar tr { break-inside: avoid; }
+.tab.teilbar .schema-titel { break-after: avoid; }
+.fallbeispiel { background: var(--kachel); }
+.fallbeispiel p { text-align: justify; text-indent: 0; }
+
+/* ── Provinzende, Füllblock, Repetitorium ── */
+.fuellblock { margin: 5mm 0 4mm; }
+.fuellblock li { break-inside: avoid; text-align: justify; }
+.kf-code { white-space: nowrap; }
+.generiert .bs { margin-top: 1mm; }
+.loes-titel { margin-top: 3.4mm; }
+.repetitorium .abschnitt.generiert + .abschnitt.generiert { margin-top: 8mm; }
+
+/* ── Korrekturläufe des Satzes ── */
+[data-neue-seite] { break-before: page; }
+[data-lw="eng"] { word-spacing: -0.05em; letter-spacing: -0.004em; }
+[data-lw="weit"] { word-spacing: 0.08em; letter-spacing: 0.006em; }
+
+/* ── Entwurf 13, dritte Runde: Umschläge wie beim gebundenen Fachbuch (leinen, halbleinen, umschlag) ──
+   Eine Schrift (Cormorant Garamond) für Autor und Titel, Grotesk nur klein für Reihe und Stand; „Terra“ kursiv als Zeichen der Reihe.
+   Keine Verläufe, Muster, Rahmen oder Zierformen; Farben allein aus dem Farbschema, nicht aus dem Stoff. */
+.titelseite[class*="tv-"] .tu-titel { margin: 0; font-family: var(--f-titel); font-weight: 500; font-feature-settings: "liga", "kern"; }
+.tu-titel em { font-style: italic; font-weight: 500; }
+.tu-titel .z { display: block; }
+.tu-probe { letter-spacing: 0.08em; }
+/* Ganzleinen */
+.tv-leinen { background: var(--tp-band); color: var(--tp-reihe); overflow: hidden; }
+.tv-leinen .tu-autor { position: absolute; left: 26mm; top: 30mm; font: 500 15pt/1 var(--f-titel); letter-spacing: 0.03em; color: var(--tp-reihe); }
+.tv-leinen .tu-block { position: absolute; left: 26mm; right: 26mm; bottom: 66mm; }
+.tv-leinen .tu-titel { font-size: 58pt; line-height: 0.98; letter-spacing: -0.005em; color: var(--tp-reihe); }
+.tv-leinen .tu-unter { margin-top: 7mm; max-width: 120mm; font: italic 400 14pt/1.35 var(--f-titel); color: var(--tp-text); opacity: 0.78; }
+.tv-leinen .tu-fuss { position: absolute; left: 26mm; right: 26mm; bottom: 26mm; display: flex; justify-content: space-between; padding-top: 3.2mm;
+  border-top: 0.4pt solid color-mix(in srgb, var(--tp-reihe) 45%, transparent); font: 500 7.4pt var(--f-ui); letter-spacing: 0.1em; text-transform: uppercase; color: var(--tp-reihe); opacity: 0.85; }
+.tv-leinen .deckvermerk { color: var(--tp-reihe); opacity: 0.7; right: 26mm; bottom: 10mm; }
+/* Halbleinen */
+.tv-halbleinen { background: var(--tp-papier); }
+.tv-halbleinen .tu-tuch { position: absolute; left: 0; top: 0; bottom: 0; width: 58mm; background: var(--tp-band); border-right: 0.8pt solid var(--tp-reihe); }
+.tv-halbleinen .tu-reihe { position: absolute; left: 12mm; right: 12mm; bottom: 26mm; font: 500 7.4pt/1.5 var(--f-ui); letter-spacing: 0.1em; text-transform: uppercase; color: var(--tp-reihe); }
+.tv-halbleinen .tu-deckel { position: absolute; left: 80mm; right: 22mm; top: 54mm; }
+.tv-halbleinen .tu-autor { font: 500 14pt/1 var(--f-titel); letter-spacing: 0.03em; color: var(--tp-titel); margin-bottom: 14mm; }
+.tv-halbleinen .tu-titel { font-size: 46pt; line-height: 1; color: var(--tp-titel); }
+.tv-halbleinen .tu-unter { margin-top: 8mm; font: italic 400 13.5pt/1.35 var(--f-titel); color: var(--tinte-2); }
+.tv-halbleinen .tu-fuss { position: absolute; left: 80mm; right: 22mm; bottom: 26mm; display: flex; justify-content: space-between;
+  font: 500 7.4pt var(--f-ui); letter-spacing: 0.1em; text-transform: uppercase; color: var(--tinte-2); }
+.tv-halbleinen .deckvermerk { right: 22mm; bottom: 10mm; }
+/* Schutzumschlag, typografisch */
+.tv-umschlag { background: #F8F6F1; }
+.tv-umschlag .tu-kante { position: absolute; left: 0; right: 0; top: 0; height: 7mm; background: var(--tp-band); }
+.tv-umschlag .tu-titel { position: absolute; left: 24mm; right: 20mm; top: 50mm; font-size: 66pt; line-height: 0.94; letter-spacing: -0.01em; color: var(--tp-titel); }
+.tv-umschlag .tu-unter { position: absolute; left: 24mm; right: 60mm; top: 136mm; font: italic 400 15pt/1.35 var(--f-titel); color: var(--tinte-2); }
+.tv-umschlag .tu-linie { position: absolute; left: 24mm; right: 24mm; bottom: 52mm; border-top: 0.6pt solid var(--tp-titel); }
+.tv-umschlag .tu-autor { position: absolute; left: 24mm; bottom: 38mm; font: 500 17pt/1 var(--f-titel); letter-spacing: 0.02em; color: var(--tp-titel); }
+.tv-umschlag .tu-rechts { position: absolute; right: 24mm; bottom: 37mm; text-align: right; font: 500 7.4pt/1.6 var(--f-ui); letter-spacing: 0.1em; text-transform: uppercase; color: var(--tinte-2); }
+.tv-umschlag .tu-rechts > * { display: block; }
+.tv-umschlag .tu-probe { color: var(--tp-akzent); }
+.tv-umschlag .deckvermerk { right: 24mm; bottom: 10mm; }
+
+/* ── Entwurf 13, vierte Runde: Relief (Höhenlinien aus dem Titel) als Ausstattung der Umschläge ── */
+.titelseite svg.relief { position: absolute; left: 0; top: 0; width: 210mm; height: 297mm; }
+.tr-autor { font: 600 9pt var(--f-ui); letter-spacing: 0.2em; text-transform: uppercase; }
+/* Ganzleinen mit Reliefplatte */
+.tv-relief { background: var(--tp-band); color: var(--tp-reihe); overflow: hidden; }
+.tr-platte { position: absolute; left: 0; right: 0; top: 0; height: 168mm; overflow: hidden; color: var(--tp-reihe); opacity: 0.55; }
+.tr-fileten { position: absolute; left: 0; right: 0; top: 168mm; height: 1.3mm; border-top: 1.2pt solid var(--tp-reihe); border-bottom: 0.4pt solid var(--tp-reihe); }
+.tr-unten { position: absolute; left: 26mm; right: 26mm; top: 184mm; }
+.tv-relief .tr-autor { color: var(--tp-reihe); margin-bottom: 7mm; }
+.tv-relief .tu-titel { font-size: 52pt; line-height: 0.98; color: var(--tp-reihe); }
+.tv-relief .tu-unter { margin-top: 6mm; font: italic 400 14pt/1.35 var(--f-titel); color: var(--tp-text); opacity: 0.8; }
+.tr-fuss { position: absolute; left: 26mm; right: 26mm; bottom: 24mm; display: flex; justify-content: space-between; padding-top: 3mm;
+  border-top: 0.4pt solid color-mix(in srgb, var(--tp-reihe) 50%, transparent); font: 500 7.4pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tp-reihe); }
+.tv-relief .deckvermerk { color: var(--tp-reihe); opacity: 0.75; right: 26mm; bottom: 10mm; }
+/* Halbleinen mit Bezugspapier und Titelschild */
+.tv-relief-halbleinen { background: var(--tp-papier); overflow: hidden; }
+.trh-bezug { position: absolute; inset: 0; color: var(--tp-titel); opacity: 0.13; }
+.trh-tuch { position: absolute; left: 0; top: 0; bottom: 0; width: 54mm; background: var(--tp-band); }
+.trh-fileten { position: absolute; top: 0; bottom: 0; left: 54mm; width: 1.4mm; border-left: 1.2pt solid var(--tp-akzent); border-right: 0.4pt solid var(--tp-akzent); }
+.trh-reihe { position: absolute; left: 11mm; right: 10mm; bottom: 26mm; font: 500 7.2pt/1.55 var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tp-reihe); }
+.trh-schild { position: absolute; left: 74mm; right: 18mm; top: 58mm; padding: 13mm 11mm 12mm; background: var(--tp-band); color: var(--tp-reihe);
+  box-shadow: inset 0 0 0 2.6mm var(--tp-band), inset 0 0 0 2.9mm var(--tp-reihe); }
+.trh-schild .tr-autor { color: var(--tp-reihe); margin-bottom: 8mm; font-size: 8pt; }
+.trh-schild .tu-titel { font-size: 36pt; line-height: 1; color: var(--tp-reihe); }
+.trh-schild .tu-unter { margin-top: 7mm; font: italic 400 12pt/1.35 var(--f-titel); color: var(--tp-text); opacity: 0.82; }
+.trh-fuss { position: absolute; left: 74mm; right: 18mm; bottom: 24mm; display: flex; justify-content: space-between; padding: 2.6mm 3mm; background: var(--tp-papier);
+  font: 600 7.4pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tp-titel); }
+.tv-relief-halbleinen .deckvermerk { right: 18mm; bottom: 10mm; color: var(--tp-titel); }
+/* Schutzumschlag mit Relief als Umschlagbild */
+.tv-relief-umschlag { background: #F8F6F1; overflow: hidden; }
+.tru-bild { position: absolute; left: 0; right: 0; top: 0; height: 150mm; overflow: hidden; color: var(--tp-band); opacity: 0.62; border-bottom: 1.2pt solid var(--tp-band); }
+.tru-text { position: absolute; left: 24mm; right: 24mm; top: 166mm; }
+.tv-relief-umschlag .tr-autor { color: var(--tp-akzent); margin-bottom: 6mm; }
+.tv-relief-umschlag .tu-titel { font-size: 54pt; line-height: 0.98; color: var(--tp-titel); }
+.tv-relief-umschlag .tu-unter { margin-top: 6mm; font: italic 400 15pt/1.35 var(--f-titel); color: var(--tinte-2); }
+.tru-band { position: absolute; left: 0; right: 0; bottom: 0; height: 26mm; box-sizing: border-box; padding: 9mm 24mm 0; display: flex; justify-content: space-between;
+  background: var(--tp-band); font: 500 7.6pt var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tp-reihe); }
+.tv-relief-umschlag .deckvermerk { right: 24mm; bottom: 4mm; color: var(--tp-reihe); opacity: 0.8; }
+
+/* ── Entwurf 13, fünfte Runde: bisherige Titelseite veredelt (band-relief Standard, band-bezug, band-rahmen) ──
+   Kopfband nur mit der Reihe; Titelblock, Register und Fuß stehen in einer Spalte im Fluss (tb-koerper), damit sich nichts schneidet. */
+.tv-band-relief, .tv-band-bezug, .tv-band-rahmen { --bh: 70mm; }
+.tv-band-relief .tp-band, .tv-band-bezug .tp-band, .tv-band-rahmen .tp-band { height: var(--bh); overflow: hidden; padding-top: 0; }
+.tb-relief { position: absolute; inset: 0; color: var(--tp-reihe); opacity: 0.5; }
+.tp-band > .tp-reihe { position: absolute; left: 26mm; bottom: 12mm; }
+/* Freistellung wie bei Kartenbeschriftungen: die Höhenlinien setzen um die Reihe aus */
+.tv-band-relief .tp-band > .tp-reihe, .tv-band-rahmen .tp-band > .tp-reihe { margin-left: -3mm; padding: 1.2mm 3mm; background: var(--tp-band); }
+.tb-fileten { position: absolute; left: 0; right: 0; top: var(--bh); height: 1.3mm; border-top: 1.2pt solid var(--tp-akzent); border-bottom: 0.4pt solid var(--tp-akzent); }
+.tb-bezug { position: absolute; inset: 0; overflow: hidden; color: var(--tp-titel); opacity: 0.11; }
+.tb-koerper { position: absolute; left: 26mm; right: 0; top: calc(var(--bh) + 22mm); bottom: 22mm; display: flex; flex-direction: column; }
+.tv-band-rahmen .tb-koerper { bottom: 32mm; }
+.tb-koerper > .tp-mitte { position: static; margin-right: 34mm; }
+.tb-koerper .tp-linie { margin-top: 8mm; }
+.tb-koerper > .tp-fuss { position: static; margin-right: 34mm; }
+/* Register: eine Zeile je Provinz, Beschriftung rechtsbündig vor dem Reiter am Seitenrand; die Zeilen teilen sich den Raum,
+   werden aber nie niedriger als ihre Beschriftung (min-height: auto), sonst schöbe sich eine Beschriftung in die nächste */
+.tb-register { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; gap: 1.8mm; margin: 7mm 0 6mm; }
+.tb-reiter { flex: 1 1 auto; max-height: 15mm; display: flex; align-items: center; justify-content: flex-end; gap: 3.4mm; text-decoration: none; color: inherit; }
+.tb-etikett { min-width: 0; max-width: 128mm; text-align: right; font: italic 500 10.5pt/1.12 var(--f-titel); color: var(--tinte-2); }
+.tb-etikett b { display: block; font: 600 6.6pt/1.3 var(--f-ui); font-style: normal; letter-spacing: 0.12em; text-transform: uppercase; color: var(--p); }
+.tb-daumen { flex: none; align-self: stretch; width: 8mm; min-height: 8.6mm; display: flex; align-items: center; justify-content: center; background: var(--p);
+  border-radius: 1.6mm 0 0 1.6mm; font: 700 7.4pt/1 var(--f-ui); color: #fff; letter-spacing: 0.02em; }
+/* Enger, wenn der Platz nicht reicht (TITEL_JS): Provinz und Name in einer Zeile, kleinere Abstände; dann auch kleinere Schrift */
+.tb-koerper.eng .tb-register { gap: 1mm; margin: 5mm 0 4mm; }
+.tb-koerper.eng .tb-etikett { font-size: 9.6pt; }
+.tb-koerper.eng .tb-etikett b { display: inline; margin-right: 1.6mm; }
+.tb-koerper.eng .tb-daumen { min-height: 6.6mm; }
+.tb-koerper.enger .tb-etikett { font-size: 8.6pt; max-width: 150mm; }
+.tb-koerper.enger .tp-titel { font-size: 46pt; }
+.tb-koerper.enger .tp-unter { font-size: 16pt; }
+.tb-koerper.enger .tp-linie { margin: 5mm 0 3mm; }
+/* Rahmen: Fußband mit Ort und Probesatz */
+.tb-fileten.unten { top: auto; bottom: 26mm; }
+.tb-fuss { position: absolute; left: 0; right: 0; bottom: 0; height: 26mm; box-sizing: border-box; padding: 9mm 34mm 0 26mm; background: var(--tp-band);
+  display: flex; justify-content: space-between; font: 600 8.4pt var(--f-ui); letter-spacing: 0.18em; text-transform: uppercase; color: var(--tp-reihe); }
+.tb-fuss .tp-probe { color: var(--tp-reihe); opacity: 0.8; }
+.tv-band-rahmen .deckvermerk { color: var(--tp-reihe); opacity: 0.75; bottom: 4mm; }
+
+/* ── Entwurf 13: Abwandlungen der Titelseite (meta.titel_stil) ── */
+.tvx-band-hoch { --bh: 96mm; }
+.tvx-band-schmal { --bh: 48mm; }
+.tvx-band-hoch .tb-koerper { top: calc(var(--bh) + 16mm); }
+.tp-titel em { font-style: italic; font-weight: 500; }
+.tvx-relief-papier .tb-bezug { opacity: 0.07; }
+.tvx-papier-weiss { background: #FBFAF7; }
+/* Band am Fuß: Titelblock und Register oben auf dem Papier, das Band mit Relief und Reihe trägt die Seite */
+.tvx-band-unten .tp-band { top: auto; bottom: 0; }
+.tvx-band-unten .tp-band > .tp-reihe { bottom: auto; top: 18mm; }
+.tvx-band-unten .tb-fileten { top: auto; bottom: var(--bh); }
+.tvx-band-unten .tb-koerper { top: 30mm; bottom: calc(var(--bh) + 8mm); }
+.tvx-band-unten .deckvermerk { color: var(--tp-reihe); opacity: 0.75; }
+/* Abwandlungen von A1 und „Relief bis ins Papier“ (zweite Runde) */
+.tvx-relief-blind .tb-relief { color: #FFFFFF; opacity: 0.1; }
+.tvx-relief-kraeftig .tb-relief { opacity: 0.8; }
+.tvx-relief-papier.tvx-papier-deutlich .tb-bezug { opacity: 0.14; }
+.tvx-relief-papier.tvx-papier-bronze .tb-bezug { color: var(--tp-akzent); opacity: 0.22; }
+/* Abwandlungen von „Relief bis ins Papier“ (dritte Runde) */
+.tvx-relief-papier.tvx-papier-praegung .tb-bezug { color: #000000; opacity: 0.055; }
+.tvx-relief-papier.tvx-papier-zaehl .tb-bezug { opacity: 0.17; }
+.tvx-papier-zaehl .tb-bezug path:not(.z) { display: none; }
+.tvx-ohne-fileten .tb-fileten { display: none; }
+.tvx-papier-hell { background: #F8F4EC; }
+/* Relief im Papier nur oberhalb einer schrägen Grenze (links etwa auf Höhe der Version, rechts unter dem Titel), weich auslaufend statt abgeschnitten */
+.tvx-relief-papier .tb-bezug { -webkit-mask-image: linear-gradient(160deg, #000 43%, rgba(0,0,0,0.5) 49%, transparent 55%);
+  mask-image: linear-gradient(160deg, #000 43%, rgba(0,0,0,0.5) 49%, transparent 55%); }
+
+/* 4.0: Formel und Rechenweg im Buchsatz (Satz der Formeln aus skript.css, Abstand wie Definition) */
+.formel-block, .rechenweg-block { margin: 5.6mm var(--spalte) 0; }
+.rechenweg-block .ergebnis { margin-top: 1.2mm; font-weight: 600; }
+.rechenweg-block .probe { margin-left: 2mm; font: 600 7.4pt var(--f-ui); color: var(--p); letter-spacing: 0.04em; }
+figure.abb .fig .t, figure.abb .fig .tkonten { margin: 0 auto; }
