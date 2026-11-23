@@ -1,11 +1,10 @@
-# (c) Oliver Bedernik · Terra-Kit · Automatische Prüfung
-# Jeder Upload (Push) und jeder Pull Request startet die vollständige Testreihe.
-# Release auf zwei Wegen, beide nur nach grüner Testreihe:
+# (c) Oliver Bedernik · Terra-Kit 4.0 · Automatische Prüfung
+# Jeder Upload (Push) und jeder Pull Request startet beide Testreihen (Validator und Werkzeuge; Buchsatz in Chromium).
+# Release auf zwei Wegen, beide nur nach grünen Testreihen:
 #   1. Actions → Prüfung → „Run workflow“ (ohne Kommandozeile): Tag v<VERSION> und Release entstehen hier.
 #   2. Tag v*.*.* pushen: muss mit der Datei VERSION übereinstimmen.
 # Beschreibung des Release = Abschnitt der Version aus der README. Die Versionswarnung
 # des Kits liest ausschließlich Releases; ein roter Stand bleibt für Werke unsichtbar.
-# Bausteine in den Node-24-Fassungen (3.5): checkout@v6, setup-python@v6, setup-node@v6.
 name: Prüfung
 on:
   push:
@@ -18,6 +17,7 @@ permissions:
 jobs:
   testreihe:
     runs-on: ubuntu-24.04
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -26,12 +26,14 @@ jobs:
         with: { node-version: "24" }
       - name: Abhängigkeiten
         run: |
-          sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+          sudo apt-get update -q && sudo apt-get install -y -q poppler-utils fonts-dejavu-core
           pip install -q -r requirements.txt
           npm ci --no-audit --no-fund
           python -m playwright install --with-deps chromium
-      - name: Testreihe
+      - name: Testreihe (Validator, Umsetzer, Karte, Exam, Anki, Werkzeuge)
         run: python tests/run_tests.py
+      - name: Testreihe Buchsatz (Paged.js in Chromium)
+        run: python tests/buch_test.py
       - name: Referenzwerke setzen
         run: |
           python validate.py referenzwerk.json --streng
@@ -54,7 +56,7 @@ jobs:
         run: |
           echo "TAG=v$(cat VERSION)" >> "$GITHUB_ENV"
           awk -v v="**$(cat VERSION)**" 'index($0, v) == 1 {an = 1; next} an && /^\*\*[0-9]/ {exit} an' README.md > notizen.md
-          echo "" >> notizen.md; echo "Testreihe grün. (c) Oliver Bedernik" >> notizen.md
+          echo "" >> notizen.md; echo "Testreihen grün. (c) Oliver Bedernik" >> notizen.md
       - name: Rückfallebene als ZIP bauen
         run: |
           mkdir -p dist/terra-kit && git archive HEAD | tar -x -C dist/terra-kit
